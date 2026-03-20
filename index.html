@@ -526,27 +526,181 @@ button:focus-visible,input:focus-visible,select:focus-visible{
   .el{min-height:44px;min-width:44px}
   input[type=range]{height:28px}
 }
+
+/* ── EXAM FOCUS GUARD ── */
+#exam-warning-overlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(255,71,87,.97);backdrop-filter:blur(8px);
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:2rem;
+}
+#exam-warning-overlay.show{display:flex}
+.ew-icon{font-size:4rem;margin-bottom:1rem;animation:shake .4s ease}
+.ew-title{font-family:var(--head);font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:.5rem}
+.ew-sub{font-size:.95rem;color:rgba(255,255,255,.85);margin-bottom:1.5rem;line-height:1.7;max-width:420px}
+.ew-count{font-family:var(--mono);font-size:1.1rem;color:#fff;background:rgba(0,0,0,.25);
+  padding:.5rem 1.25rem;border-radius:8px;margin-bottom:1.5rem}
+.ew-btn{padding:.65rem 2rem;border:2px solid #fff;border-radius:10px;background:transparent;
+  color:#fff;font-family:var(--head);font-size:1rem;font-weight:700;cursor:pointer;transition:.18s}
+.ew-btn:hover{background:#fff;color:var(--red)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+#exam-warning-bar{
+  display:none;align-items:center;gap:.6rem;
+  background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.4);
+  border-radius:9px;padding:.6rem 1rem;margin-bottom:.85rem;font-size:.82rem;
+}
+#exam-warning-bar.show{display:flex}
+#exam-warning-bar .wb-icon{font-size:1rem;flex-shrink:0}
+#exam-warning-bar .wb-text{color:var(--red);flex:1}
+#exam-warning-bar .wb-count{font-family:var(--mono);font-size:.78rem;color:var(--red);
+  background:rgba(255,71,87,.15);padding:.15rem .5rem;border-radius:5px;flex-shrink:0}
+
+/* ══════════════════════════════════
+   HOME PAGE — REDESIGNED
+══════════════════════════════════ */
+.home-hero{
+  position:relative;overflow:hidden;
+  padding:2.5rem 1.5rem 2rem;
+  background:linear-gradient(160deg,var(--s2) 0%,var(--bg) 60%);
+  border-bottom:1px solid var(--border);
+}
+.home-hero::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,229,255,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.home-hero::after{
+  content:'';position:absolute;bottom:-40px;left:20%;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,53,.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.home-hero-content{position:relative;z-index:1;max-width:640px}
+.home-hero-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);
+  border-radius:20px;padding:.28rem .75rem;margin-bottom:1rem;
+}
+.home-hero-title{
+  font-family:var(--head);font-size:clamp(1.7rem,4.5vw,3.2rem);
+  font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:.75rem;
+}
+.home-hero-em{
+  background:linear-gradient(120deg,var(--cyan),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.home-hero-sub{color:var(--dim);font-size:.88rem;line-height:1.75;margin-bottom:1.5rem;max-width:480px}
+.home-cta-row{display:flex;gap:.65rem;flex-wrap:wrap}
+.home-cta-btn{
+  padding:.55rem 1.35rem;border-radius:9px;font-family:var(--head);
+  font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s;border:none;
+}
+.home-cta-btn.primary{
+  background:linear-gradient(120deg,var(--cyan),var(--purple));
+  color:#000;
+}
+.home-cta-btn.primary:hover{opacity:.88;transform:translateY(-1px)}
+.home-cta-btn:not(.primary){
+  background:var(--s2);color:var(--text);
+  border:1px solid var(--border2);
+}
+.home-cta-btn:not(.primary):hover{border-color:var(--cyan);color:var(--cyan)}
+.home-hero-stats{
+  display:flex;align-items:center;gap:0;
+  margin-top:2rem;background:var(--s1);border:1px solid var(--border);
+  border-radius:12px;padding:.85rem 1.25rem;width:fit-content;max-width:100%;
+  flex-wrap:wrap;row-gap:.5rem;
+}
+.home-stat{text-align:center;padding:0 1.1rem}
+.home-stat-n{font-family:var(--head);font-size:1.5rem;font-weight:800;color:var(--cyan)}
+.home-stat-l{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
+.home-stat-div{width:1px;height:36px;background:var(--border)}
+
+/* Topic category grid */
+.topic-cat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:.65rem;margin-bottom:.25rem;
+}
+.topic-cat{
+  background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:1rem;cursor:pointer;transition:.22s;position:relative;overflow:hidden;
+}
+.topic-cat::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--tc,var(--cyan));transform:scaleX(0);transform-origin:left;transition:.22s;
+}
+.topic-cat:hover{border-color:var(--tc,var(--cyan));transform:translateY(-2px)}
+.topic-cat:hover::before{transform:scaleX(1)}
+.tc-icon{font-size:1.6rem;margin-bottom:.5rem}
+.tc-name{font-family:var(--head);font-size:.88rem;font-weight:700;margin-bottom:.25rem}
+.tc-count{font-size:.68rem;color:var(--dim)}
+.tc-prog{height:3px;background:var(--s3);border-radius:2px;margin-top:.6rem;overflow:hidden}
+.tc-prog-fill{height:100%;border-radius:2px;transition:width .4s}
+
+/* Quick actions */
+.quick-actions-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:.65rem;
+}
+.qa-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:1rem .85rem;cursor:pointer;transition:.22s;text-align:center;
+}
+.qa-card:hover{border-color:var(--border2);transform:translateY(-2px);background:var(--s2)}
+.qa-icon{font-size:1.8rem;margin-bottom:.45rem}
+.qa-name{font-family:var(--head);font-size:.82rem;font-weight:700;margin-bottom:.2rem}
+.qa-desc{font-size:.68rem;color:var(--dim);line-height:1.5}
+
+/* Simulations page — category filter tabs */
+.cat-filter{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;padding:0 1rem}
+.cat-pill{
+  padding:.32rem .8rem;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--dim);font-family:var(--font);
+  font-size:.75rem;font-weight:500;cursor:pointer;transition:.18s;white-space:nowrap;
+}
+.cat-pill:hover{border-color:var(--border2);color:var(--text)}
+.cat-pill.on{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.4);color:var(--cyan)}
+
+/* Category header inside grid */
+.cat-header{
+  grid-column:1/-1;display:flex;align-items:center;gap:.75rem;
+  padding:.25rem 0;margin-top:.25rem;
+}
+.cat-header h3{font-family:var(--head);font-size:.82rem;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.cat-header-line{flex:1;height:1px;background:var(--border)}
+.cat-header-count{font-size:.68rem;color:var(--dim2);white-space:nowrap}
+
+@media(max-width:480px){
+  .home-hero{padding:1.5rem .85rem 1.5rem}
+  .home-hero-stats{padding:.65rem .85rem;gap:0}
+  .home-stat{padding:0 .75rem}
+  .home-stat-n{font-size:1.2rem}
+  .home-stat-div{height:28px}
+  .topic-cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem}
+  .quick-actions-grid{grid-template-columns:repeat(3,1fr);gap:.5rem}
+  .qa-card{padding:.75rem .5rem}
+  .qa-icon{font-size:1.4rem}
+  .qa-name{font-size:.72rem}
+  .qa-desc{display:none}
+  .home-cta-btn{font-size:.8rem;padding:.5rem 1rem}
+}
+@media(max-width:360px){
+  .quick-actions-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 <script type="module">
-// ═══════════════════════════════════════════════════════════
-// FIREBASE CONFIG — replace these values with your own from
-// Firebase Console → Project Settings → Your Apps → Web App
-// ═══════════════════════════════════════════════════════════
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc,
-         collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp }                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword,
+         signInWithEmailAndPassword, signOut,
+         onAuthStateChanged }                           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc,
+         updateDoc, collection, getDocs,
+         serverTimestamp }                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ═══════════════════════════════════════════════════════════════
-// SECURITY NOTE: Firebase API keys are safe to be public.
-// Real security is enforced by:
-//   1. Firebase Authentication (only signed-in users access data)
-//   2. Firestore Security Rules (users can only read their own data)
-//   3. Authorized Domains (only your Vercel domain can use this key)
-// Set authorized domains at:
-// Firebase Console → Authentication → Settings → Authorized domains
-// ═══════════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey:            "AIzaSyCALIoHk_wxZnz-OGKMOsxZa8qOHkHhu7Q",
   authDomain:        "atom-edge-7a3d6.firebaseapp.com",
@@ -561,176 +715,23 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// ── Admin email — change this to your wife's email ──────────────────────────
-const ADMIN_EMAIL = "aish.priya19@gmail.com";
+window.FB = {
+  auth, db,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp
+};
 
-// ── Expose to global scope so main script can call them ──────────────────────
-window.FB = { auth, db, ADMIN_EMAIL,
-  createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  signOut, onAuthStateChanged,
-  doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp };
-
-// ── Auth state listener ───────────────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
   if (user) {
     window._fbUser = user;
-    await loadUserProfile(user);
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app-root').style.display    = 'block';
-    const isAdmin = user.email === ADMIN_EMAIL;
-    document.querySelector('.ntab[data-page="teacher"]').style.display = isAdmin ? '' : 'none';
-    document.querySelector('.iconbtn[data-action="signout"]').style.display = '';
-    updateXPBar();
+    if (typeof onUserSignedIn === 'function') await onUserSignedIn(user);
   } else {
     window._fbUser = null;
-    document.getElementById('auth-screen').style.display = 'flex';
-    document.getElementById('app-root').style.display    = 'none';
+    if (typeof onUserSignedOut === 'function') onUserSignedOut();
   }
 });
-
-async function loadUserProfile(user) {
-  const ref  = doc(db, 'users', user.uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) {
-    const d = snap.data();
-    xp           = d.xp           || 0;
-    streak       = d.streak       || 0;
-    lastDay      = d.lastDay      || '';
-    bookmarks    = d.bookmarks    || [];
-    topicVisits  = d.topicVisits  || {};
-    quizHistory  = d.quizHistory  || [];
-    gameScore    = d.gameScore    || 0;
-    earned       = d.badges       || [];
-  } else {
-    // New user — create their document
-    await setDoc(ref, {
-      name: user.displayName || user.email.split('@')[0],
-      email: user.email,
-      xp: 0, streak: 0, lastDay: '',
-      bookmarks: [], topicVisits: {}, quizHistory: [],
-      gameScore: 0, badges: [],
-      createdAt: serverTimestamp()
-    });
-    xp = streak = gameScore = 0;
-    bookmarks = []; topicVisits = {}; quizHistory = []; earned = [];
-  }
-  // Update streak for today
-  const today     = new Date().toDateString();
-  const yesterday = new Date(Date.now() - 86400000).toDateString();
-  if (lastDay !== today) {
-    streak = lastDay === yesterday ? streak + 1 : 1;
-    lastDay = today;
-    await saveField('streak', streak);
-    await saveField('lastDay', lastDay);
-  }
-  document.getElementById('home-xp-disp').textContent = xp;
-  // Show name chip in header
-  if (typeof showUserChip === 'function') {
-    const snap2 = await getDoc(doc(db, 'users', user.uid));
-    showUserChip(snap2.exists() ? (snap2.data().name || user.email) : user.email);
-  }
-}
-
-// ── Persist helpers (replaces localStorage) ──────────────────────────────────
-// Allowed fields a student can write to their own profile
-const ALLOWED_FIELDS = new Set([
-  'xp','streak','lastDay','bookmarks','topicVisits',
-  'quizHistory','gameScore','badges','hwList'
-]);
-
-window.saveField = async function(field, value) {
-  if (!window._fbUser) return;
-  if (!ALLOWED_FIELDS.has(field)) { console.warn('saveField: blocked field', field); return; }
-  // Validate value size to prevent abuse
-  const serialized = JSON.stringify(value);
-  if (serialized.length > 50000) { console.warn('saveField: value too large'); return; }
-  try {
-    const ref = doc(db, 'users', window._fbUser.uid);
-    await updateDoc(ref, { [field]: value });
-  } catch(e) { console.warn('saveField error', e); }
-};
-
-window.saveProfile = async function(fields) {
-  if (!window._fbUser) return;
-  try {
-    const ref = doc(db, 'users', window._fbUser.uid);
-    await updateDoc(ref, fields);
-  } catch(e) { console.warn('saveProfile error', e); }
-};
-
-// ── Auth actions (called by UI buttons) ──────────────────────────────────────
-window.doSignIn = async function() {
-  const email = document.getElementById('auth-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('auth-pass').value;
-  const err   = document.getElementById('auth-err');
-  err.textContent = '';
-  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Please enter a valid email.'; return; }
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) { err.textContent = friendlyError(e.code); }
-};
-
-window.doSignUp = async function() {
-  const email = document.getElementById('auth-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('auth-pass').value;
-  const name  = document.getElementById('auth-name').value.trim().slice(0, 60);
-  const err   = document.getElementById('auth-err');
-  err.textContent = '';
-  if (!name) { err.textContent = 'Please enter your name.'; return; }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Please enter a valid email.'; return; }
-  if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
-  if (name.length < 2) { err.textContent = 'Please enter your full name.'; return; }
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    // Store name separately in Firestore after creation
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      name, email, xp: 0, streak: 0, lastDay: '',
-      bookmarks: [], topicVisits: {}, quizHistory: [],
-      gameScore: 0, badges: [], createdAt: serverTimestamp()
-    });
-  } catch(e) { err.textContent = friendlyError(e.code); }
-};
-
-window.doSignOut = async function() {
-  await signOut(auth);
-  // Reset all in-memory state
-  xp = streak = gameScore = 0;
-  bookmarks = []; topicVisits = {}; quizHistory = []; earned = [];
-  goPage('home', document.querySelector('.ntab'));
-};
-
-// ── Teacher: load all students ────────────────────────────────────────────────
-window.loadAllStudents = async function() {
-  const snap = await getDocs(collection(db, 'users'));
-  return snap.docs.map(d => ({ uid: d.id, ...d.data() }))
-             .filter(u => u.email !== ADMIN_EMAIL);
-};
-
-// ── Teacher: create student account ──────────────────────────────────────────
-window.createStudentAccount = async function(name, email, password) {
-  const cred = await createUserWithEmailAndPassword(auth, email, password);
-  await setDoc(doc(db, 'users', cred.user.uid), {
-    name, email, xp: 0, streak: 0, lastDay: '',
-    bookmarks: [], topicVisits: {}, quizHistory: [],
-    gameScore: 0, badges: [], createdAt: serverTimestamp()
-  });
-  // Sign back in as admin (creating a user signs in as that user in Firebase)
-  return cred;
-};
-
-function friendlyError(code) {
-  const map = {
-    'auth/user-not-found':   'No account found with this email.',
-    'auth/wrong-password':   'Incorrect password.',
-    'auth/email-already-in-use': 'This email is already registered.',
-    'auth/invalid-email':    'Please enter a valid email address.',
-    'auth/weak-password':    'Password must be at least 6 characters.',
-    'auth/too-many-requests':'Too many attempts. Please wait a moment.',
-    'auth/invalid-credential': 'Incorrect email or password.',
-  };
-  return map[code] || 'Something went wrong. Please try again.';
-}
 </script>
 </head>
 <body>
@@ -808,7 +809,7 @@ function friendlyError(code) {
         </div>
       </div>
       <div id="auth-err" style="color:var(--red);font-size:.78rem;margin-bottom:.65rem;min-height:1rem;text-align:center"></div>
-      <button id="auth-submit" onclick="authSubmit()" style="width:100%;padding:.65rem;border:none;border-radius:9px;background:linear-gradient(120deg,var(--cyan),var(--purple));color:#000;font-family:var(--head);font-size:.92rem;font-weight:700;cursor:pointer;transition:.18s;letter-spacing:.02em">Sign In</button>
+      <button id="auth-submit" onclick="authSubmit()" style="width:100%;padding:.65rem;border:none;border-radius:9px;background:linear-gradient(120deg,var(--cyan),var(--purple));color:#000;font-family:var(--head);font-size:.92rem;font-weight:700;cursor:pointer;transition:.18s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:.5rem">Sign In</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.75rem;color:var(--dim)">Your progress syncs across all your devices 🌐</div>
   </div>
@@ -816,21 +817,88 @@ function friendlyError(code) {
 
 <div id="app-root" style="display:none">
 <main>
+<!-- EXAM FOCUS GUARD OVERLAY -->
+<div id="exam-warning-overlay">
+  <div class="ew-icon">🚨</div>
+  <div class="ew-title">Tab Switch Detected!</div>
+  <div class="ew-sub">You left the exam tab. This behaviour is recorded and your teacher will be notified.<br><br>Stay focused — your exam is still running.</div>
+  <div class="ew-count" id="ew-count-text">Warning 1 of 3</div>
+  <button class="ew-btn" onclick="dismissExamWarning()">Return to Exam →</button>
+</div>
+
 <!-- HOME -->
 <div id="page-home" class="page on">
-  <div class="hero">
-    <h1>Chemistry <em>Comes Alive</em><br>With Atom Edge</h1>
-    <p>Interactive simulations, exam practice and guided discovery — built for IGCSE students with love.</p>
-    <div class="hero-stats">
-      <div class="hstat"><div class="n">18</div><div class="l">Simulations</div></div>
-      <div class="hstat"><div class="n">118</div><div class="l">Elements</div></div>
-      <div class="hstat"><div class="n" id="home-xp-disp">0</div><div class="l">XP Earned</div></div>
+
+  <!-- ── HERO ── -->
+  <div class="home-hero">
+    <div class="home-hero-content">
+      <div class="home-hero-badge">⚗️ IGCSE Chemistry · Grade 9–10</div>
+      <h1 class="home-hero-title">Chemistry <span class="home-hero-em">Comes Alive</span><br>With Atom Edge</h1>
+      <p class="home-hero-sub">Interactive simulations, exam practice and guided discovery — built for IGCSE students with love.</p>
+      <div class="home-cta-row">
+        <button class="home-cta-btn primary" onclick="goPage('sims',document.querySelectorAll('.ntab')[2]);syncBnav('sims',document.querySelectorAll('.bnav-btn')[2])">Start Learning →</button>
+        <button class="home-cta-btn" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',document.querySelectorAll('.bnav-btn')[3])">Take Practice Exam</button>
+      </div>
+    </div>
+    <div class="home-hero-stats">
+      <div class="home-stat"><div class="home-stat-n" id="home-xp-disp">0</div><div class="home-stat-l">XP Earned</div></div>
+      <div class="home-stat-div"></div>
+      <div class="home-stat"><div class="home-stat-n" id="sim-count">28</div><div class="home-stat-l">Simulations</div></div>
+      <div class="home-stat-div"></div>
+      <div class="home-stat"><div class="home-stat-n">118</div><div class="home-stat-l">Elements</div></div>
+      <div class="home-stat-div"></div>
+      <div class="home-stat"><div class="home-stat-n">30</div><div class="home-stat-l">Quiz Questions</div></div>
     </div>
   </div>
+
+  <!-- ── QUICK SEARCH ── -->
   <div class="search-wrap">
     <div class="search-box"><span class="search-icon">🔍</span><input type="search" placeholder="Search simulations, topics, equations…" id="search-inp" oninput="handleSearch(this.value)"></div>
   </div>
-  <div class="sec"><div class="sec-hd"><h2>All Experiments</h2><div class="sec-line"></div></div><div class="grid" id="home-grid"></div></div>
+
+  <!-- ── CONTINUE LEARNING (if has progress) ── -->
+  <div class="sec" id="continue-sec" style="display:none">
+    <div class="sec-hd"><h2>📌 Continue Learning</h2><div class="sec-line"></div></div>
+    <div class="grid" id="continue-grid"></div>
+  </div>
+
+  <!-- ── TOPIC CATEGORIES ── -->
+  <div class="sec">
+    <div class="sec-hd"><h2>Browse by Topic</h2><div class="sec-line"></div></div>
+    <div class="topic-cat-grid" id="topic-cat-grid"></div>
+  </div>
+
+  <!-- ── FEATURED / POPULAR ── -->
+  <div class="sec">
+    <div class="sec-hd"><h2>⭐ Most Popular Labs</h2><div class="sec-line"></div></div>
+    <div class="grid" id="featured-grid"></div>
+  </div>
+
+  <!-- ── QUICK ACTIONS ── -->
+  <div class="sec">
+    <div class="sec-hd"><h2>Quick Actions</h2><div class="sec-line"></div></div>
+    <div class="quick-actions-grid">
+      <div class="qa-card" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',document.querySelectorAll('.bnav-btn')[3])">
+        <div class="qa-icon">📝</div><div class="qa-name">Exam Mode</div><div class="qa-desc">Timed IGCSE practice papers</div>
+      </div>
+      <div class="qa-card" onclick="goPage('game',document.querySelectorAll('.ntab')[5]);syncBnav('game',document.querySelectorAll('.bnav-btn')[4])">
+        <div class="qa-icon">🎮</div><div class="qa-name">Equation Game</div><div class="qa-desc">Balance equations, earn XP</div>
+      </div>
+      <div class="qa-card" onclick="goPage('periodic',document.querySelectorAll('.ntab')[6])">
+        <div class="qa-icon">⚛️</div><div class="qa-name">Periodic Table</div><div class="qa-desc">All 118 elements interactive</div>
+      </div>
+      <div class="qa-card" onclick="goPage('sandbox',document.querySelectorAll('.ntab')[3]);syncBnav('sandbox',null)">
+        <div class="qa-icon">🧪</div><div class="qa-name">Free Sandbox</div><div class="qa-desc">Mix reagents & discover</div>
+      </div>
+      <div class="qa-card" onclick="toggleGlossary()">
+        <div class="qa-icon">📖</div><div class="qa-name">Glossary</div><div class="qa-desc">36 key chemistry terms</div>
+      </div>
+      <div class="qa-card" onclick="goPage('progress',document.querySelectorAll('.ntab')[1]);syncBnav('progress',document.querySelectorAll('.bnav-btn')[1])">
+        <div class="qa-icon">📊</div><div class="qa-name">My Progress</div><div class="qa-desc">XP, badges & topic mastery</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- PROGRESS -->
@@ -921,6 +989,11 @@ function friendlyError(code) {
     </div>
     <div id="exam-active" style="display:none">
       <div id="exam-wrap">
+        <div id="exam-warning-bar">
+          <span class="wb-icon">⚠️</span>
+          <span class="wb-text" id="wb-text">You switched tabs during the exam. This has been recorded.</span>
+          <span class="wb-count" id="wb-count">1 warning</span>
+        </div>
         <div class="exam-hd">
           <div>
             <div style="font-size:.7rem;color:var(--dim);margin-bottom:.2rem">QUESTION <span id="eq-cur">1</span> OF <span id="eq-tot">20</span></div>
@@ -1040,6 +1113,155 @@ function friendlyError(code) {
 //  11. Teacher Dashboard      ~line 1660
 // ════════════════════════════════════════════════════════
 'use strict';
+
+// ════════════ FIREBASE AUTH ACTIONS (main script) ════════════
+
+// Waits up to 8 seconds for the Firebase module to assign window.FB
+function waitForFB(maxMs=8000) {
+  if (window.FB) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
+    const check = setInterval(() => {
+      if (window.FB) { clearInterval(check); resolve(); }
+      else if (Date.now() - start > maxMs) { clearInterval(check); reject(new Error('Firebase took too long to load. Please refresh the page.')); }
+    }, 80);
+  });
+}
+
+const ADMIN_EMAIL = "aish.priya19@gmail.com";
+
+function friendlyError(code) {
+  const map = {
+    'auth/user-not-found':      'No account found with this email.',
+    'auth/wrong-password':      'Incorrect password.',
+    'auth/email-already-in-use':'This email is already registered.',
+    'auth/invalid-email':       'Please enter a valid email address.',
+    'auth/weak-password':       'Password must be at least 6 characters.',
+    'auth/too-many-requests':   'Too many attempts. Please wait a moment.',
+    'auth/invalid-credential':  'Incorrect email or password.',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
+
+async function loadUserProfile(user) {
+  if (!window.FB) return;
+  const {db,doc,getDoc,setDoc,serverTimestamp} = window.FB;
+  const ref  = doc(db,'users',user.uid);
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    const d = snap.data();
+    xp=d.xp||0; streak=d.streak||0; lastDay=d.lastDay||'';
+    bookmarks=d.bookmarks||[]; topicVisits=d.topicVisits||{};
+    quizHistory=d.quizHistory||[]; gameScore=d.gameScore||0; earned=d.badges||[];
+  } else {
+    await setDoc(ref,{name:user.displayName||user.email.split('@')[0],email:user.email,
+      xp:0,streak:0,lastDay:'',bookmarks:[],topicVisits:{},quizHistory:[],
+      gameScore:0,badges:[],createdAt:serverTimestamp()});
+    xp=streak=gameScore=0; bookmarks=[]; topicVisits={}; quizHistory={}; earned=[];
+  }
+  const today=new Date().toDateString(),yesterday=new Date(Date.now()-86400000).toDateString();
+  if(lastDay!==today){streak=lastDay===yesterday?streak+1:1;lastDay=today;DB.save('streak',streak);DB.save('lastDay',lastDay);}
+  const xpEl=document.getElementById('home-xp-disp');if(xpEl)xpEl.textContent=xp;
+  const chip=document.getElementById('user-chip');
+  if(chip){chip.textContent='\u{1F464} '+(snap.exists()?snap.data().name||user.email:user.email);chip.style.display='flex';}
+}
+
+async function onUserSignedIn(user) {
+  await loadUserProfile(user);
+  const as=document.getElementById('auth-screen'),ar=document.getElementById('app-root');
+  if(as)as.style.display='none'; if(ar)ar.style.display='block';
+  const tt=document.querySelector('.ntab[data-page="teacher"]');
+  if(tt)tt.style.display=user.email===ADMIN_EMAIL?'':'none';
+  const sb=document.querySelector('.iconbtn[data-action="signout"]');
+  if(sb)sb.style.display='';
+  updateXPBar();
+  try{buildHomePage();}catch(e){}
+}
+
+function onUserSignedOut() {
+  const as=document.getElementById('auth-screen'),ar=document.getElementById('app-root');
+  if(as)as.style.display='flex'; if(ar)ar.style.display='none';
+  xp=streak=gameScore=0; bookmarks=[]; topicVisits={}; quizHistory=[]; earned=[];
+}
+
+window.saveField = async function(field,value) {
+  if(!window._fbUser||!window.FB)return;
+  const ALLOWED=new Set(['xp','streak','lastDay','bookmarks','topicVisits','quizHistory','gameScore','badges','hwList','lastExamViolations']);
+  if(!ALLOWED.has(field)||JSON.stringify(value).length>50000)return;
+  try{const{db,doc,updateDoc}=window.FB;await updateDoc(doc(db,'users',window._fbUser.uid),{[field]:value});}
+  catch(e){console.warn('saveField:',e);}
+};
+
+window.saveProfile = async function(fields) {
+  if(!window._fbUser||!window.FB)return;
+  try{const{db,doc,updateDoc}=window.FB;await updateDoc(doc(db,'users',window._fbUser.uid),fields);}
+  catch(e){console.warn('saveProfile:',e);}
+};
+
+window.doSignIn = async function() {
+  const emailEl=document.getElementById('auth-email'),passEl=document.getElementById('auth-pass'),errEl=document.getElementById('auth-err');
+  if(!errEl)return;
+  const email=(emailEl?emailEl.value.trim().toLowerCase():''),pass=passEl?passEl.value:'';
+  errEl.textContent='';
+  if(!email||!pass){errEl.textContent='Please enter your email and password.';return;}
+  const btn=document.getElementById('auth-submit');
+  if(btn){btn.disabled=true;btn.textContent='Signing in…';}
+  try{
+    // Wait up to 8s for Firebase to load
+    await waitForFB();
+    await window.FB.signInWithEmailAndPassword(window.FB.auth,email,pass);
+  } catch(e){
+    errEl.textContent=friendlyError(e.code||e.message);
+    if(btn){btn.disabled=false;btn.textContent='Sign In';}
+  }
+};
+
+window.doSignUp = async function() {
+  const emailEl=document.getElementById('auth-email'),passEl=document.getElementById('auth-pass'),
+        nameEl=document.getElementById('auth-name'),errEl=document.getElementById('auth-err');
+  if(!errEl)return;
+  const email=(emailEl?emailEl.value.trim().toLowerCase():''),pass=passEl?passEl.value:'',
+        name=nameEl?nameEl.value.trim().slice(0,60):'';
+  errEl.textContent='';
+  if(!name){errEl.textContent='Please enter your name.';return;}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters.';return;}
+  const btn=document.getElementById('auth-submit');
+  if(btn){btn.disabled=true;btn.textContent='Creating account…';}
+  try{
+    await waitForFB();
+    const{createUserWithEmailAndPassword,auth,db,doc,setDoc,serverTimestamp}=window.FB;
+    const cred=await createUserWithEmailAndPassword(auth,email,pass);
+    await setDoc(doc(db,'users',cred.user.uid),{name,email,xp:0,streak:0,lastDay:'',
+      bookmarks:[],topicVisits:{},quizHistory:[],gameScore:0,badges:[],createdAt:serverTimestamp()});
+  }catch(e){
+    errEl.textContent=friendlyError(e.code||e.message);
+    if(btn){btn.disabled=false;btn.textContent='Create Account';}
+  }
+};
+
+window.doSignOut = async function() {
+  if(!window.FB)return;
+  await window.FB.signOut(window.FB.auth);
+  goPage('home',document.querySelector('.ntab'));
+  const chip=document.getElementById('user-chip');if(chip)chip.style.display='none';
+};
+
+window.loadAllStudents = async function() {
+  if(!window.FB)return[];
+  const{db,collection,getDocs}=window.FB;
+  const snap=await getDocs(collection(db,'users'));
+  return snap.docs.map(d=>({uid:d.id,...d.data()})).filter(u=>u.email!==ADMIN_EMAIL);
+};
+
+window.createStudentAccount = async function(name,email,password) {
+  if(!window.FB)throw new Error('Firebase not loaded');
+  const{auth,db,createUserWithEmailAndPassword,doc,setDoc,serverTimestamp}=window.FB;
+  const cred=await createUserWithEmailAndPassword(auth,email,password);
+  await setDoc(doc(db,'users',cred.user.uid),{name,email,xp:0,streak:0,lastDay:'',
+    bookmarks:[],topicVisits:{},quizHistory:[],gameScore:0,badges:[],createdAt:serverTimestamp()});
+  return cred;
+};
+
 // ════════════ STORAGE ════════════
 // localStorage only used for UI preferences (theme) — user data lives in Firebase
 const S={
@@ -1066,7 +1288,7 @@ if(!darkMode)document.body.classList.add('light');
 
 // ════════════ TOAST ════════════
 function toast(msg,dur=2200){
-  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),dur);
 }
 
@@ -1090,10 +1312,10 @@ function getLevel(){for(let i=XP_LEVEL.length-1;i>=0;i--)if(xp>=XP_LEVEL[i])retu
 function updateXPBar(){
   const lv=getLevel(),cur=xp-XP_LEVEL[lv-1],next=(XP_LEVEL[lv]||9999)-XP_LEVEL[lv-1];
   const pct=Math.min(100,Math.round(cur/next*100));
-  document.getElementById('xp-fill').style.width=pct+'%';
-  document.getElementById('xp-label-l').textContent=xp+' XP';
-  document.getElementById('xp-label-r').textContent='Level '+lv;
-  document.getElementById('home-xp-disp').textContent=xp;
+  const fill=document.getElementById('xp-fill');if(fill)fill.style.width=pct+'%';
+  const ll=document.getElementById('xp-label-l');if(ll)ll.textContent=xp+' XP';
+  const lr=document.getElementById('xp-label-r');if(lr)lr.textContent='Level '+lv;
+  const hx=document.getElementById('home-xp-disp');if(hx)hx.textContent=xp;
 }
 
 // ════════════ BADGES ════════════
@@ -1220,18 +1442,30 @@ const EXPS=[
   {id:'periodic_trends',topic:'Periodic Table',name:'Periodic Trends',desc:'Visualise atomic radius, ionisation energy, electronegativity.',tags:['Trends','IE'],color:'#00e5a0',render:renderTrends},
   {id:'covalent',topic:'Chemical Bonding',name:'Covalent Bonding',desc:'Share electron pairs and form molecules.',tags:['Covalent','Shapes'],color:'#00e5ff',render:renderCovalent},
   {id:'ionic',topic:'Chemical Bonding',name:'Ionic Bonding',desc:'Transfer electrons and build ionic lattices.',tags:['Ionic','Lattice'],color:'#ffd93d',render:renderIonic},
-  {id:'equilibrium',topic:'Reversible Reactions',name:'Dynamic Equilibrium',desc:"Apply Le Chatelier's principle interactively.",tags:['Equilibrium'],color:'#00e5a0',render:renderEquil},
+  {id:'equilibrium',topic:'Reversible Reactions',name:'Dynamic Equilibrium',desc:"Apply Le Chatelier\'s principle interactively.",tags:['Equilibrium'],color:'#00e5a0',render:renderEquil},
   {id:'displacement',topic:'Metals & Reactivity',name:'Metal Displacement',desc:'Watch displacement reactions in real time.',tags:['Redox','Reactivity'],color:'#ff8c00',render:renderDisplace},
   {id:'crystallisation',topic:'Separation',name:'Crystallisation',desc:'Cool saturated solutions and watch crystals grow.',tags:['Crystals','Solubility'],color:'#88ccff',render:renderCrystal},
   {id:'rates',topic:'Rates of Reaction',name:'Rate of Reaction',desc:'Heat reactions and observe collision frequency.',tags:['Rate','Temperature'],color:'#ff4757',render:renderRates},
   {id:'combustion',topic:'Organic Chemistry',name:'Combustion of Hydrocarbons',desc:'Compare complete vs incomplete combustion.',tags:['Combustion','CO₂'],color:'#ff8c00',render:renderCombust},
   {id:'distillation',topic:'Separation',name:'Fractional Distillation',desc:'Separate crude oil fractions by boiling point.',tags:['Fractions','Crude Oil'],color:'#b388ff',render:renderDistil},
+  // ── NEW SIMULATIONS ──────────────────────────────────────────────
+  {id:'kinetic_theory',topic:'States of Matter',name:'Kinetic Particle Theory',desc:'Watch particles behave as solid, liquid and gas. See how temperature drives state changes.',tags:['Particles','States','Melting'],color:'#ffd93d',render:renderKinetic},
+  {id:'diffusion',topic:'States of Matter',name:'Diffusion & Brownian Motion',desc:'Release gas particles and watch them spread. Observe Brownian motion in real time.',tags:['Diffusion','Brownian','Gas'],color:'#ffd93d',render:renderDiffusion},
+  {id:'energetics',topic:'Energetics',name:'Exo & Endothermic Reactions',desc:'Plot energy profile diagrams. Compare activation energy and enthalpy change.',tags:['Exothermic','Enthalpy','ΔH'],color:'#ff4757',render:renderEnergetics},
+  {id:'haber',topic:'Industrial Chemistry',name:'Haber Process',desc:'Optimise temperature, pressure and catalyst to maximise ammonia yield.',tags:['Haber','NH₃','Catalyst'],color:'#00e5a0',render:renderHaber},
+  {id:'blast_furnace',topic:'Industrial Chemistry',name:'Blast Furnace',desc:'Extract iron from ore. Watch the reduction of iron oxide step by step.',tags:['Iron','Reduction','Coke'],color:'#ff8c00',render:renderBlastFurnace},
+  {id:'organic_series',topic:'Organic Chemistry',name:'Homologous Series Explorer',desc:'Explore alkanes, alkenes and alcohols. See how properties change with chain length.',tags:['Alkanes','Alkenes','Series'],color:'#ff8c00',render:renderOrganicSeries},
+  {id:'polymerisation',topic:'Organic Chemistry',name:'Polymerisation',desc:'Link monomers into polymers. Compare addition and condensation polymerisation.',tags:['Polymer','Monomer','Plastic'],color:'#ff8c00',render:renderPolymer},
+  {id:'gas_tests',topic:'Acids & Bases',name:'Testing for Gases',desc:'Test for H₂, O₂, CO₂, Cl₂ and NH₃ using the standard lab tests.',tags:['Gas Tests','Indicators','Lab'],color:'#00e5ff',render:renderGasTests},
+  {id:'electroplating',topic:'Electrochemistry',name:'Electroplating',desc:'Plate copper onto an object using electrolysis. Control current and time.',tags:['Electroplating','Copper','Current'],color:'#ff6b35',render:renderElectroplate},
+  {id:'moles',topic:'Quantitative Chemistry',name:'Mole Calculations',desc:'Calculate moles, mass and concentration. Interactive worked examples with visual atoms.',tags:['Moles','Avogadro','Concentration'],color:'#b388ff',render:renderMoles},
 ];
 
 // ════════════ SEARCH ════════════
 function handleSearch(v){
   const q=v.toLowerCase().trim();
   const grid=document.getElementById('home-grid');
+  if(!grid)return;
   if(!q){buildGrid('home-grid');return;}
   const matches=EXPS.filter(e=>e.name.toLowerCase().includes(q)||e.topic.toLowerCase().includes(q)||e.desc.toLowerCase().includes(q)||e.tags.some(t=>t.toLowerCase().includes(q)));
   grid.innerHTML='';
@@ -1246,8 +1480,8 @@ function makeCard(e){
   c.innerHTML=`<button class="card-fav ${isBookmarked?'on':''}" onclick="event.stopPropagation();toggleBookmark('${e.id}',this)" title="Bookmark">${isBookmarked?'💛':'🤍'}</button><div class="ctopic">${e.topic}</div><div class="cname">${e.name}</div><div class="cdesc">${e.desc}</div><div class="ctags">${e.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
   c.addEventListener('click',()=>openModal(e));return c;
 }
-function buildGrid(id){const g=document.getElementById(id);g.innerHTML='';EXPS.forEach(e=>g.appendChild(makeCard(e)));}
-buildGrid('home-grid');buildGrid('sims-grid');
+function buildGrid(id){const g=document.getElementById(id);if(!g)return;g.innerHTML='';EXPS.forEach(e=>g.appendChild(makeCard(e)));}
+buildGrid('home-grid'); // sims-grid built by buildSimsPage()
 
 // ════════════ HELPERS ════════════
 function mkCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.style.cssText=`width:100%;max-height:${Math.min(h,280)}px`;return c;}
@@ -2022,7 +2256,7 @@ function renderEquil(c){
   }
   loop();
   c.appendChild(mkObs("Add more reactant A → equilibrium shifts right (more product C). Increase temperature → shifts towards endothermic direction. Watch graph converge."));
-  c.appendChild(mkInfoGrid([{title:'Dynamic Equilibrium',html:'<p>Rate forward = Rate reverse<br>Concentrations constant (not zero)<br>Must be a closed system</p>'},{title:"Le Chatelier's Principle",html:"<p>System opposes applied stress.<br>↑ Reactant → shift right<br>↑ Temperature → shift to endothermic side<br>↑ Pressure → shift to fewer moles of gas</p>"}]));
+  c.appendChild(mkInfoGrid([{title:'Dynamic Equilibrium',html:'<p>Rate forward = Rate reverse<br>Concentrations constant (not zero)<br>Must be a closed system</p>'},{title:"Le Chatelier\'s Principle",html:"<p>System opposes applied stress.<br>↑ Reactant → shift right<br>↑ Temperature → shift to endothermic side<br>↑ Pressure → shift to fewer moles of gas</p>"}]));
   c.appendChild(mkSandbox([{q:'What happens to [C] when you add more A?',a:'[C] increases. Adding A increases [A], shifting equilibrium right. More A and B react to form C until new equilibrium established.'},{q:'Adding a catalyst — does it change the equilibrium position?',a:'No. A catalyst speeds up BOTH forward and reverse reactions equally. Equilibrium is reached faster but the final concentrations are the same.'}]));
 }
 
@@ -2279,6 +2513,527 @@ function renderDistil(c){
   c.appendChild(mkSandbox([{q:'Why do shorter hydrocarbon chains have lower boiling points?',a:'Shorter chains have fewer electrons → weaker London dispersion forces between molecules → less energy needed to vaporise them.'},{q:'What is "cracking" and why is it done?',a:'Cracking breaks long-chain hydrocarbons (like heavy oil) into shorter, more useful chains (like petrol and ethene). Uses heat or catalyst. Increases supply of high-demand fuels.'}]));
 }
 
+
+// ════════════════════════════════════════════════════════════
+// NEW SIMULATIONS (10)
+// ════════════════════════════════════════════════════════════
+
+// ── 19. KINETIC PARTICLE THEORY ─────────────────────────────
+function renderKinetic(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,300);
+  let state='solid',temp=20;
+  const states={solid:{t:20,speed:.4,spacing:22,color:'#4488ff'},liquid:{t:100,speed:1.2,spacing:26,color:'#00e5a0'},gas:{t:300,speed:3.5,spacing:55,color:'#ff6b35'}};
+  ['Solid','Liquid','Gas'].forEach(s=>{
+    const b=document.createElement('button');b.className='btn'+(state===s.toLowerCase()?' on':'');
+    b.textContent=s;b.onclick=()=>{state=s.toLowerCase();temp=states[state].t;document.querySelectorAll('#'+cv.id+' .btn').forEach(bb=>bb.classList.remove('on'));b.classList.add('on');};ctrl.appendChild(b);
+  });
+  const sl=document.createElement('div');sl.className='sl-row';const sv=document.createElement('span');sv.className='slv';sv.textContent=temp+'°C';
+  const si=document.createElement('input');si.type='range';si.min=0;si.max=500;si.value=temp;
+  si.oninput=()=>{temp=+si.value;sv.textContent=temp+'°C';state=temp<100?'solid':temp<300?'liquid':'gas';};
+  sl.append('🌡',si,sv);ctrl.appendChild(sl);
+  // Create particles in grid
+  const pts=[];
+  for(let r=0;r<5;r++)for(let cc=0;cc<9;cc++)pts.push({bx:80+cc*70,by:40+r*50,x:80+cc*70,y:40+r*50,vx:0,vy:0});
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const st=states[state],spd=st.speed*(temp/st.t);
+    // Label
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='bold 13px Syne,sans-serif';ctx.textAlign='center';
+    ctx.fillText(state.toUpperCase(),W/2,H-12);
+    ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='10px monospace';ctx.fillText('Temperature: '+temp+'°C',W/2,H-28);
+    pts.forEach((p,i)=>{
+      if(state==='solid'){
+        p.x+=(Math.sin(Date.now()/200+i)*.8);p.y+=(Math.cos(Date.now()/180+i)*.8);
+      } else if(state==='liquid'){
+        p.vx+=(Math.random()-.5)*spd;p.vy+=(Math.random()-.5)*spd;
+        p.vx*=.92;p.vy*=.92;p.x+=p.vx;p.y+=p.vy;
+        if(p.x<20)p.vx=Math.abs(p.vx);if(p.x>W-20)p.vx=-Math.abs(p.vx);
+        if(p.y<20)p.vy=Math.abs(p.vy);if(p.y>H-40)p.vy=-Math.abs(p.vy);
+      } else {
+        p.vx+=(Math.random()-.5)*spd;p.vy+=(Math.random()-.5)*spd;
+        const speed=Math.sqrt(p.vx*p.vx+p.vy*p.vy);if(speed>spd*3){p.vx*=.7;p.vy*=.7;}
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<8)p.vx=Math.abs(p.vx);if(p.x>W-8)p.vx=-Math.abs(p.vx);
+        if(p.y<8)p.vy=Math.abs(p.vy);if(p.y>H-40)p.vy=-Math.abs(p.vy);
+      }
+      const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,state==='gas'?7:9);
+      g.addColorStop(0,st.color+'ff');g.addColorStop(1,st.color+'33');
+      ctx.beginPath();ctx.arc(p.x,p.y,state==='gas'?7:9,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      if(state==='solid'){ctx.beginPath();ctx.arc(p.x,p.y,18,0,Math.PI*2);ctx.strokeStyle=st.color+'22';ctx.lineWidth=1;ctx.stroke();ctx.lineWidth=1;}
+    });
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Solid: particles vibrate in fixed positions. Liquid: particles flow freely. Gas: particles move fast and spread to fill container.'));
+  c.appendChild(mkInfoGrid([{title:'State Changes',html:'<ul><li>Melting: solid→liquid (absorbs heat)</li><li>Boiling: liquid→gas (absorbs heat)</li><li>Condensing: gas→liquid (releases heat)</li><li>Freezing: liquid→solid (releases heat)</li></ul>'},{title:'Kinetic Theory',html:'<p>All matter is made of particles in constant motion. Higher temperature = more kinetic energy = faster movement.</p>'}]));
+  c.appendChild(mkSandbox([{q:'Why do gases fill their container but solids keep their shape?',a:'Gas particles move fast and randomly with large gaps between them — they spread to fill any space. Solid particles are held in fixed positions by strong forces, so they keep their shape.'},{q:'What happens to particle speed when water is heated from 20°C to 100°C?',a:'Particle speed increases significantly. More particles gain enough energy to break free from the liquid surface (evaporate). At 100°C, all particles have enough energy to become gas — this is boiling.'}]));
+}
+
+// ── 20. DIFFUSION ────────────────────────────────────────────
+function renderDiffusion(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,280);
+  let particles=[],running=false,molMass=1;
+  const gBtn=document.createElement('button');gBtn.className='btn green';gBtn.textContent='▶ Release Gas';
+  const rBtn=document.createElement('button');rBtn.className='btn';rBtn.textContent='↺ Reset';
+  const ms=document.createElement('div');ms.className='sl-row';const mv=document.createElement('span');mv.className='slv';mv.textContent='Light';
+  const mi=document.createElement('input');mi.type='range';mi.min=1;mi.max=3;mi.value=1;mi.step=1;
+  mi.oninput=()=>{molMass=+mi.value;mv.textContent=['Light','Medium','Heavy'][molMass-1];};
+  ms.append('Molecule:',mi,mv);
+  gBtn.onclick=()=>{running=true;const speed=3.5-molMass*.8;for(let i=0;i<40;i++)particles.push({x:W/2,y:H/2+(Math.random()-.5)*40,vx:(Math.random()-.5)*speed*2,vy:(Math.random()-.5)*speed*2,t:molMass});};
+  rBtn.onclick=()=>{particles=[];running=false;};
+  ctrl.append(gBtn,rBtn,ms);
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle='rgba(255,255,255,.12)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(W/2,0);ctx.lineTo(W/2,H);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText('Start',W/2,H-8);
+    particles.forEach(p=>{
+      const spd=3.5-p.t*.8;p.vx+=(Math.random()-.5)*.3;p.vy+=(Math.random()-.5)*.3;
+      const s=Math.sqrt(p.vx*p.vx+p.vy*p.vy);if(s>spd){p.vx*=spd/s;p.vy*=spd/s;}
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<5)p.vx=Math.abs(p.vx);if(p.x>W-5)p.vx=-Math.abs(p.vx);
+      if(p.y<5)p.vy=Math.abs(p.vy);if(p.y>H-5)p.vy=-Math.abs(p.vy);
+      const cols=['#88ccff','#aaffaa','#ffaa88'];
+      ctx.beginPath();ctx.arc(p.x,p.y,4+p.t,0,Math.PI*2);
+      ctx.fillStyle=cols[p.t-1]+'cc';ctx.fill();
+    });
+    if(particles.length){
+      const avgX=particles.reduce((a,p)=>a+p.x,0)/particles.length;
+      const dist=Math.abs(avgX-W/2).toFixed(0);
+      ctx.fillStyle='rgba(255,255,255,.5)';ctx.textAlign='left';ctx.fillText('Avg distance: '+dist+'px from start',10,18);
+    }
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Lighter molecules diffuse faster (move further in same time). Heavier molecules move more slowly — same principle as Graham\'s Law.'));
+  c.appendChild(mkInfoGrid([{title:"Graham's Law",html:"<p>Rate of diffusion ∝ 1/√(molar mass)<br>Lighter gas = faster diffusion<br>e.g. H₂ diffuses 4× faster than O₂</p>"},{title:'Evidence',html:'<ul><li>Smell of perfume spreading</li><li>Bromine vapour spreading in jar</li><li>NH₃ + HCl white ring experiment</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'Cl₂ (mass 71) vs H₂ (mass 2) — which diffuses faster and by how much?',a:'H₂ diffuses faster. Rate ratio = √(71/2) ≈ 6×. H₂ diffuses about 6 times faster than Cl₂.'},{q:'Why does the smell of cooking spread through the house?',a:'Food molecules in the air diffuse from high concentration (kitchen) to low concentration (other rooms). Warmer temperatures speed this up.'}]));
+}
+
+// ── 21. ENERGETICS ───────────────────────────────────────────
+function renderEnergetics(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,300);
+  let rxnType='exo',Ea=80,dH=-60;
+  const eBtn=document.createElement('button');eBtn.className='btn on';eBtn.textContent='Exothermic';
+  const nBtn=document.createElement('button');nBtn.className='btn';nBtn.textContent='Endothermic';
+  eBtn.onclick=()=>{rxnType='exo';dH=-60;eBtn.classList.add('on');nBtn.classList.remove('on');};
+  nBtn.onclick=()=>{rxnType='endo';dH=80;nBtn.classList.add('on');eBtn.classList.remove('on');};
+  const as=document.createElement('div');as.className='sl-row';const av=document.createElement('span');av.className='slv';av.textContent='80';
+  const ai=document.createElement('input');ai.type='range';ai.min=30;ai.max=150;ai.value=80;
+  ai.oninput=()=>{Ea=+ai.value;av.textContent=Ea;};as.append('Eₐ:',ai,av);ctrl.append(eBtn,nBtn,as);
+  let progress=0;
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const gx=50,gy=20,gw=W-100,gh=H-50;
+    const reactY=gy+gh*.65,prodY=rxnType==='exo'?gy+gh*.85:gy+gh*.3;
+    const peakY=gy+gh*.05+(rxnType==='exo'?0:0);
+    const actualPeak=Math.min(reactY,prodY)-Ea*.8;
+    // Axes
+    ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(gx,gy);ctx.lineTo(gx,gy+gh);ctx.lineTo(gx+gw,gy+gh);ctx.stroke();ctx.lineWidth=1;
+    ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='10px monospace';ctx.textAlign='center';
+    ctx.fillText('Reaction Progress →',gx+gw/2,gy+gh+18);
+    ctx.save();ctx.translate(gx-22,gy+gh/2);ctx.rotate(-Math.PI/2);ctx.fillText('Energy',0,0);ctx.restore();
+    // Reactant & product levels
+    ctx.strokeStyle='rgba(100,180,255,.6)';ctx.setLineDash([4,4]);ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(gx+10,reactY);ctx.lineTo(gx+gw*.35,reactY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(gx+gw*.65,prodY);ctx.lineTo(gx+gw-10,prodY);ctx.stroke();ctx.setLineDash([]);
+    // Energy curve (cubic bezier)
+    const col=rxnType==='exo'?'#ff6b35':'#00e5ff';
+    ctx.beginPath();ctx.moveTo(gx+20,reactY);
+    ctx.bezierCurveTo(gx+gw*.3,reactY,gx+gw*.4,actualPeak,gx+gw*.5,actualPeak);
+    ctx.bezierCurveTo(gx+gw*.6,actualPeak,gx+gw*.7,prodY,gx+gw-20,prodY);
+    ctx.strokeStyle=col;ctx.lineWidth=3;ctx.stroke();ctx.lineWidth=1;
+    // Activation energy arrow
+    const midX=gx+gw*.5;
+    ctx.strokeStyle='rgba(255,217,61,.7)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(midX+20,reactY);ctx.lineTo(midX+20,actualPeak);ctx.stroke();
+    ctx.fillStyle='rgba(255,217,61,.85)';ctx.font='bold 10px monospace';ctx.textAlign='left';
+    ctx.fillText('Eₐ = '+Ea+' kJ',midX+25,(reactY+actualPeak)/2+4);
+    // ΔH arrow
+    if(Math.abs(prodY-reactY)>10){
+      ctx.strokeStyle='rgba(100,255,150,.7)';
+      ctx.beginPath();ctx.moveTo(gx+gw*.8,Math.min(reactY,prodY));ctx.lineTo(gx+gw*.8,Math.max(reactY,prodY));ctx.stroke();
+      ctx.fillStyle='rgba(100,255,150,.85)';
+      ctx.fillText('ΔH = '+(rxnType==='exo'?'-':'+')+'ve',(gx+gw*.8)+8,(reactY+prodY)/2+4);
+    }
+    // Labels
+    ctx.fillStyle='rgba(100,180,255,.8)';ctx.textAlign='left';ctx.font='10px var(--font)';
+    ctx.fillText('Reactants',gx+12,reactY-6);
+    ctx.fillText('Products',gx+gw*.67,prodY-6);
+    ctx.fillStyle=col;ctx.textAlign='center';ctx.font='bold 12px Syne,sans-serif';
+    ctx.fillText(rxnType==='exo'?'EXOTHERMIC — releases energy':'ENDOTHERMIC — absorbs energy',W/2,H-10);
+    // Travelling particle
+    progress=(progress+.003)%1;
+    const px=gx+20+(gx+gw-40-gx-20)*progress;
+    const t=progress;
+    const cy=reactY+(actualPeak-reactY)*3*t*(1-t)*(1-t)+actualPeak*3*t*t*(1-t)+prodY*t*t*t;
+    ctx.beginPath();ctx.arc(px,cy,6,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Exothermic: products lower than reactants, energy released. Endothermic: products higher, energy absorbed. Peak = transition state (activation energy).'));
+  c.appendChild(mkInfoGrid([{title:'Exothermic Examples',html:'<ul><li>Combustion (burning)</li><li>Neutralisation</li><li>Respiration</li><li>Rusting of iron</li></ul>'},{title:'Endothermic Examples',html:'<ul><li>Thermal decomposition</li><li>Photosynthesis</li><li>Dissolving ammonium nitrate</li><li>Cooking an egg</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'What does activation energy represent on this diagram?',a:'The minimum energy reactant particles must have to react. It\'s the energy needed to break existing bonds before new ones form. Catalysts lower this peak.'},{q:'A reaction has ΔH = +120 kJ/mol. Is it exo or endothermic? What does this mean?',a:'Endothermic (positive ΔH). The system absorbs 120 kJ of energy from surroundings per mole. The products have MORE energy than the reactants.'}]));
+}
+
+// ── 22. HABER PROCESS ────────────────────────────────────────
+function renderHaber(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,300);
+  let temp=450,pressure=200,catalyst=true;
+  const ts=document.createElement('div');ts.className='sl-row';const tv=document.createElement('span');tv.className='slv';tv.textContent='450°C';
+  const ti=document.createElement('input');ti.type='range';ti.min=200;ti.max=600;ti.value=450;ti.oninput=()=>{temp=+ti.value;tv.textContent=temp+'°C';};ts.append('🌡 Temp:',ti,tv);
+  const ps=document.createElement('div');ps.className='sl-row';const pv=document.createElement('span');pv.className='slv';pv.textContent='200atm';
+  const pi=document.createElement('input');pi.type='range';pi.min=50;pi.max=400;pi.value=200;pi.oninput=()=>{pressure=+pi.value;pv.textContent=pressure+'atm';};ps.append('⬆ Press:',pi,pv);
+  const cBtn=document.createElement('button');cBtn.className='btn on';cBtn.textContent='✓ Fe Catalyst';cBtn.onclick=()=>{catalyst=!catalyst;cBtn.className=catalyst?'btn on':'btn';cBtn.textContent=(catalyst?'✓ ':'')+'Fe Catalyst';};
+  ctrl.append(ts,ps,cBtn);
+  function calcYield(){
+    // Higher temp → less yield (exothermic reaction, Le Chatelier)
+    // Higher pressure → more yield (fewer moles on product side)
+    // Catalyst → same yield, faster rate
+    const tempFactor=Math.max(5,50-(temp-200)/8);
+    const presFactor=Math.min(60,pressure/6);
+    return Math.round(Math.min(95,tempFactor+presFactor));
+  }
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const yld=calcYield(),rate=catalyst?(temp/200):(temp/350);
+    const t=Date.now()/1000;
+    // Reactor diagram
+    ctx.fillStyle='rgba(100,160,220,.15)';ctx.fillRect(180,30,200,200);ctx.strokeStyle='rgba(100,160,220,.5)';ctx.lineWidth=2;ctx.strokeRect(180,30,200,200);ctx.lineWidth=1;
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('REACTOR',280,60);ctx.fillText('450°C / 200atm',280,76);
+    if(catalyst){ctx.fillStyle='rgba(255,200,50,.55)';ctx.fillRect(200,100,160,40);ctx.fillStyle='rgba(255,200,50,.9)';ctx.font='10px monospace';ctx.fillText('Iron Catalyst',280,124);}
+    // Flow arrows: N₂ and H₂ in
+    ctx.strokeStyle='rgba(80,160,255,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(60,100);ctx.lineTo(178,100);ctx.stroke();
+    ctx.fillStyle='rgba(80,160,255,.85)';ctx.font='11px monospace';ctx.textAlign='center';ctx.fillText('N₂',30,96);ctx.fillText('+',30,112);ctx.fillText('3H₂',30,128);
+    // NH₃ out
+    ctx.strokeStyle='rgba(0,229,160,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(382,130);ctx.lineTo(520,130);ctx.stroke();
+    ctx.fillStyle='rgba(0,229,160,.85)';ctx.font='11px monospace';ctx.textAlign='center';ctx.fillText('NH₃',545,134);ctx.fillText(yld+'% yield',545,150);
+    // Flowing particles
+    for(let i=0;i<6;i++){
+      const prog=((t*rate*.4+i/6)%1);const px=62+prog*115;
+      ctx.beginPath();ctx.arc(px,i%2===0?95:115,4,0,Math.PI*2);ctx.fillStyle=i<2?'rgba(80,160,255,.8)':'rgba(180,180,255,.8)';ctx.fill();
+    }
+    for(let i=0;i<Math.round(yld/20);i++){
+      const prog=((t*rate*.3+i/5)%1);const px=384+prog*130;
+      ctx.beginPath();ctx.arc(px,130,5,0,Math.PI*2);ctx.fillStyle='rgba(0,229,160,.8)';ctx.fill();
+    }
+    // Yield gauge
+    const gx=600,gy=40,gw=160,gh=200;
+    ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(gx,gy,gw,gh);ctx.strokeStyle='var(--border)';ctx.strokeRect(gx,gy,gw,gh);
+    const fillH=yld/100*gh;const gcol=yld>40?'rgba(0,229,160,.7)':yld>20?'rgba(255,200,50,.7)':'rgba(255,71,87,.7)';
+    ctx.fillStyle=gcol;ctx.fillRect(gx+1,gy+gh-fillH,gw-2,fillH);
+    ctx.fillStyle='rgba(255,255,255,.85)';ctx.font='bold 20px Syne,sans-serif';ctx.textAlign='center';ctx.fillText(yld+'%',gx+gw/2,gy+gh/2+8);
+    ctx.font='10px monospace';ctx.fillText('NH₃ Yield',gx+gw/2,gy+20);
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='10px var(--font)';ctx.fillText(catalyst?'Catalyst: ON':'Catalyst: OFF',gx+gw/2,gy+gh+14);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('High pressure increases yield but is expensive. High temperature increases rate but decreases yield (reaction is exothermic). Catalyst speeds up rate without changing yield. Compromise: 450°C, 200atm.'));
+  c.appendChild(mkInfoGrid([{title:'Haber Process',html:'<p>N₂ + 3H₂ ⇌ 2NH₃ (ΔH = −92 kJ/mol)<br>Iron catalyst<br>450°C, 200 atm<br>Yield ≈ 15% (recycled)</p>'},{title:'Uses of Ammonia',html:'<ul><li>Fertilisers (ammonium nitrate)</li><li>Nitric acid manufacture</li><li>Cleaning products</li><li>Explosives</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'Why is 450°C used rather than a lower temperature which would give higher yield?',a:'Lower temperature gives higher yield but the rate is too slow — takes too long to produce NH₃ commercially. 450°C is a compromise: reasonable rate and acceptable yield.'},{q:'Why is unreacted N₂ and H₂ recycled back into the reactor?',a:'To increase the overall yield and reduce waste. Although yield per pass is only ~15%, recycling means almost all the reactants eventually convert to NH₃.'}]));
+}
+
+// ── 23. BLAST FURNACE ────────────────────────────────────────
+function renderBlastFurnace(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,320);
+  let step=0;const steps=['Loading materials','Hot air blast','Coke burns → CO₂','CO₂ + C → 2CO','3CO + Fe₂O₃ → 2Fe + 3CO₂','Iron tapped at bottom'];
+  const nBtn=document.createElement('button');nBtn.className='btn green';nBtn.textContent='Next Step →';nBtn.onclick=()=>step=(step+1)%steps.length;
+  const rBtn=document.createElement('button');rBtn.className='btn';rBtn.textContent='↺ Reset';rBtn.onclick=()=>step=0;
+  ctrl.append(nBtn,rBtn);
+  const zones=[{label:'Iron ore + Coke + Limestone',col:'rgba(180,120,60,.6)',y:40,h:60},{label:'Reduction zone',col:'rgba(255,100,50,.25)',y:100,h:80},{label:'CO reducing agent',col:'rgba(255,200,50,.2)',y:180,h:60},{label:'Liquid iron',col:'rgba(255,150,0,.5)',y:240,h:50}];
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    // Furnace shape (trapezoid)
+    ctx.beginPath();ctx.moveTo(160,20);ctx.lineTo(260,20);ctx.lineTo(300,300);ctx.lineTo(120,300);ctx.closePath();
+    ctx.fillStyle='rgba(80,60,40,.4)';ctx.fill();ctx.strokeStyle='rgba(180,140,80,.6)';ctx.lineWidth=2;ctx.stroke();ctx.lineWidth=1;
+    // Zones
+    zones.forEach((z,i)=>{
+      ctx.fillStyle=z.col;const xOff=i*8;
+      ctx.fillRect(125+xOff,z.y,145-xOff*2,z.h);
+    });
+    // Hot air pipes
+    ctx.strokeStyle='rgba(255,150,50,.7)';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(50,220);ctx.lineTo(122,220);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(310,220);ctx.lineTo(380,220);ctx.stroke();ctx.lineWidth=1;
+    ctx.fillStyle='rgba(255,150,50,.7)';ctx.font='10px var(--font)';ctx.textAlign='center';ctx.fillText('Hot air',50,210);ctx.fillText('blasted in',50,222);
+    // Slag/iron outlets
+    ctx.strokeStyle='rgba(255,150,0,.6)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(120,285);ctx.lineTo(70,285);ctx.stroke();
+    ctx.strokeStyle='rgba(180,180,180,.5)';ctx.beginPath();ctx.moveTo(300,270);ctx.lineTo(360,270);ctx.stroke();ctx.lineWidth=1;
+    ctx.fillStyle='rgba(255,150,0,.85)';ctx.textAlign='center';ctx.fillText('Molten iron',55,300);
+    ctx.fillStyle='rgba(200,200,200,.75)';ctx.fillText('Slag',355,265);
+    // Current step highlight
+    ctx.fillStyle='rgba(0,229,255,.85)';ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Step '+(step+1)+': '+steps[step],W*.65,100);
+    const eqs=['Fe₂O₃ + coke → loaded','O₂ blown in at 1000°C','C + O₂ → CO₂','CO₂ + C → 2CO','3CO + Fe₂O₃ → 2Fe + 3CO₂','Iron sinks, tapped off'];
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px monospace';ctx.fillText(eqs[step],W*.65,122);
+    // CO particles rising
+    const t2=Date.now()/1200;for(let i=0;i<5;i++){const py=300-((t2+i*.2)%1)*260;ctx.beginPath();ctx.arc(190+(i%3)*15,py,3.5,0,Math.PI*2);ctx.fillStyle='rgba(255,200,50,.6)';ctx.fill();}
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Iron ore is reduced by carbon monoxide gas. CO is the actual reducing agent — it takes oxygen from Fe₂O₃. Limestone removes acidic impurities as slag.'));
+  c.appendChild(mkInfoGrid([{title:'Key Reactions',html:'<p>C + O₂ → CO₂<br>CO₂ + C → 2CO<br>Fe₂O₃ + 3CO → 2Fe + 3CO₂<br>CaCO₃ → CaO + CO₂ (limestone)</p>'},{title:'Materials Charged',html:'<ul><li>Iron ore (Fe₂O₃)</li><li>Coke (C) — fuel + reducing agent</li><li>Limestone (CaCO₃) — removes impurities</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'What is the role of carbon monoxide in the blast furnace?',a:'CO is the reducing agent. It removes oxygen from iron ore: Fe₂O₃ + 3CO → 2Fe + 3CO₂. CO is oxidised to CO₂ while Fe₂O₃ is reduced to Fe.'},{q:'Why is limestone added to the blast furnace?',a:'Limestone (CaCO₃) decomposes to CaO + CO₂. CaO is a base that reacts with acidic impurities (like SiO₂) to form slag (CaSiO₃). Slag floats on molten iron and is tapped off separately.'}]));
+}
+
+// ── 24. ORGANIC SERIES ───────────────────────────────────────
+function renderOrganicSeries(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,300);
+  let series='alkane',chainLen=1;
+  const sSel=document.createElement('select');['Alkanes (CₙH₂ₙ₊₂)','Alkenes (CₙH₂ₙ)','Alcohols (CₙH₂ₙ₊₁OH)'].forEach((s,i)=>{const o=document.createElement('option');o.value=['alkane','alkene','alcohol'][i];o.textContent=s;sSel.appendChild(o);});
+  sSel.onchange=()=>series=sSel.value;
+  const cs=document.createElement('div');cs.className='sl-row';const cv2=document.createElement('span');cv2.className='slv';cv2.textContent='1';
+  const ci=document.createElement('input');ci.type='range';ci.min=1;ci.max=6;ci.value=1;ci.oninput=()=>{chainLen=+ci.value;cv2.textContent=chainLen;};cs.append('Chain n:',ci,cv2);
+  ctrl.append('Series:',sSel,cs);
+  const names={alkane:['Methane','Ethane','Propane','Butane','Pentane','Hexane'],alkene:['—','Ethene','Propene','Butene','Pentene','Hexene'],alcohol:['Methanol','Ethanol','Propanol','Butanol','Pentanol','Hexanol']};
+  const formulas={alkane:(n)=>`C${n}H${2*n+2}`,alkene:(n)=>`C${n}H${2*n}`,alcohol:(n)=>`C${n}H${2*n+1}OH`};
+  const bps={alkane:[-161,-89,-42,-1,36,69],alkene:[null,-104,-47,-6,30,63],alcohol:[-97,78,97,117,138,157]};
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const n=chainLen;const name=(names[series][n-1])||'—';const formula=formulas[series](n);const bp=bps[series][n-1];
+    // Draw structural formula
+    const cx=W*.42,cy=H/2;const bondL=55;
+    // Carbon chain
+    for(let i=0;i<n;i++){
+      const x=cx+(i-(n-1)/2)*bondL;
+      // C-C bond
+      if(i>0){
+        if(series==='alkene'&&i===1){ctx.strokeStyle='rgba(0,229,255,.8)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x-bondL+8,cy-3);ctx.lineTo(x-8,cy-3);ctx.stroke();ctx.beginPath();ctx.moveTo(x-bondL+8,cy+3);ctx.lineTo(x-8,cy+3);ctx.stroke();}
+        else{ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-bondL+8,cy);ctx.lineTo(x-8,cy);ctx.stroke();}
+      }
+      // Carbon circle
+      ctx.beginPath();ctx.arc(x,cy,10,0,Math.PI*2);ctx.fillStyle='rgba(100,100,100,.8)';ctx.fill();ctx.strokeStyle='rgba(200,200,200,.5)';ctx.stroke();
+      ctx.fillStyle='#ccc';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('C',x,cy);ctx.textBaseline='alphabetic';
+      // H atoms above/below
+      const hCount=series==='alkene'&&(i===0||i===1)?2:series==='alcohol'&&i===n-1?2:2;
+      for(let h=0;h<hCount;h++){const hy=cy+(h===0?-26:26);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,cy+(h===0?-10:10));ctx.lineTo(x,hy);ctx.stroke();ctx.beginPath();ctx.arc(x,hy,7,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='8px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('H',x,hy);ctx.textBaseline='alphabetic';}
+      // OH group on alcohol last carbon
+      if(series==='alcohol'&&i===n-1){const ohx=x+30,ohy=cy;ctx.strokeStyle='rgba(255,100,100,.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+10,ohy);ctx.lineTo(ohx-8,ohy);ctx.stroke();ctx.beginPath();ctx.arc(ohx,ohy,9,0,Math.PI*2);ctx.fillStyle='rgba(255,100,100,.35)';ctx.fill();ctx.fillStyle='rgba(255,150,150,.9)';ctx.font='8px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('OH',ohx,ohy);ctx.textBaseline='alphabetic';}
+    }
+    // Info panel
+    const ix=600,iy=30;
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(ix,iy,180,200);ctx.strokeStyle='var(--border)';ctx.strokeRect(ix,iy,180,200);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='left';ctx.fillText(name,ix+10,iy+22);
+    ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='12px monospace';ctx.fillText(formula,ix+10,iy+44);
+    if(bp!==null){ctx.fillStyle='rgba(255,200,50,.75)';ctx.font='10px var(--font)';ctx.fillText('Boiling point: '+bp+'°C',ix+10,iy+66);ctx.fillText(bp<20?'Gas at room temp':'Liquid at room temp',ix+10,iy+82);}
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillText('n = '+n+' carbons',ix+10,iy+104);
+    ctx.fillStyle='rgba(0,229,160,.7)';ctx.fillText(series==='alkane'?'Saturated (all single bonds)':series==='alkene'?'Unsaturated (C=C double bond)':'Contains −OH group',ix+10,iy+126);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('As chain length increases: boiling point rises, viscosity increases, flammability decreases. Alkenes have a C=C double bond — test with bromine water (decolourises).'));
+  c.appendChild(mkInfoGrid([{title:'General Formulas',html:'<ul><li>Alkanes: CₙH₂ₙ₊₂</li><li>Alkenes: CₙH₂ₙ</li><li>Alcohols: CₙH₂ₙ₊₁OH</li></ul>'},{title:'Test for Alkene',html:'<p>Add bromine water (orange).<br>Alkene → decolourises (goes colourless).<br>Alkane → no colour change.<br>This tests for C=C double bond.</p>'}]));
+  c.appendChild(mkSandbox([{q:'Give the formula of propane and propene.',a:'Propane (alkane, n=3): C₃H₈. Propene (alkene, n=3): C₃H₆. Propene has one fewer H₂ due to the double bond.'},{q:'Why do alkenes decolourise bromine water but alkanes do not?',a:'Alkenes have a C=C double bond that undergoes addition reaction with Br₂. The Br₂ adds across the double bond forming a dibromo compound. Alkanes have no double bond so cannot undergo addition.'}]));
+}
+
+// ── 25. POLYMERISATION ───────────────────────────────────────
+function renderPolymer(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,280);
+  let running=false,joined=1,polyType='addition';
+  const rBtn=document.createElement('button');rBtn.className='btn green';rBtn.textContent='▶ Polymerise';
+  rBtn.onclick=()=>{running=!running;rBtn.textContent=running?'⏹ Stop':'▶ Polymerise';rBtn.className=running?'btn red':'btn green';if(!running)joined=1;};
+  const tSel=document.createElement('select');['Addition (ethene)','Condensation (nylon)'].forEach((s,i)=>{const o=document.createElement('option');o.value=['addition','condensation'][i];o.textContent=s;tSel.appendChild(o);});
+  tSel.onchange=()=>{polyType=tSel.value;running=false;joined=1;rBtn.textContent='▶ Polymerise';rBtn.className='btn green';};
+  ctrl.append(rBtn,'Type:',tSel);
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    if(running&&joined<12)joined+=.025;
+    const t=Date.now()/1000,n=Math.min(12,Math.floor(joined));
+    // Draw monomers
+    const unitW=55,startX=30,y=H/2;
+    for(let i=0;i<n;i++){
+      const x=startX+i*unitW;
+      const linked=i<n-1;
+      // Bond between units
+      if(linked){
+        ctx.strokeStyle=polyType==='addition'?'rgba(0,229,255,.7)':'rgba(255,107,53,.7)';
+        ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+20,y);ctx.lineTo(x+unitW-20,y);ctx.stroke();ctx.lineWidth=1;
+      }
+      // Monomer box
+      const col=polyType==='addition'?'rgba(0,229,255,.25)':'rgba(255,107,53,.25)';
+      const stroke=polyType==='addition'?'rgba(0,229,255,.6)':'rgba(255,107,53,.6)';
+      ctx.fillStyle=col;ctx.strokeStyle=stroke;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.roundRect(x-2,y-18,44,36,6);ctx.fill();ctx.stroke();ctx.lineWidth=1;
+      // Double bond (addition) — opens when joined
+      ctx.fillStyle=polyType==='addition'?'rgba(0,229,255,.85)':'rgba(255,107,53,.85)';
+      ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(polyType==='addition'?'CH₂':'[unit]',x+20,y-4);
+      ctx.fillText(polyType==='addition'?(i<n-1?'|':'=CH₂'):'amide',x+20,y+8);
+      ctx.textBaseline='alphabetic';
+      // Byproduct (condensation)
+      if(polyType==='condensation'&&linked&&Math.random()<.02){
+        const bx=x+unitW/2,by=y-35;
+        ctx.fillStyle='rgba(150,200,255,.6)';ctx.font='9px monospace';ctx.fillText('H₂O↑',bx,by);
+      }
+    }
+    // Label
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px var(--font)';ctx.textAlign='left';
+    ctx.fillText(polyType==='addition'?'Addition polymer — no byproduct (e.g. poly(ethene))':'Condensation polymer — H₂O released (e.g. nylon)',10,H-12);
+    ctx.fillStyle='rgba(0,229,255,.8)';ctx.font='bold 11px monospace';
+    ctx.fillText('n = '+n+' units joined',10,H-28);
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Addition: monomers with C=C join together, double bond opens. No atoms lost. Condensation: monomers join and release small molecules (H₂O or HCl) at each link.'));
+  c.appendChild(mkInfoGrid([{title:'Addition Polymers',html:'<ul><li>Monomer must have C=C</li><li>e.g. ethene → poly(ethene)</li><li>No byproduct formed</li><li>Used for: bags, bottles, pipes</li></ul>'},{title:'Condensation Polymers',html:'<ul><li>Two different monomer types</li><li>H₂O released at each link</li><li>e.g. nylon, polyester, proteins</li><li>Used for: clothing, packaging</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'Write the repeat unit of poly(ethene).',a:'The repeat unit is −(CH₂−CH₂)ₙ−. The C=C double bond in ethene (CH₂=CH₂) opens and the carbons link to form a long chain.'},{q:'What is the difference between addition and condensation polymerisation?',a:'Addition: monomers with C=C join, no byproduct, only one monomer type. Condensation: two monomers react releasing H₂O at each junction, forming a different type of bond (e.g. amide, ester).'}]));
+}
+
+// ── 26. GAS TESTS ────────────────────────────────────────────
+function renderGasTests(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,310);
+  let selGas=0;
+  const gases=[
+    {name:'Hydrogen H₂',test:'Lit splint',result:'Squeaky pop!',col:'#88ccff',steps:['Collect gas in test tube','Hold lit splint at mouth','SQUEAKY POP = H₂ confirmed']},
+    {name:'Oxygen O₂',test:'Glowing splint',result:'Splint relights!',col:'#ffaa44',steps:['Collect gas in test tube','Insert glowing (not lit) splint','Splint relights = O₂ confirmed']},
+    {name:'Carbon Dioxide CO₂',test:'Limewater',result:'Turns milky!',col:'#aaaaaa',steps:['Bubble gas through limewater','Ca(OH)₂ + CO₂ → CaCO₃ + H₂O','Milky white ppt = CO₂ confirmed']},
+    {name:'Chlorine Cl₂',test:'Damp litmus',result:'Bleaches paper!',col:'#aaffaa',steps:['Hold damp litmus paper in gas','Cl₂ reacts with water → HCl + HClO','Paper bleached white = Cl₂ confirmed']},
+    {name:'Ammonia NH₃',test:'Damp red litmus',result:'Turns blue!',col:'#ffaaff',steps:['Hold damp red litmus paper in gas','NH₃ is alkaline (NH₃ + H₂O → NH₄OH)','Paper turns blue = NH₃ confirmed']},
+  ];
+  const gSel=document.createElement('select');gases.forEach((g,i)=>{const o=document.createElement('option');o.value=i;o.textContent=g.name;gSel.appendChild(o);});
+  gSel.onchange=()=>selGas=+gSel.value;
+  ctrl.append('Gas:',gSel);
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const g=gases[selGas],t=Date.now()/1000;
+    // Test tube
+    ctx.strokeStyle='rgba(200,220,255,.4)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(180,50);ctx.lineTo(180,240);ctx.arc(200,240,20,Math.PI,0);ctx.lineTo(220,50);ctx.stroke();ctx.lineWidth=1;
+    // Gas fill
+    ctx.fillStyle=g.col+'44';ctx.fillRect(181,60,38,175);
+    ctx.fillStyle=g.col+'88';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(g.name.split(' ')[1],200,155);
+    // Bubbles
+    for(let i=0;i<5;i++){const by=230-((t*40+i*20)%200);ctx.beginPath();ctx.arc(195+(i%3-1)*8,by,3,0,Math.PI*2);ctx.fillStyle=g.col+'99';ctx.fill();}
+    // Test indicator
+    const ix=280,iy=60;
+    ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(ix,iy,450,220);ctx.strokeStyle='var(--border)';ctx.strokeRect(ix,iy,450,220);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 13px Syne,sans-serif';ctx.textAlign='left';ctx.fillText('Test: '+g.test,ix+14,iy+28);
+    ctx.fillStyle=g.col;ctx.font='bold 12px Syne,sans-serif';ctx.fillText('Result: '+g.result,ix+14,iy+52);
+    g.steps.forEach((step,i)=>{ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px var(--font)';ctx.fillText((i+1)+'. '+step,ix+14,iy+82+i*26);});
+    // Visual animation
+    if(selGas===0){ctx.fillStyle='rgba(255,200,50,.8)';ctx.font='20px monospace';ctx.textAlign='center';ctx.fillText(Math.sin(t*3)>.5?'💥':'🔥',200,35);}
+    else if(selGas===2){ctx.fillStyle='rgba(255,255,255,'+(.3+.3*Math.sin(t*2))+')';ctx.fillRect(181,60+20*Math.sin(t),38,30);}
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Each gas has a unique test. H₂ → squeaky pop. O₂ → relights glowing splint. CO₂ → milky limewater. Cl₂ → bleaches litmus. NH₃ → turns red litmus blue.'));
+  c.appendChild(mkInfoGrid([{title:'Summary Table',html:'<ul><li>H₂: lit splint → squeaky pop</li><li>O₂: glowing splint → relights</li><li>CO₂: limewater → milky white</li><li>Cl₂: damp litmus → bleaches</li><li>NH₃: red litmus → turns blue</li></ul>'},{title:'Key Equations',html:'<p>CO₂+Ca(OH)₂→CaCO₃+H₂O<br>NH₃+H₂O→NH₄⁺+OH⁻<br>Cl₂+H₂O→HCl+HClO</p>'}]));
+  c.appendChild(mkSandbox([{q:'A colourless gas bleaches damp litmus paper. Identify it.',a:'Chlorine (Cl₂). It dissolves in water to form HCl and HClO (hypochlorous acid), which is the bleaching agent. It also has a pungent smell.'},{q:'Why must the splint be glowing (not lit) for the oxygen test?',a:'If the splint were lit, it would burn in both air and oxygen — no difference visible. A glowing splint is on the edge of extinction: it only relights in a gas with higher O₂ concentration than air.'}]));
+}
+
+// ── 27. ELECTROPLATING ───────────────────────────────────────
+function renderElectroplate(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,320);
+  let run=false,time=0,volt=6,deposited=0;
+  const rBtn=document.createElement('button');rBtn.className='btn green';rBtn.textContent='▶ Start';
+  rBtn.onclick=()=>{run=!run;rBtn.textContent=run?'⏹ Stop':'▶ Start';rBtn.className=run?'btn red':'btn green';if(!run){time=0;deposited=0;}};
+  const vs=document.createElement('div');vs.className='sl-row';const vv=document.createElement('span');vv.className='slv';vv.textContent='6V';
+  const vi=document.createElement('input');vi.type='range';vi.min=2;vi.max=12;vi.value=6;vi.oninput=()=>{volt=+vi.value;vv.textContent=volt+'V';};vs.append('⚡ Voltage:',vi,vv);
+  ctrl.append(rBtn,vs);
+  let ions=[];
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    if(run){time+=.016;deposited+=volt*.001;if(Math.random()<.12*volt/6)ions.push({x:280,y:80+Math.random()*180,vx:1.5+Math.random()*volt*.15,vy:(Math.random()-.5)*.8});}
+    // Solution
+    ctx.fillStyle='rgba(50,100,200,.12)';ctx.fillRect(120,50,440,230);ctx.strokeStyle='rgba(100,150,255,.3)';ctx.lineWidth=2;ctx.strokeRect(120,50,440,230);ctx.lineWidth=1;
+    ctx.fillStyle='rgba(100,150,255,.45)';ctx.font='11px var(--font)';ctx.textAlign='center';ctx.fillText('CuSO₄ solution (electrolyte)',340,270);
+    // Anode (copper dissolves)
+    ctx.fillStyle='rgba(255,140,60,.6)';ctx.fillRect(255,40,30,220);ctx.strokeStyle='rgba(255,140,60,.8)';ctx.strokeRect(255,40,30,220);
+    ctx.fillStyle='rgba(255,140,60,.9)';ctx.font='bold 10px monospace';ctx.fillText('+',270,32);ctx.fillText('Anode',270,295);ctx.fillText('(Cu)',270,308);
+    // Cathode (object being plated)
+    const catW=30+Math.min(15,deposited*8);
+    ctx.fillStyle='rgba(180,180,180,.5)';ctx.fillRect(455-catW/2,40,catW,220);
+    ctx.fillStyle=`rgba(255,140,60,${Math.min(.7,deposited*.3)})`;ctx.fillRect(455-catW/2,40,catW*.4,220); // copper layer
+    ctx.strokeStyle='rgba(200,200,200,.7)';ctx.strokeRect(455-catW/2,40,catW,220);
+    ctx.fillStyle='rgba(200,200,200,.9)';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText('−',455,32);ctx.fillText('Cathode',455,295);ctx.fillText('(object)',455,308);
+    // Moving Cu²⁺ ions
+    ions=ions.filter(ion=>{
+      ion.x+=ion.vx;ion.y+=ion.vy+(Math.random()-.5)*.5;
+      if(ion.x>445)return false;
+      ctx.beginPath();ctx.arc(ion.x,ion.y,5,0,Math.PI*2);ctx.fillStyle='rgba(255,140,60,.75)';ctx.fill();
+      ctx.fillStyle='rgba(255,200,100,.8)';ctx.font='8px monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Cu²⁺',ion.x,ion.y);ctx.textBaseline='alphabetic';
+      return true;
+    });
+    // Battery
+    ctx.fillStyle='rgba(255,200,50,.15)';ctx.fillRect(310,10,60,30);ctx.strokeStyle='rgba(255,200,50,.6)';ctx.strokeRect(310,10,60,30);
+    ctx.fillStyle='rgba(255,200,50,.8)';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText(volt+'V',340,28);
+    // Wire
+    ctx.strokeStyle='rgba(255,200,50,.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(270,40);ctx.lineTo(270,25);ctx.lineTo(310,25);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(455,40);ctx.lineTo(455,25);ctx.lineTo(370,25);ctx.stroke();ctx.lineWidth=1;
+    // Status
+    ctx.fillStyle='rgba(0,229,160,.8)';ctx.font='11px var(--font)';ctx.textAlign='left';
+    ctx.fillText('Cu deposited: '+deposited.toFixed(2)+'g | Time: '+time.toFixed(0)+'s',10,H-10);
+    // Half equations
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillText('Cathode: Cu²⁺ + 2e⁻ → Cu',550,140);ctx.fillText('Anode: Cu → Cu²⁺ + 2e⁻',550,160);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('Cu²⁺ ions move from anode to cathode. At cathode: reduction (Cu²⁺ → Cu deposits). At anode: oxidation (Cu dissolves into solution). Higher voltage = faster plating.'));
+  c.appendChild(mkInfoGrid([{title:'Electroplating Uses',html:'<ul><li>Chrome car bumpers</li><li>Gold jewellery plating</li><li>Tin cans (food preservation)</li><li>Silver cutlery coating</li></ul>'},{title:'Conditions',html:'<p>Cathode = object to be plated<br>Anode = plating metal<br>Electrolyte = solution of plating metal salt<br>Current flows → metal deposits</p>'}]));
+  c.appendChild(mkSandbox([{q:'In copper electroplating: what is the cathode, anode, and electrolyte?',a:'Cathode = object to be plated (connects to negative terminal). Anode = pure copper (connects to positive, dissolves). Electrolyte = copper sulfate solution (provides Cu²⁺ ions).'},{q:'How would you increase the thickness of the copper plating?',a:'Increase time, increase current/voltage, or increase Cu²⁺ concentration. Mass deposited ∝ current × time (Faraday\'s laws of electrolysis).'}]));
+}
+
+// ── 28. MOLE CALCULATIONS ────────────────────────────────────
+function renderMoles(c){
+  const {cv,ctx,ctrl,W,H}=mkSim(c,800,300);
+  let mode='moles',mass=24,Mr=24,conc=2,vol=0.5;
+  const mSel=document.createElement('select');
+  ['Moles from mass','Moles from concentration','Concentration calc'].forEach((s,i)=>{const o=document.createElement('option');o.value=['moles','conc','findconc'][i];o.textContent=s;mSel.appendChild(o);});
+  mSel.onchange=()=>{mode=mSel.value;};
+  const ms=document.createElement('div');ms.className='sl-row';const mv=document.createElement('span');mv.className='slv';mv.textContent='24g';
+  const mi=document.createElement('input');mi.type='range';mi.min=1;mi.max=200;mi.value=24;mi.oninput=()=>{mass=+mi.value;mv.textContent=mass+'g';};ms.append('Mass:',mi,mv);
+  const rs=document.createElement('div');rs.className='sl-row';const rv=document.createElement('span');rv.className='slv';rv.textContent='24';
+  const ri=document.createElement('input');ri.type='range';ri.min=1;ri.max=200;ri.value=24;ri.oninput=()=>{Mr=+ri.value;rv.textContent=Mr;};rs.append('Mᵣ:',ri,rv);
+  ctrl.append('Mode:',mSel,ms,rs);
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    const moles=(mass/Mr).toFixed(3);
+    const particles=(mass/Mr*6.022e23).toExponential(2);
+    // Triangle diagram
+    const tx=W*.38,ty=60,tw=220,th=180;
+    ctx.fillStyle='rgba(0,229,255,.08)';ctx.strokeStyle='rgba(0,229,255,.4)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(tx+tw/2,ty);ctx.lineTo(tx+tw,ty+th);ctx.lineTo(tx,ty+th);ctx.closePath();ctx.fill();ctx.stroke();ctx.lineWidth=1;
+    // Dividing lines
+    ctx.beginPath();ctx.moveTo(tx+tw/2,ty+th/2+10);ctx.lineTo(tx,ty+th);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx+tw/2,ty+th/2+10);ctx.lineTo(tx+tw,ty+th);ctx.stroke();
+    // Labels in triangle sections
+    ctx.fillStyle='rgba(0,229,255,.85)';ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Moles (n)',tx+tw/2,ty+th/2);
+    ctx.fillStyle='rgba(255,200,50,.85)';ctx.fillText('Mass (m)',tx+tw*.25,ty+th*.85);
+    ctx.fillStyle='rgba(0,229,160,.85)';ctx.fillText('Mᵣ',tx+tw*.75,ty+th*.85);
+    // Formula display
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='12px monospace';
+    ctx.fillText('n = m ÷ Mᵣ',tx+tw/2,ty-12);
+    // Result box
+    const rx=20,ry=30;
+    ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(rx,ry,280,220);ctx.strokeStyle='var(--border)';ctx.strokeRect(rx,ry,280,220);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='left';ctx.fillText('Calculation',rx+10,ry+24);
+    ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='11px monospace';
+    ctx.fillText('mass = '+mass+' g',rx+10,ry+50);
+    ctx.fillText('Mᵣ   = '+Mr,rx+10,ry+68);
+    ctx.fillStyle='rgba(255,200,50,.85)';ctx.font='bold 13px monospace';
+    ctx.fillText('n = '+mass+' ÷ '+Mr,rx+10,ry+95);
+    ctx.fillText('n = '+moles+' mol',rx+10,ry+115);
+    ctx.fillStyle='rgba(0,229,160,.7)';ctx.font='10px monospace';
+    ctx.fillText('Particles: '+particles,rx+10,ry+140);
+    ctx.fillText('(× 6.022×10²³)',rx+10,ry+156);
+    // Common Mᵣ reference
+    ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='9px monospace';
+    ['H₂O=18','NaCl=58.5','CaCO₃=100','H₂SO₄=98','NaOH=40'].forEach((s,i)=>ctx.fillText(s,rx+10+(i%2)*130,ry+182+(Math.floor(i/2))*14));
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  c.appendChild(mkObs('n = m ÷ Mᵣ. Increase mass → more moles. Increase Mᵣ → fewer moles per gram. 1 mole always contains 6.022×10²³ particles (Avogadro\'s number).'));
+  c.appendChild(mkInfoGrid([{title:'Mole Equations',html:'<p>n = m ÷ Mᵣ<br>n = c × V (V in dm³)<br>n = volume ÷ 24 (gases at RTP)<br>N = n × 6.022×10²³</p>'},{title:'Common Mᵣ Values',html:'<ul><li>H₂O = 18</li><li>NaCl = 58.5</li><li>NaOH = 40</li><li>CaCO₃ = 100</li><li>H₂SO₄ = 98</li></ul>'}]));
+  c.appendChild(mkSandbox([{q:'Calculate moles in 4g of NaOH (Mᵣ = 40)',a:'n = m ÷ Mᵣ = 4 ÷ 40 = 0.1 mol. So 4g of NaOH = 0.1 moles = 6.022×10²² molecules.'},{q:'How many moles in 11g of CO₂ (Mᵣ = 44)?',a:'n = 11 ÷ 44 = 0.25 mol. And particles = 0.25 × 6.022×10²³ = 1.51×10²³ molecules.'}]));
+}
+
 // ════════════ PERIODIC TABLE DATA — ALL 118 ELEMENTS ════════════
 const ELEMENTS=[
  {n:1,sym:'H',name:'Hydrogen',mass:1.008,type:'nonmetal',group:1,period:1,col:1,row:1,shells:[1]},
@@ -2450,6 +3205,7 @@ function initSandbox(){
 }
 function updateMix(){
   const sd=document.getElementById('sel-display'),mr=document.getElementById('mix-result'),me=document.getElementById('mix-explain');
+  if(!sd||!mr||!me)return;
   sd.textContent='Selected: '+(selReagents.map(r=>r.label).join(' + ')||'none');
   me.style.display='none';mixExplain='';
   if(selReagents.length===2){const key=getMixKey(selReagents[0],selReagents[1]);
@@ -2478,7 +3234,7 @@ const ALL_QUESTIONS=[
   {q:'H₂O is V-shaped because O has _ lone pairs',opts:['0','1','2','3'],a:2,topic:'Chemical Bonding'},
   {q:'Which gas turns limewater milky?',opts:['H₂','O₂','CO₂','N₂'],a:2,topic:'Acids & Bases'},
   {q:'Rf = spot distance ÷ _?',opts:['Spot size','Solvent distance','Paper length','Time'],a:1,topic:'Separation'},
-  {q:"Le Chatelier's: adding more reactant shifts equilibrium _?",opts:['Left','Right','No change','Stops reaction'],a:1,topic:'Reversible Reactions'},
+  {q:"Le Chatelier\'s: adding more reactant shifts equilibrium _?",opts:['Left','Right','No change','Stops reaction'],a:1,topic:'Reversible Reactions'},
   {q:'Complete combustion produces _?',opts:['CO + H₂','CO₂ + H₂O','CO₂ + H₂','C + H₂O'],a:1,topic:'Organic Chemistry'},
   {q:'Electronegativity increases _?',opts:['Down a group','Up a group','Left to right','Right to left'],a:2,topic:'Atomic Structure'},
   {q:'Which is NOT a method of preventing rusting?',opts:['Painting','Galvanising','Heating','Sacrificial anode'],a:2,topic:'Metals & Reactivity'},
@@ -2499,7 +3255,7 @@ function nextQ(){
   if(qi>=shuffled.length){qi=0;shuffled=[...ALL_QUESTIONS].sort(()=>Math.random()-.5);}
   const q=shuffled[qi++];
   document.getElementById('qtext').textContent=q.q;
-  const opts=document.getElementById('qopts');opts.innerHTML='';
+  const opts=document.getElementById('qopts');if(!opts)return;opts.innerHTML='';
   q.opts.forEach((opt,i)=>{
     const b=document.createElement('div');b.className='qopt';b.textContent=opt;
     b.onclick=()=>{qtotal++;if(i===q.a){qscore++;b.classList.add('correct');addXP(8,'Correct answer!');}else{b.classList.add('wrong');opts.children[q.a].classList.add('correct');}
@@ -2510,6 +3266,137 @@ function nextQ(){
 }
 
 // ════════════ EXAM MODE ════════════
+
+// ════════════ EXAM FOCUS GUARD ════════════
+let examViolations = 0;
+let examFocusActive = false;
+let examViolationLog = []; // stored per student
+
+function startFocusGuard() {
+  examViolations = 0;
+  examFocusActive = true;
+  examViolationLog = [];
+  updateWarningBar();
+
+  // Method 1: Page Visibility API (tab switch, minimize)
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  // Method 2: Window blur (alt-tab, clicking outside browser)
+  window.addEventListener('blur', handleWindowBlur);
+
+  // Method 3: Right-click disable during exam
+  document.addEventListener('contextmenu', blockContextMenu);
+
+  // Method 4: Keyboard shortcuts that leave the page
+  document.addEventListener('keydown', blockExamKeys);
+}
+
+function stopFocusGuard() {
+  examFocusActive = false;
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
+  window.removeEventListener('blur', handleWindowBlur);
+  document.removeEventListener('contextmenu', blockContextMenu);
+  document.removeEventListener('keydown', blockExamKeys);
+  hideExamWarning();
+  document.getElementById('exam-warning-bar').classList.remove('show');
+}
+
+function handleVisibilityChange() {
+  if (!examFocusActive) return;
+  if (document.hidden) {
+    recordViolation('Tab hidden / switched');
+  }
+}
+
+function handleWindowBlur() {
+  if (!examFocusActive) return;
+  // Small delay to avoid false positives (clicking within the page)
+  setTimeout(() => {
+    if (!document.hasFocus() && examFocusActive) {
+      recordViolation('Window lost focus');
+    }
+  }, 300);
+}
+
+function blockContextMenu(e) {
+  if (!examFocusActive) return;
+  e.preventDefault();
+}
+
+function blockExamKeys(e) {
+  if (!examFocusActive) return;
+  // Block: Ctrl+T (new tab), Ctrl+W (close tab), Ctrl+N (new window), Alt+Tab feel
+  if ((e.ctrlKey || e.metaKey) && ['t','w','n','Tab'].includes(e.key)) {
+    e.preventDefault();
+    recordViolation('Keyboard shortcut: ' + e.key);
+  }
+}
+
+function recordViolation(reason) {
+  examViolations++;
+  const timestamp = new Date().toLocaleTimeString();
+  examViolationLog.push({ reason, time: timestamp, q: examCur + 1 });
+
+  // Save violations to Firebase so teacher can see
+  DB.save('lastExamViolations', examViolationLog);
+
+  updateWarningBar();
+
+  if (examViolations >= 3) {
+    // 3rd strike — auto submit
+    showExamWarning(true);
+  } else {
+    showExamWarning(false);
+  }
+}
+
+function showExamWarning(autoSubmit) {
+  const overlay = document.getElementById('exam-warning-overlay');
+  const countText = document.getElementById('ew-count-text');
+  const btn = overlay.querySelector('.ew-btn');
+  const sub = overlay.querySelector('.ew-sub');
+  if (!sub) return;
+
+  if (autoSubmit) {
+    countText.textContent = '3 violations — exam auto-submitted';
+    sub.textContent = 'You switched tabs 3 times. Your exam has been automatically submitted and your teacher has been notified.';
+    btn.textContent = 'View Results';
+    btn.onclick = () => { hideExamWarning(); submitExam(); };
+    overlay.classList.add('show');
+    // Auto submit after 4 seconds
+    setTimeout(() => { hideExamWarning(); submitExam(); }, 4000);
+  } else {
+    countText.textContent = 'Warning ' + examViolations + ' of 3 — one more and exam auto-submits';
+    sub.innerHTML = 'You left the exam tab. This behaviour is recorded and your teacher will be notified.<br><br><strong>One more violation = automatic submission.</strong>';
+    btn.textContent = 'Return to Exam →';
+    btn.onclick = dismissExamWarning;
+    overlay.classList.add('show');
+  }
+}
+
+function hideExamWarning() {
+  document.getElementById('exam-warning-overlay').classList.remove('show');
+}
+
+function dismissExamWarning() {
+  hideExamWarning();
+  // Focus back on the exam window
+  window.focus();
+}
+
+function updateWarningBar() {
+  const bar  = document.getElementById('exam-warning-bar');
+  const text = document.getElementById('wb-text');
+  const cnt  = document.getElementById('wb-count');
+  if (examViolations === 0) {
+    bar.classList.remove('show');
+    return;
+  }
+  bar.classList.add('show');
+  text.textContent = 'Tab switch detected — teacher has been notified.';
+  cnt.textContent  = examViolations + (examViolations === 1 ? ' warning' : ' warnings');
+}
+
 function startExam(){
   const qcount=+document.getElementById('exam-qcount').value;
   const topic=document.getElementById('exam-topic').value;
@@ -2530,6 +3417,7 @@ function renderExamQ(){
   document.getElementById('exam-prog-fill').style.width=(((examCur+1)/examQs.length)*100)+'%';
   const q=examQs[examCur];
   const wrap=document.getElementById('exam-questions');
+  if(!wrap)return;
   wrap.innerHTML=`<div class="exam-q"><div class="qnum">Question ${examCur+1} of ${examQs.length} · ${q.topic}</div><div class="qtext">${q.q}</div>${q.opts.map((o,i)=>`<div class="exam-opt${examAnswers[examCur]===i?' sel':''}" onclick="selectExamOpt(${i})"><span class="opt-letter">${'ABCD'[i]}</span>${o}</div>`).join('')}</div>`;
 }
 function selectExamOpt(i){examAnswers[examCur]=i;renderExamQ();}
@@ -2547,19 +3435,23 @@ function startExamTimer(){
 }
 function submitExam(){
   if(examTimerInt){clearInterval(examTimerInt);examTimerInt=null;}
+  stopFocusGuard();
   document.getElementById('exam-active').style.display='none';
   let correct=0;
   examQs.forEach((q,i)=>{if(examAnswers[i]===q.a)correct++;});
   const pct=Math.round(correct/examQs.length*100);
   const grade=pct>=90?'A*':pct>=80?'A':pct>=70?'B':pct>=60?'C':pct>=50?'D':'U';
+  const violationNote = examViolations > 0
+    ? `<div style="background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem;color:var(--red)">⚠️ ${examViolations} tab switch violation${examViolations>1?'s':''} recorded — teacher notified.</div>`
+    : `<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem;color:var(--green)">✅ No violations — excellent focus!</div>`;
   const topic=document.getElementById('exam-topic').value;
   const timeUsed=document.getElementById('exam-time').value>0?Math.floor((+document.getElementById('exam-time').value-examTimeLeft)/60)+'m':'—';
   quizHistory.push({pct,correct,total:examQs.length,grade,topic:topic==='all'?'Mixed':topic,date:new Date().toLocaleDateString(),duration:timeUsed});
   DB.save('quizHistory',quizHistory);
   addXP(correct*10+(pct===100?50:0),(pct===100?'Perfect score! ':'')+'Exam completed');
   checkBadges();
-  const rd=document.getElementById('exam-results');rd.style.display='block';
-  rd.innerHTML=`<div class="results-wrap"><div class="results-score">${pct}%</div><div class="results-grade">Grade ${grade} · ${correct}/${examQs.length} correct</div><div class="results-grid"><div class="rstat"><div class="rn">${correct}</div><div class="rl">Correct</div></div><div class="rstat"><div class="rn">${examQs.length-correct}</div><div class="rl">Wrong</div></div><div class="rstat"><div class="rn">${grade}</div><div class="rl">Grade</div></div></div><div style="display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap"><button class="btn green" onclick="startExam()">Retry →</button><button class="btn" onclick="document.getElementById('exam-setup').style.display='block';document.getElementById('exam-results').style.display='none'">New Setup</button></div></div>`;
+  const rd=document.getElementById('exam-results');if(!rd)return;rd.style.display='block';
+  rd.innerHTML=`<div class="results-wrap">${violationNote}<div class="results-score">${pct}%</div><div class="results-grade">Grade ${grade} · ${correct}/${examQs.length} correct</div><div class="results-grid"><div class="rstat"><div class="rn">${correct}</div><div class="rl">Correct</div></div><div class="rstat"><div class="rn">${examQs.length-correct}</div><div class="rl">Wrong</div></div><div class="rstat"><div class="rn">${grade}</div><div class="rl">Grade</div></div></div><div style="display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap"><button class="btn green" onclick="startExam()">Retry →</button><button class="btn" onclick="document.getElementById('exam-setup').style.display='block';document.getElementById('exam-results').style.display='none'">New Setup</button></div></div>`;
   window.scrollTo(0,0);
 }
 
@@ -2588,7 +3480,7 @@ function initGame(){
 function renderEquation(){
   const eq=EQUATIONS[curEq];
   document.getElementById('game-desc').textContent=eq.desc;
-  const disp=document.getElementById('eq-display');disp.innerHTML='';
+  const disp=document.getElementById('eq-display');if(!disp)return;disp.innerHTML='';
   let blankIdx=0;
   function renderSide(side){
     side.forEach((part,i)=>{
@@ -2616,7 +3508,7 @@ function renderEquation(){
   renderSide(eq.right);
 
   // Coefficient buttons
-  const cp=document.getElementById('coeff-panel');cp.innerHTML='';
+  const cp=document.getElementById('coeff-panel');if(!cp)return;cp.innerHTML='';
   [1,2,3,4,5,6,7,8].forEach(n=>{
     const b=document.createElement('button');b.className='coeff-btn'+(selCoeff===n?' sel':'');
     b.textContent=n;
@@ -2729,8 +3621,9 @@ function renderDashboard(){
   const avg=Math.round(MOCK_STUDENTS.reduce((a,s)=>a+s.score,0)/MOCK_STUDENTS.length);
   const activeN=MOCK_STUDENTS.filter(s=>s.active).length;
   const ds=document.getElementById('dash-stats');
+  if(!ds)return;
   ds.innerHTML=[{n:MOCK_STUDENTS.length,l:'Students'},{n:avg+'%',l:'Avg Score'},{n:activeN,l:'Online Now'},{n:Math.max(...MOCK_STUDENTS.map(s=>s.streak)),l:'Top Streak'}].map(s=>`<div class="dstat"><div class="dn">${s.n}</div><div class="dl">${s.l}</div></div>`).join('');
-  const tbody=document.getElementById('student-tbody');tbody.innerHTML='';
+  const tbody=document.getElementById('student-tbody');if(!tbody)return;tbody.innerHTML='';
   MOCK_STUDENTS.forEach(s=>{
     const tr=document.createElement('tr');
     const col=s.score>=80?'var(--green)':s.score>=60?'var(--yellow)':'var(--red)';
@@ -2738,7 +3631,7 @@ function renderDashboard(){
     tbody.appendChild(tr);
   });
   // Homework assignment select
-  const hwSel=document.getElementById('hw-exp');hwSel.innerHTML=EXPS.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  const hwSel=document.getElementById('hw-exp');if(!hwSel)return;hwSel.innerHTML=EXPS.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
   renderHWList();
 }
 function assignHW(){
@@ -2772,6 +3665,8 @@ let authMode = 'signin';
 function switchTab(mode) {
   authMode = mode;
   const isSignup = mode === 'signup';
+  const btn = document.getElementById('auth-submit');
+  if (btn) { btn.disabled = false; btn.textContent = isSignup ? 'Create Account' : 'Sign In'; }
   document.getElementById('name-field').style.display = isSignup ? 'block' : 'none';
   document.getElementById('auth-submit').textContent  = isSignup ? 'Create Account' : 'Sign In';
   document.getElementById('tab-signin').style.cssText = isSignup
@@ -2794,6 +3689,7 @@ function togglePassVis() {
 // ════════════ TEACHER ADMIN DASHBOARD (Firebase-powered) ════════════
 async function renderDashboard() {
   const wrap = document.getElementById('dash-wrap');
+  if (!wrap) return;
   wrap.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading student data…</div>';
 
   let students = [];
@@ -2902,10 +3798,160 @@ function copyAssignLink() {
 function printWorksheet() { window.print(); }
 
 // Show user chip in header after login
-function showUserChip(name) {
-  const chip = document.getElementById('user-chip');
-  if (chip) { chip.textContent = '👤 ' + name; chip.style.display = 'flex'; }
+
+
+
+// ════════════ HOME PAGE RENDERING ════════════
+
+const TOPIC_CATEGORIES = [
+  {id:'acids',name:'Acids & Bases',icon:'⚗️',color:'#00e5ff',topics:['Acids & Bases']},
+  {id:'atoms',name:'Atomic Structure',icon:'⚛️',color:'#00e5a0',topics:['Atomic Structure']},
+  {id:'bonding',name:'Chemical Bonding',icon:'🔗',color:'#ffd93d',topics:['Chemical Bonding']},
+  {id:'states',name:'States of Matter',icon:'🌡️',color:'#ffd93d',topics:['States of Matter']},
+  {id:'metals',name:'Metals & Reactivity',icon:'⚙️',color:'#ff8c00',topics:['Metals & Reactivity']},
+  {id:'electro',name:'Electrochemistry',icon:'⚡',color:'#ff6b35',topics:['Electrochemistry']},
+  {id:'organic',name:'Organic Chemistry',icon:'🧬',color:'#ff8c00',topics:['Organic Chemistry']},
+  {id:'sep',name:'Separation',icon:'🔬',color:'#b388ff',topics:['Separation']},
+  {id:'rates',name:'Rates & Equilibrium',icon:'📈',color:'#ff4757',topics:['Rates of Reaction','Reversible Reactions']},
+  {id:'industrial',name:'Industrial Chemistry',icon:'🏭',color:'#00e5a0',topics:['Industrial Chemistry']},
+  {id:'energetics',name:'Energetics',icon:'🔥',color:'#ff4757',topics:['Energetics']},
+  {id:'quant',name:'Quantitative Chem',icon:'🔢',color:'#b388ff',topics:['Quantitative Chemistry']},
+];
+
+const FEATURED_IDS = ['acid_base','electrolysis','atom_model','haber','energetics','organic_series','gas_tests','moles'];
+
+function buildHomePage() {
+  const catGrid = document.getElementById('topic-cat-grid');
+  if (!catGrid) return;
+  catGrid.innerHTML = '';
+  TOPIC_CATEGORIES.forEach(cat => {
+    const sims = EXPS.filter(e => cat.topics.includes(e.topic));
+    const done = sims.filter(e => topicVisits[e.id]).length;
+    const pct  = sims.length ? Math.round(done/sims.length*100) : 0;
+    const d = document.createElement('div');
+    d.className = 'topic-cat';
+    d.style.setProperty('--tc', cat.color);
+    d.innerHTML = `
+      <div class="tc-icon">${cat.icon}</div>
+      <div class="tc-name">${cat.name}</div>
+      <div class="tc-count">${sims.length} lab${sims.length!==1?'s':''} · ${pct}% done</div>
+      <div class="tc-prog"><div class="tc-prog-fill" style="width:${pct}%;background:${cat.color}"></div></div>`;
+    d.onclick = () => {
+      goPage('sims', document.querySelectorAll('.ntab')[2]);
+      syncBnav('sims', document.querySelectorAll('.bnav-btn')[2]);
+      filterSimsByCategory(cat.topics);
+    };
+    catGrid.appendChild(d);
+  });
+
+  // Featured grid
+  const featGrid = document.getElementById('featured-grid');
+  if (featGrid) {
+    featGrid.innerHTML = '';
+    FEATURED_IDS.map(id => EXPS.find(e => e.id === id)).filter(Boolean).forEach(e => {
+      featGrid.appendChild(makeCard(e));
+    });
+  }
+
+  // Continue learning — show last 3 visited that aren't complete
+  const visited = Object.keys(topicVisits);
+  const continueSec = document.getElementById('continue-sec');
+  const continueGrid = document.getElementById('continue-grid');
+  if (continueSec && continueGrid && visited.length > 0) {
+    const recent = visited.slice(-3).reverse().map(id => EXPS.find(e => e.id === id)).filter(Boolean);
+    if (recent.length > 0) {
+      continueSec.style.display = 'block';
+      if (!continueGrid) return;
+      continueGrid.innerHTML = '';
+      recent.forEach(e => continueGrid.appendChild(makeCard(e)));
+    }
+  }
 }
+
+// Filter simulations page by category topics
+function filterSimsByCategory(topics) {
+  // Set active filter pill if it exists
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('on'));
+  setTimeout(() => buildSimsPage(topics), 50);
+}
+
+// Build categorized simulations page
+function buildSimsPage(filterTopics = null) {
+  const grid = document.getElementById('sims-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  // Group EXPS by topic
+  const groups = {};
+  EXPS.forEach(e => {
+    if (filterTopics && !filterTopics.includes(e.topic)) return;
+    if (!groups[e.topic]) groups[e.topic] = [];
+    groups[e.topic].push(e);
+  });
+
+  Object.entries(groups).forEach(([topic, sims]) => {
+    // Category header
+    const hdr = document.createElement('div');
+    hdr.className = 'cat-header';
+    const done = sims.filter(e => topicVisits[e.id]).length;
+    hdr.innerHTML = `<h3>${topic}</h3><div class="cat-header-line"></div><div class="cat-header-count">${done}/${sims.length} done</div>`;
+    grid.appendChild(hdr);
+    // Cards
+    sims.forEach(e => grid.appendChild(makeCard(e)));
+  });
+}
+
+// ── Build category filter pills on sims page ──
+function buildCatPills() {
+  const sec = document.getElementById('page-sims');
+  if (!sec || sec.querySelector('.cat-filter')) return;
+  const row = document.createElement('div');
+  row.className = 'cat-filter';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'cat-pill on';
+  allBtn.textContent = 'All (' + EXPS.length + ')';
+  allBtn.onclick = () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('on'));
+    allBtn.classList.add('on');
+    buildSimsPage();
+  };
+  row.appendChild(allBtn);
+  TOPIC_CATEGORIES.forEach(cat => {
+    const count = EXPS.filter(e => cat.topics.includes(e.topic)).length;
+    if (!count) return;
+    const btn = document.createElement('button');
+    btn.className = 'cat-pill';
+    btn.textContent = cat.icon + ' ' + cat.name + ' (' + count + ')';
+    btn.onclick = () => {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('on'));
+      btn.classList.add('on');
+      buildSimsPage(cat.topics);
+    };
+    row.appendChild(btn);
+  });
+  sec.insertBefore(row, sec.querySelector('.sec'));
+}
+
+// Override goPage to rebuild home and sims dynamically
+const _origGoPage = goPage;
+goPage = function(id, btn) {
+  _origGoPage(id, btn);
+  requestAnimationFrame(() => {
+    if (id === 'home') { try { buildHomePage(); } catch(e) {} }
+    if (id === 'sims') { try { buildCatPills(); buildSimsPage(); } catch(e) {} }
+  });
+};
+
+// Init on load — called after Firebase auth
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    try { buildHomePage(); } catch(e) { console.warn('buildHomePage:', e); }
+    try { buildCatPills(); } catch(e) { console.warn('buildCatPills:', e); }
+    try { buildSimsPage(); } catch(e) { console.warn('buildSimsPage:', e); }
+    const xpEl = document.getElementById('home-xp-disp');
+    if (xpEl) xpEl.textContent = xp;
+  }, 500);
+});
 
 </script>
 </body>
