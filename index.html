@@ -1335,7 +1335,7 @@ onAuthStateChanged(auth, async user => {
         <!-- Canvas -->        <!-- Canvas -->
         <div id="wb-canvas-wrap" style="display:none">
           <div style="position:relative;width:100%;">
-            <canvas id="wb-canvas" style="display:block;width:100%;height:auto;touch-action:none;cursor:none;background:#fff;border-radius:8px;box-shadow:0 2px 24px rgba(0,0,0,.18)"></canvas>
+            <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:none;background:#fff;border-radius:8px;box-shadow:0 2px 24px rgba(0,0,0,.18)"></canvas>
             <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);display:none;z-index:5"></div>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.7rem;color:var(--dim2)">
@@ -5872,6 +5872,18 @@ function initWhiteboard() {
   if (wbAutoSaveTimer) clearInterval(wbAutoSaveTimer);
   wbAutoSaveTimer = setInterval(saveWhiteboardNow, 10000);
 
+  // Force canvas to display at correct A4 height
+  const enforceA4Height = () => {
+    if (!wbCanvas) return;
+    const w = wbCanvas.getBoundingClientRect().width;
+    if (w > 0) {
+      const h = Math.round(w * A4_H / A4_W) * wbPages;
+      wbCanvas.style.height = h + 'px';
+    }
+  };
+  enforceA4Height();
+  window.addEventListener('resize', enforceA4Height);
+
   // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     if (!wbCurrentStudent) return;
@@ -5937,6 +5949,11 @@ function addWbPage() {
   img.src = data;
   const pc = document.getElementById('wb-page-count');
   if (pc) pc.textContent = wbPages;
+  // Update displayed height
+  if (wbCanvas) {
+    const w = wbCanvas.getBoundingClientRect().width;
+    if (w > 0) wbCanvas.style.height = Math.round(w * A4_H / A4_W * wbPages) + 'px';
+  }
   toast('📄 Page ' + wbPages + ' added');
 }
 
@@ -5985,8 +6002,8 @@ function printClassboard() {
     
 /* ══ WHITEBOARD CANVAS SIZING ══ */
 #wb-canvas-wrap { width: 100%; }
-#wb-scroll-container { width: 100%; }
-#wb-canvas { display: block; width: 100% !important; height: auto !important; }
+#wb-scroll-container { width: 100%; max-height: 88vh; }
+#wb-canvas { display: block; width: 100% !important; }
 </style>
   </head><body>`);
 
@@ -6008,17 +6025,15 @@ function printClassboard() {
 
 function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
 function wbPos(e) {
-  // canvas CSS: width:100%, height:auto
-  // So displayed width = r.width, displayed height = r.height
-  // Canvas internal = A4_W x A4_H (992 x 1403)
-  // Scale factors:
-  const r  = wbCanvas.getBoundingClientRect();
+  const r = wbCanvas.getBoundingClientRect();
+  // Scale from CSS pixels to canvas pixels
+  // Canvas internal size: A4_W x (A4_H * wbPages)
+  // Displayed size: r.width x r.height
   const sx = wbCanvas.width  / r.width;
   const sy = wbCanvas.height / r.height;
-  return {
-    x: Math.round((e.clientX - r.left) * sx),
-    y: Math.round((e.clientY - r.top)  * sy)
-  };
+  const x = (e.clientX - r.left) * sx;
+  const y = (e.clientY - r.top)  * sy;
+  return { x: Math.round(x), y: Math.round(y) };
 }
 function fillBackground() {
   if(!wbCtx)return;
@@ -6214,6 +6229,9 @@ async function loadTodaySession() {
   drawPageGuides();
   wbHistory = [wbCanvas.toDataURL()];
   const pc=document.getElementById('wb-page-count'); if(pc)pc.textContent=1;
+  // Enforce correct display height
+  const rr = wbCanvas.getBoundingClientRect();
+  if (rr.width > 0) wbCanvas.style.height = Math.round(rr.width * A4_H / A4_W) + 'px';
   try {
     const snap=await getDoc(doc(db,'whiteboards',wbSessionKey));
     if(snap.exists()){
