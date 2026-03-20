@@ -1252,146 +1252,149 @@ onAuthStateChanged(auth, async user => {
         <div id="wb-selector-err" style="color:var(--red);font-size:.78rem;margin-top:.5rem;display:none">Please select a student first.</div>
       </div>
 
-      <!-- Active session header (hidden until session started) -->
-      <div id="wb-active-header" style="display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.65rem;margin-bottom:1rem">
-        <div>
-          <div style="font-family:var(--head);font-size:1.05rem;font-weight:700">🖊️ Whiteboard</div>
-          <div style="font-size:.78rem;color:var(--dim);margin-top:.2rem" id="cb-session-meta">Select a student to begin</div>
-        </div>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
-          <div id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">✓ Saved</div>
-          <button class="btn" onclick="changeStudent()">👤 Change Student</button>
-          <button class="btn" onclick="clearWhiteboard()">🗑 Clear</button>
-          <button class="btn green" onclick="saveWhiteboardNow()">💾 Save Now</button>
-          <button class="btn" onclick="showSessionHistory()">📅 Sessions</button>
-        </div>
-      </div>
+      <!-- Active whiteboard UI -->
+      <div id="wb-active-header" style="display:none">
 
-      <!-- Toolbar -->
-      <div id="wb-toolbar" style="display:none">
-        <div class="wb-bar">
-
-          <!-- TOOLS GROUP -->
-          <div class="wb-section">
-            <button class="wbt on" id="tool-pen" onclick="setTool('pen')" title="Pen">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-              Pen
+        <!-- Top bar: student info + action buttons -->
+        <div class="wb-topbar">
+          <div class="wb-topbar-left">
+            <div class="wb-topbar-title">
+              <span id="wb-student-badge" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:var(--cyan);border-radius:20px;padding:.2rem .75rem;font-size:.78rem;font-weight:600"></span>
+              <span id="wb-topic-badge" style="background:var(--s2);border:1px solid var(--border);color:var(--dim);border-radius:20px;padding:.2rem .75rem;font-size:.75rem"></span>
+            </div>
+            <div id="cb-session-meta" style="font-size:.72rem;color:var(--dim2);margin-top:.2rem"></div>
+          </div>
+          <div class="wb-topbar-right">
+            <div id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none;align-items:center;gap:.3rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Saved
+            </div>
+            <button class="wb-action-btn" onclick="changeStudent()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Change
             </button>
-            <button class="wbt" id="tool-marker" onclick="setTool('marker')" title="Marker">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
-              Marker
+            <button class="wb-action-btn" onclick="clearWhiteboard()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+              Clear
             </button>
-            <button class="wbt" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/></svg>
-              Eraser
+            <button class="wb-action-btn green" onclick="saveWhiteboardNow()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save
             </button>
-            <button class="wbt" id="tool-line" onclick="setTool('line')" title="Line">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
-              Line
-            </button>
-            <button class="wbt" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-              Rect
-            </button>
-            <button class="wbt" id="tool-circle" onclick="setTool('circle')" title="Circle">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>
-              Circle
-            </button>
-            <button class="wbt" id="tool-text" onclick="setTool('text')" title="Text">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-              Text
+            <button class="wb-action-btn" onclick="showSessionHistory()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Sessions
             </button>
           </div>
+        </div>
 
-          <div class="wb-sep"></div>
+        <!-- Toolbar: single floating pill -->
+        <div class="wb-toolbar-pill" id="wb-toolbar">
 
-          <!-- COLOURS -->
-          <div class="wb-section">
-            <div class="wbc on" style="--cc:#1a1a1a;background:#1a1a1a" data-color="#1a1a1a" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#e74c3c;background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#2980b9;background:#2980b9" data-color="#2980b9" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#27ae60;background:#27ae60" data-color="#27ae60" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#f39c12;background:#f39c12" data-color="#f39c12" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#8e44ad;background:#8e44ad" data-color="#8e44ad" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#e91e63;background:#e91e63" data-color="#e91e63" onclick="setColor(this)"></div>
-            <div class="wbc" style="--cc:#ffffff;background:#ffffff;box-shadow:inset 0 0 0 1.5px #bbb" data-color="#ffffff" onclick="setColor(this)"></div>
-            <label class="wbc-custom" title="Custom colour">
+          <!-- Draw tools -->
+          <button class="wbt on" id="tool-pen" onclick="setTool('pen')" title="Pen">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            <span>Pen</span>
+          </button>
+          <button class="wbt" id="tool-marker" onclick="setTool('marker')" title="Marker">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+            <span>Mark</span>
+          </button>
+          <button class="wbt" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/></svg>
+            <span>Erase</span>
+          </button>
+
+          <div class="wb-pill-sep"></div>
+
+          <!-- Shapes -->
+          <button class="wbt" id="tool-line" onclick="setTool('line')" title="Line">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+            <span>Line</span>
+          </button>
+          <button class="wbt" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            <span>Rect</span>
+          </button>
+          <button class="wbt" id="tool-circle" onclick="setTool('circle')" title="Circle">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>
+            <span>Circle</span>
+          </button>
+          <button class="wbt" id="tool-text" onclick="setTool('text')" title="Text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            <span>Text</span>
+          </button>
+
+          <div class="wb-pill-sep"></div>
+
+          <!-- Colour swatches -->
+          <div class="wb-swatches">
+            <div class="wbc on" style="background:#1a1a1a" data-color="#1a1a1a" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#2980b9" data-color="#2980b9" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#27ae60" data-color="#27ae60" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#f39c12" data-color="#f39c12" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#8e44ad" data-color="#8e44ad" onclick="setColor(this)"></div>
+            <div class="wbc" style="background:#ffffff;box-shadow:inset 0 0 0 1.5px #bbb" data-color="#ffffff" onclick="setColor(this)"></div>
+            <label class="wbc-picker" title="Custom colour">
               <input type="color" id="custom-color" value="#1a1a1a" onchange="setCustomColor(this.value)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg>
             </label>
           </div>
 
-          <div class="wb-sep"></div>
+          <div class="wb-pill-sep"></div>
 
-          <!-- BRUSH SIZE -->
-          <div class="wb-section" style="gap:.5rem">
-            <div id="wb-dot-preview" style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-              <div id="wb-dot" style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
-            </div>
+          <!-- Size slider -->
+          <div class="wb-size-row">
+            <div id="wb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0;transition:all .15s"></div>
             <input type="range" id="wb-size" min="1" max="40" value="3" class="wb-slider" oninput="setBrushSize(this.value)">
             <span class="wb-size-num" id="wb-size-val">3</span>
           </div>
 
-          <div class="wb-sep"></div>
+          <div class="wb-pill-sep"></div>
 
-          <!-- UNDO / REDO / BG -->
-          <div class="wb-section">
-            <button class="wbt" onclick="wbUndo()" title="Undo (Ctrl+Z)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 6.5 13 4 18 6"/></svg>
-              Undo
-            </button>
-            <button class="wbt" onclick="wbRedo()" title="Redo (Ctrl+Y)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C18.5 6.5 11 4 6 6"/></svg>
-              Redo
-            </button>
-            <button class="wbt" id="tool-bg" onclick="toggleBg()" title="Toggle dark/light background">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-              BG
-            </button>
-          </div>
+          <!-- Undo / Redo / BG -->
+          <button class="wbt" onclick="wbUndo()" title="Undo (Ctrl+Z)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 6.5 13 4 18 6"/></svg>
+            <span>Undo</span>
+          </button>
+          <button class="wbt" onclick="wbRedo()" title="Redo (Ctrl+Y)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C18.5 6.5 11 4 6 6"/></svg>
+            <span>Redo</span>
+          </button>
+          <button class="wbt" id="tool-bg" onclick="toggleBg()" title="Toggle background">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <span>BG</span>
+          </button>
+
+          <div class="wb-pill-sep"></div>
+
+          <!-- Page controls -->
+          <button class="wbt" onclick="addWbPage()" title="Add page">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Page</span>
+          </button>
+          <button class="wbt" onclick="printClassboard()" title="Print A4">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Print</span>
+          </button>
 
         </div>
-      </div>
 
-      <!-- Canvas (hidden until student selected) -->
-      <div id="wb-canvas-wrap" style="display:none">
-        <!-- Page indicator -->
-        <div id="wb-page-bar" style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.5rem 1rem;margin-bottom:.6rem;font-size:.78rem;color:var(--dim)">
-          <div style="display:flex;align-items:center;gap:.75rem">
-            <span>📄 <strong id="wb-page-count" style="color:var(--text)">1</strong> page</span>
-            <span style="color:var(--border2)">|</span>
-            <span>A4 width · unlimited vertical scroll</span>
-          </div>
-          <div style="display:flex;gap:.4rem">
-            <button class="wb-tool" style="min-width:auto;padding:.3rem .7rem;flex-direction:row;gap:.3rem;font-size:.72rem" onclick="addWbPage()" title="Add page below">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add Page
-            </button>
-            <button class="wb-tool" style="min-width:auto;padding:.3rem .7rem;flex-direction:row;gap:.3rem;font-size:.72rem" onclick="printClassboard()" title="Print as A4">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-              Print A4
-            </button>
-          </div>
-        </div>
-
-        <!-- Scrollable canvas container -->
-        <div id="wb-scroll-container" style="overflow-y:auto;overflow-x:hidden;border-radius:12px;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.2);background:#e8e8e8;max-height:90vh;position:relative">
-          <!-- Page guides overlay -->
-          <div id="wb-page-guides" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:2"></div>
+        <!-- Canvas -->
+        <div id="wb-canvas-wrap" style="display:none">
           <div style="position:relative;width:100%;">
-            <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:none;background:#fff"></canvas>
-            <!-- Cursor dot overlay -->
-            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;border:2px solid rgba(0,0,0,0.5);transform:translate(-50%,-50%);display:none;z-index:5"></div>
+            <canvas id="wb-canvas" style="display:block;width:100%;height:auto;touch-action:none;cursor:none;background:#fff;border-radius:8px;box-shadow:0 2px 24px rgba(0,0,0,.18)"></canvas>
+            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);display:none;z-index:5"></div>
           </div>
-          <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px;z-index:10">
+          <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.7rem;color:var(--dim2)">
+            <span>Scroll down to draw more · <span id="wb-page-count">1</span> page(s)</span>
+            <span id="cb-last-saved"></span>
+          </div>
         </div>
 
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
-          <div style="font-size:.7rem;color:var(--dim2)">Scroll down to draw more · Each A4 section prints on one page</div>
-          <div style="font-size:.72rem;color:var(--dim);display:none" id="cb-last-saved"></div>
-        </div>
+        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:fixed;border:2px solid var(--cyan);border-radius:6px;padding:6px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:var(--font);min-width:180px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.2)">
+
       </div>
-    </div>
 
     <!-- Session history panel -->
     <div id="session-history-panel" style="display:none">
@@ -5616,54 +5619,92 @@ function openPrintWindow(paper, isMarkScheme) {
     
 @keyframes hb{from{transform:scale(1)}to{transform:scale(1.12)}}
 
-/* ══ WHITEBOARD TOOLBAR — CLEAN ══ */
-.wb-bar{
-  display:flex;align-items:center;gap:.3rem;flex-wrap:nowrap;
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:12px;padding:.5rem .75rem;margin-bottom:.75rem;
-  overflow-x:auto;overflow-y:hidden;
-  scrollbar-width:none;
+/* ══ WHITEBOARD — MODERN UI ══ */
+
+/* Top bar */
+.wb-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.75rem;flex-wrap:wrap;margin-bottom:.85rem;
 }
-.wb-bar::-webkit-scrollbar{display:none}
-.wb-section{display:flex;align-items:center;gap:.25rem;flex-wrap:nowrap;flex-shrink:0}
-.wb-sep{width:1px;height:32px;background:var(--border);margin:0 .3rem;flex-shrink:0}
+.wb-topbar-left{display:flex;flex-direction:column;gap:.2rem}
+.wb-topbar-title{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.wb-topbar-right{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.wb-action-btn{
+  display:inline-flex;align-items:center;gap:.35rem;
+  padding:.4rem .85rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--s2);color:var(--text);font-family:var(--font);
+  font-size:.78rem;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap;
+}
+.wb-action-btn:hover{border-color:var(--border2);background:var(--s3)}
+.wb-action-btn.green{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4);color:var(--green)}
+.wb-action-btn.green:hover{background:rgba(52,211,153,.18)}
+
+/* Toolbar pill */
+.wb-toolbar-pill{
+  display:flex;align-items:center;gap:.15rem;
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:14px;padding:.4rem .6rem;
+  margin-bottom:.85rem;
+  overflow-x:auto;overflow-y:visible;
+  scrollbar-width:none;white-space:nowrap;
+}
+.wb-toolbar-pill::-webkit-scrollbar{display:none}
+.wb-pill-sep{width:1px;height:26px;background:var(--border);margin:0 .3rem;flex-shrink:0}
+
+/* Tool buttons */
 .wbt{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;padding:.4rem .45rem;min-width:44px;border-radius:9px;
+  display:inline-flex;flex-direction:column;align-items:center;
+  gap:2px;padding:.35rem .45rem;min-width:42px;border-radius:8px;
   border:1.5px solid transparent;background:transparent;
   color:var(--dim);cursor:pointer;transition:.15s;flex-shrink:0;
-  font-family:var(--font);font-size:.58rem;font-weight:600;letter-spacing:.02em;
+  font-family:var(--font);font-size:.55rem;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;
 }
-.wbt:hover{background:var(--s3);border-color:var(--border);color:var(--text)}
-.wbt.on{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.5);color:var(--cyan)}
+.wbt:hover{background:var(--s2);color:var(--text)}
+.wbt.on{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);color:var(--cyan)}
+
+/* Colour swatches */
+.wb-swatches{display:flex;align-items:center;gap:.3rem;flex-shrink:0}
 .wbc{
-  width:26px;height:26px;border-radius:50%;cursor:pointer;
-  transition:.18s;border:3px solid transparent;flex-shrink:0;
+  width:22px;height:22px;border-radius:50%;cursor:pointer;
+  transition:.18s;border:2.5px solid transparent;flex-shrink:0;
 }
 .wbc:hover{transform:scale(1.2)}
 .wbc.on{border-color:var(--cyan);transform:scale(1.15);
   box-shadow:0 0 0 2px rgba(56,189,248,.3)}
-.wbc-custom{
-  width:26px;height:26px;border-radius:50%;
+.wbc-picker{
+  width:22px;height:22px;border-radius:50%;
   border:2px dashed var(--border2);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
+  display:inline-flex;align-items:center;justify-content:center;
   color:var(--dim);position:relative;transition:.15s;flex-shrink:0;
 }
-.wbc-custom:hover{border-color:var(--cyan);color:var(--cyan)}
-.wbc-custom input{position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%}
+.wbc-picker:hover{border-color:var(--cyan);color:var(--cyan)}
+.wbc-picker input{position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%;width:100%;height:100%}
+
+/* Brush size */
+.wb-size-row{display:inline-flex;align-items:center;gap:.4rem;flex-shrink:0}
 .wb-slider{
   -webkit-appearance:none;appearance:none;
-  width:90px;height:4px;border-radius:4px;
+  width:80px;height:3px;border-radius:3px;
   background:var(--s3);outline:none;cursor:pointer;
 }
 .wb-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:16px;height:16px;
+  -webkit-appearance:none;width:14px;height:14px;
   border-radius:50%;background:var(--cyan);cursor:pointer;
   box-shadow:0 1px 4px rgba(0,0,0,.3);
 }
 .wb-size-num{
-  font-family:var(--mono);font-size:.75rem;
-  color:var(--cyan);min-width:18px;text-align:center;
+  font-family:var(--mono);font-size:.72rem;
+  color:var(--cyan);min-width:16px;text-align:right;
+}
+
+/* Cursor dot */
+#wb-cursor{
+  border-radius:50%;
+  border:1.5px solid rgba(0,0,0,.35);
+  background:rgba(0,0,0,.08);
+  pointer-events:none;
+  transition:width .05s,height .05s;
 }
 
 /* ══ WHITEBOARD INFINITE SCROLL ══ */
@@ -5795,16 +5836,18 @@ function startStudentSession() {
 
   // Hide selector, show canvas
   document.getElementById('wb-student-selector').style.display = 'none';
-  document.getElementById('wb-active-header').style.display    = 'flex';
-  document.getElementById('wb-toolbar').style.display          = 'flex';
+  document.getElementById('wb-active-header').style.display    = 'block';
   document.getElementById('wb-canvas-wrap').style.display      = 'block';
-  document.getElementById('cb-last-saved').style.display       = 'block';
 
   // Update meta
   const today = new Date().toISOString().split('T')[0];
   wbSessionKey  = studentName.replace(/\s+/g,'-') + '_' + today;
-  const meta    = document.getElementById('cb-session-meta');
-  if (meta) meta.textContent = '👤 ' + studentName + (wbCurrentTopic ? ' · ' + wbCurrentTopic : '') + ' · Auto-saves every 10s';
+  const meta = document.getElementById('cb-session-meta');
+  if (meta) meta.textContent = 'Auto-saves every 10s · ' + formatDate(wbSessionKey.split('_')[1]||wbSessionKey);
+  const sb = document.getElementById('wb-student-badge');
+  if (sb) sb.textContent = '👤 ' + studentName;
+  const tb = document.getElementById('wb-topic-badge');
+  if (tb) tb.textContent = wbCurrentTopic || 'General';
 
   initWhiteboard();
   loadTodaySession();
