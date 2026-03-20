@@ -1179,7 +1179,7 @@ onAuthStateChanged(auth, async user => {
 
 <!-- PAST PAPERS -->
 <div id="page-papers" class="page">
-  <div class="sec">
+  <div class="sec" id="papers-list-sec">
     <div class="sec-hd"><h2>📄 IGCSE Practice Papers</h2><div class="sec-line"></div></div>
     <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">10 Cambridge-style practice papers with diagrams — fully printable. Each paper has 30 marks and covers the full IGCSE Chemistry syllabus.</p>
     <div id="papers-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;margin-bottom:1.5rem"></div>
@@ -4446,7 +4446,7 @@ const PAPERS = [
 // PAPER 1 — Atomic Structure & Bonding
 // ══════════════════════════════════
 {
-  id:1, title:'Paper 1', subtitle:'Atomic Structure & Chemical Bonding',
+  id:1, year:"Year 10", title:'Paper 1', subtitle:'Atomic Structure & Chemical Bonding',
   marks:30, time:45, difficulty:'Core',
   questions:[
     {
@@ -4505,7 +4505,7 @@ const PAPERS = [
 // PAPER 2 — Acids, Bases & Salts
 // ══════════════════════════════════
 {
-  id:2, title:'Paper 2', subtitle:'Acids, Bases & Salts',
+  id:2, year:"Year 10", title:'Paper 2', subtitle:'Acids, Bases & Salts',
   marks:30, time:45, difficulty:'Core',
   questions:[
     {
@@ -4557,7 +4557,7 @@ const PAPERS = [
 // PAPER 3 — Metals & Reactivity
 // ══════════════════════════════════
 {
-  id:3, title:'Paper 3', subtitle:'Metals, Reactivity & Extraction',
+  id:3, year:"Year 10", title:'Paper 3', subtitle:'Metals, Reactivity & Extraction',
   marks:30, time:45, difficulty:'Core',
   questions:[
     {
@@ -4606,7 +4606,7 @@ const PAPERS = [
 // PAPER 4 — Energy & Rates of Reaction
 // ══════════════════════════════════
 {
-  id:4, title:'Paper 4', subtitle:'Energetics & Rates of Reaction',
+  id:4, year:"Year 11", title:'Paper 4', subtitle:'Energetics & Rates of Reaction',
   marks:30, time:45, difficulty:'Core',
   questions:[
     {
@@ -4646,7 +4646,7 @@ const PAPERS = [
 // PAPER 5 — Organic Chemistry
 // ══════════════════════════════════
 {
-  id:5, title:'Paper 5', subtitle:'Organic Chemistry',
+  id:5, year:"Year 11", title:'Paper 5', subtitle:'Organic Chemistry',
   marks:30, time:45, difficulty:'Extended',
   questions:[
     {
@@ -4693,7 +4693,7 @@ const PAPERS = [
 },
 
 // PAPERS 6-10: shorter format for space efficiency
-{id:6, title:'Paper 6', subtitle:'Separation Techniques', marks:30, time:45, difficulty:'Core',
+{id:6, year:"Year 10", title:'Paper 6', subtitle:'Separation Techniques', marks:30, time:45, difficulty:'Core',
   questions:[
     {n:1, marks:10, topic:'Chromatography', diagram:{type:'chromatogram', spots:3},
      parts:[
@@ -4725,7 +4725,7 @@ const PAPERS = [
   ]
 },
 
-{id:7, title:'Paper 7', subtitle:'Quantitative Chemistry', marks:30, time:45, difficulty:'Extended',
+{id:7, year:"Year 11", title:'Paper 7', subtitle:'Quantitative Chemistry', marks:30, time:45, difficulty:'Extended',
   questions:[
     {n:1, marks:12, topic:'Mole Calculations',
      parts:[
@@ -4752,7 +4752,7 @@ const PAPERS = [
   ]
 },
 
-{id:8, title:'Paper 8', subtitle:'States of Matter & Gases', marks:30, time:45, difficulty:'Core',
+{id:8, year:"Year 10", title:'Paper 8', subtitle:'States of Matter & Gases', marks:30, time:45, difficulty:'Core',
   questions:[
     {n:1, marks:10, topic:'Kinetic Theory', diagram:{type:'state_changes'},
      parts:[
@@ -4782,7 +4782,7 @@ const PAPERS = [
   ]
 },
 
-{id:9, title:'Paper 9', subtitle:'Industrial Chemistry', marks:30, time:45, difficulty:'Extended',
+{id:9, year:"Year 11", title:'Paper 9', subtitle:'Industrial Chemistry', marks:30, time:45, difficulty:'Extended',
   questions:[
     {n:1, marks:12, topic:'Haber Process', diagram:{type:'haber_diagram'},
      parts:[
@@ -4809,7 +4809,7 @@ const PAPERS = [
   ]
 },
 
-{id:10, title:'Paper 10', subtitle:'Mixed Topics — Full Revision', marks:30, time:45, difficulty:'Extended',
+{id:10, year:"Year 11", title:'Paper 10', subtitle:'Mixed Topics — Full Revision', marks:30, time:45, difficulty:'Extended',
   questions:[
     {n:1, marks:8, topic:'Mixed Calculation',
      parts:[
@@ -4858,12 +4858,42 @@ function initPapersPage() {
   const grid = document.getElementById('papers-grid');
   if (!grid || grid.dataset.built) return;
   grid.dataset.built = '1';
+
+  // Build filter pills
+  const listSec = document.getElementById('papers-list-sec');
+  const filterRow = document.createElement('div');
+  filterRow.style.cssText = 'display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem';
+  const filters = [
+    {label:'All Papers', value:'all', col:'var(--cyan)'},
+    {label:'Year 10', value:'Year 10', col:'var(--cyan)'},
+    {label:'Year 11', value:'Year 11', col:'var(--orange)'},
+    {label:'Core', value:'Core', col:'var(--green)'},
+    {label:'Extended', value:'Extended', col:'var(--purple)'},
+  ];
+  filters.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-pill' + (f.value==='all'?' on':'');
+    btn.textContent = f.label;
+    btn.onclick = () => {
+      document.querySelectorAll('#papers-list-sec .cat-pill').forEach(p=>p.classList.remove('on'));
+      btn.classList.add('on');
+      filterPapers(f.value);
+    };
+    filterRow.appendChild(btn);
+  });
+  const secHd = listSec.querySelector('.sec-hd');
+  if (secHd) secHd.after(filterRow);
+
   PAPERS.forEach(p => {
     const card = document.createElement('div');
     card.className = 'card';
     card.style.setProperty('--cc', p.difficulty === 'Extended' ? 'var(--purple)' : 'var(--cyan)');
+    const yearCol = p.year === 'Year 10' ? 'var(--cyan)' : 'var(--orange)';
     card.innerHTML = `
-      <div class="ctopic">${p.difficulty} Level</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem">
+        <div class="ctopic">${p.difficulty} Level</div>
+        <div style="font-size:.62rem;font-weight:700;padding:.18rem .55rem;border-radius:20px;border:1px solid;border-color:${yearCol}44;color:${yearCol};background:${yearCol}11">${p.year||''}</div>
+      </div>
       <div class="cname">${p.title}</div>
       <div style="font-size:.8rem;font-weight:500;color:var(--dim);margin-bottom:.35rem">${p.subtitle}</div>
       <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.65rem">
@@ -4882,17 +4912,34 @@ function initPapersPage() {
 function openPaper(id) {
   currentPaper = PAPERS.find(p => p.id === id);
   if (!currentPaper) return;
-  document.getElementById('papers-grid').parentElement.parentElement.style.display = 'none';
-  document.getElementById('paper-viewer').style.display = 'block';
-  document.getElementById('pv-title').textContent = `${currentPaper.title} — ${currentPaper.subtitle}`;
-  document.getElementById('pv-meta').textContent = `${currentPaper.difficulty} · ${currentPaper.time} minutes · ${currentPaper.marks} marks`;
+  const listSec = document.getElementById('papers-list-sec');
+  const viewer  = document.getElementById('paper-viewer');
+  if (listSec) listSec.style.display = 'none';
+  if (viewer)  viewer.style.display  = 'block';
+  const pvTitle = document.getElementById('pv-title');
+  const pvMeta  = document.getElementById('pv-meta');
+  if (pvTitle) pvTitle.textContent = currentPaper.title + ' — ' + currentPaper.subtitle;
+  if (pvMeta)  pvMeta.textContent  = (currentPaper.year||'') + ' · ' + currentPaper.difficulty + ' · ' + currentPaper.time + ' minutes · ' + currentPaper.marks + ' marks';
   renderPaperContent(currentPaper, 'pv-content', false);
   window.scrollTo(0, 0);
 }
 
+function filterPapers(value) {
+  const grid = document.getElementById('papers-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.card').forEach((card, i) => {
+    const p = PAPERS[i];
+    if (!p) return;
+    const show = value === 'all' || p.year === value || p.difficulty === value;
+    card.style.display = show ? '' : 'none';
+  });
+}
+
 function closePaperViewer() {
-  document.getElementById('paper-viewer').style.display = 'none';
-  document.getElementById('papers-grid').parentElement.parentElement.style.display = 'block';
+  const listSec = document.getElementById('papers-list-sec');
+  const viewer  = document.getElementById('paper-viewer');
+  if (viewer)  viewer.style.display  = 'none';
+  if (listSec) listSec.style.display = 'block';
   currentPaper = null;
 }
 
@@ -5141,11 +5188,169 @@ function renderDiagramSVG(diag) {
     <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>`;
   }
 
+  else if (diag.type === 'rusting_experiment') {
+    // Three test tubes for rusting experiment
+    const tubes = [{x:90,label:'Tube A',fill:'rgba(68,136,255,.2)',sub:'Water + Air'},{x:210,label:'Tube B',fill:'rgba(200,200,200,.1)',sub:'Dry Air only'},{x:330,label:'Tube C',fill:'rgba(68,136,255,.15)',sub:'Boiled water + oil'}];
+    tubes.forEach(t => {
+      svg += `<rect x="${t.x-25}" y="30" width="50" height="100" rx="6" fill="${t.fill}" stroke="#888" stroke-width="1.5"/>`;
+      svg += `<ellipse cx="${t.x}" cy="130" rx="25" ry="8" fill="${t.fill}" stroke="#888" stroke-width="1"/>`;
+      // Iron nail
+      svg += `<rect x="${t.x-3}" y="50" width="6" height="60" rx="2" fill="#999"/>`;
+      svg += `<polygon points="${t.x-6},50 ${t.x+6},50 ${t.x},42" fill="#777"/>`;
+      // Rust indicator for Tube A
+      if(t.label==='Tube A') svg += `<rect x="${t.x-3}" y="50" width="6" height="60" rx="2" fill="rgba(180,80,20,.6)" stroke="none"/>`;
+      // Oil layer for Tube C
+      if(t.label==='Tube C') svg += `<rect x="${t.x-24}" y="32" width="48" height="10" rx="4" fill="rgba(255,220,100,.3)" stroke="rgba(255,200,0,.4)" stroke-width="1"/>`;
+      svg += `<text x="${t.x}" y="150" text-anchor="middle" font-size="9" fill="#aaa">${t.label}</text>`;
+      svg += `<text x="${t.x}" y="162" text-anchor="middle" font-size="7.5" fill="#666">${t.sub}</text>`;
+    });
+    svg += `<text x="250" y="22" text-anchor="middle" font-size="10" fill="#ff6b35">Rusting Investigation — Iron nails in different conditions</text>`;
+  }
+
+  else if (diag.type === 'molecule') {
+    // Molecule shape diagram
+    const name = diag.name || 'H₂O';
+    const shape = diag.shape || 'V-shaped';
+    const angle = diag.angle || '104.5°';
+    svg += `<text x="250" y="25" text-anchor="middle" font-size="12" fill="#00e5ff" font-weight="bold">${name} — ${shape}</text>`;
+    if(name==='H₂O') {
+      // V-shaped water molecule
+      svg += `<circle cx="250" cy="80" r="20" fill="rgba(255,80,80,.6)" stroke="#ff4444" stroke-width="2"/>`;
+      svg += `<text x="250" y="85" text-anchor="middle" font-size="11" fill="white" font-weight="bold">O</text>`;
+      // H atoms
+      svg += `<circle cx="190" cy="120" r="14" fill="rgba(200,220,255,.5)" stroke="#aabb ff" stroke-width="1.5"/>`;
+      svg += `<text x="190" y="125" text-anchor="middle" font-size="10" fill="white">H</text>`;
+      svg += `<circle cx="310" cy="120" r="14" fill="rgba(200,220,255,.5)" stroke="#aabbff" stroke-width="1.5"/>`;
+      svg += `<text x="310" y="125" text-anchor="middle" font-size="10" fill="white">H</text>`;
+      // Bonds
+      svg += `<line x1="233" y1="93" x2="200" y2="112" stroke="#aaa" stroke-width="2.5"/>`;
+      svg += `<line x1="267" y1="93" x2="300" y2="112" stroke="#aaa" stroke-width="2.5"/>`;
+      // Lone pairs
+      svg += `<ellipse cx="235" cy="62" rx="12" ry="6" fill="none" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="3"/>`;
+      svg += `<ellipse cx="265" cy="62" rx="12" ry="6" fill="none" stroke="#ffd93d" stroke-width="1.5" stroke-dasharray="3"/>`;
+      svg += `<text x="250" y="57" text-anchor="middle" font-size="8" fill="#ffd93d">lone pairs</text>`;
+      // Angle arc
+      svg += `<path d="M205,108 A30,30 0 0,1 295,108" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="3"/>`;
+      svg += `<text x="250" y="148" text-anchor="middle" font-size="10" fill="#00e5ff">Bond angle: ${angle}</text>`;
+    }
+  }
+
+  else if (diag.type === 'pt_section') {
+    // Period 2 elements
+    const els = diag.elements || ['Li','Be','B','C','N','O','F','Ne'];
+    const cols = {'Li':'#ff6b35','Be':'#ffd93d','B':'#00e5a0','C':'#888','N':'#4488ff','O':'#ff4444','F':'#b388ff','Ne':'#00e5ff'};
+    svg += `<text x="250" y="20" text-anchor="middle" font-size="10" fill="#aaa">Period 2 of the Periodic Table</text>`;
+    els.forEach((el,i) => {
+      const x = 30 + i*58, y = 35, col = cols[el]||'#888';
+      svg += `<rect x="${x}" y="${y}" width="48" height="58" rx="5" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
+      svg += `<text x="${x+24}" y="${y+18}" text-anchor="middle" font-size="8" fill="${col}">${i+3}</text>`;
+      svg += `<text x="${x+24}" y="${y+36}" text-anchor="middle" font-size="15" fill="${col}" font-weight="bold">${el}</text>`;
+      svg += `<text x="${x+24}" y="${y+52}" text-anchor="middle" font-size="7" fill="#666">${['6.9','9.0','10.8','12.0','14.0','16.0','19.0','20.2'][i]}</text>`;
+    });
+    svg += `<line x1="30" y1="110" x2="462" y2="110" stroke="#555" stroke-width="1"/>`;
+    svg += `<text x="30" y="125" font-size="8.5" fill="#ff6b35">← More metallic</text>`;
+    svg += `<text x="462" y="125" text-anchor="end" font-size="8.5" fill="#00e5ff">More non-metallic →</text>`;
+    svg += `<text x="246" y="148" text-anchor="middle" font-size="8" fill="#ffd93d">Atomic radius decreases → / Electronegativity increases →</text>`;
+  }
+
+  else if (diag.type === 'electrolysis_cell') {
+    // Electrolysis cell
+    const electrolyte = diag.electrolyte || 'electrolyte';
+    svg += `<rect x="120" y="40" width="260" height="100" rx="8" fill="rgba(68,136,255,.08)" stroke="rgba(68,136,255,.4)" stroke-width="1.5"/>`;
+    svg += `<text x="250" y="100" text-anchor="middle" font-size="10" fill="#4488ff">${electrolyte}</text>`;
+    // Electrodes
+    svg += `<rect x="165" y="25" width="12" height="100" rx="3" fill="#999"/>`;
+    svg += `<rect x="323" y="25" width="12" height="100" rx="3" fill="#999"/>`;
+    // Labels
+    svg += `<text x="171" y="20" text-anchor="middle" font-size="10" fill="#ff4444">+ Anode</text>`;
+    svg += `<text x="329" y="20" text-anchor="middle" font-size="10" fill="#4488ff">- Cathode</text>`;
+    // Bubbles at cathode (H2)
+    [0,1,2].forEach(i => { svg += `<circle cx="${318+i*5}" cy="${95-i*18}" r="4" fill="rgba(150,200,255,.5)" stroke="rgba(100,180,255,.7)" stroke-width="1"/>`; });
+    // Bubbles at anode (O2)
+    [0,1,2].forEach(i => { svg += `<circle cx="${178-i*5}" cy="${95-i*18}" r="4" fill="rgba(255,200,100,.5)" stroke="rgba(255,180,50,.7)" stroke-width="1"/>`; });
+    svg += `<text x="171" y="148" text-anchor="middle" font-size="8" fill="#ff8844">O₂ gas ↑</text>`;
+    svg += `<text x="329" y="148" text-anchor="middle" font-size="8" fill="#88aaff">H₂ gas ↑</text>`;
+    // Battery
+    svg += `<rect x="210" y="5" width="80" height="22" rx="4" fill="rgba(255,200,50,.15)" stroke="#ffd93d" stroke-width="1"/>`;
+    svg += `<text x="250" y="20" text-anchor="middle" font-size="9" fill="#ffd93d">Battery/Power supply</text>`;
+    svg += `<line x1="171" y1="25" x2="171" y2="16" stroke="#ffd93d" stroke-width="1.5"/>`;
+    svg += `<line x1="171" y1="16" x2="210" y2="16" stroke="#ffd93d" stroke-width="1.5"/>`;
+    svg += `<line x1="329" y1="25" x2="329" y2="16" stroke="#ffd93d" stroke-width="1.5"/>`;
+    svg += `<line x1="329" y1="16" x2="290" y2="16" stroke="#ffd93d" stroke-width="1.5"/>`;
+  }
+
+  else if (diag.type === 'polymer') {
+    const monomer = diag.monomer || 'ethene';
+    svg += `<text x="250" y="20" text-anchor="middle" font-size="11" fill="#b388ff" font-weight="bold">Polymerisation of ${monomer}</text>`;
+    // Show 3 monomers joining
+    [0,1,2].forEach(i => {
+      const x = 40 + i*140;
+      svg += `<rect x="${x}" y="55" width="110" height="50" rx="6" fill="rgba(179,136,255,.15)" stroke="#b388ff" stroke-width="1.5"/>`;
+      svg += `<text x="${x+55}" y="72" text-anchor="middle" font-size="10" fill="#b388ff">CH₂=CH₂</text>`;
+      svg += `<text x="${x+55}" y="90" text-anchor="middle" font-size="8" fill="#888">monomer</text>`;
+      if(i<2) { svg += `<text x="${x+120}" y="83" text-anchor="middle" font-size="14" fill="#ffd93d">+</text>`; }
+    });
+    svg += `<text x="250" y="128" text-anchor="middle" font-size="11" fill="#ffd93d">↓ Addition polymerisation (catalyst, pressure)</text>`;
+    // Product
+    svg += `<rect x="100" y="138" width="300" height="15" rx="3" fill="rgba(0,229,160,.2)" stroke="#00e5a0" stroke-width="1.5"/>`;
+    svg += `<text x="250" y="150" text-anchor="middle" font-size="9" fill="#00e5a0">─(CH₂─CH₂)─(CH₂─CH₂)─(CH₂─CH₂)─  →  poly(ethene)</text>`;
+  }
+
+  else if (diag.type === 'properties_table') {
+    // Visual table comparing NaCl and CO2
+    svg += `<text x="250" y="20" text-anchor="middle" font-size="11" fill="#00e5ff" font-weight="bold">Comparing Ionic and Covalent Compounds</text>`;
+    const headers = ['Property','NaCl (Ionic)','CO₂ (Covalent)'];
+    const rows = [['Bonding','Ionic','Covalent'],['Structure','Giant lattice','Simple molecules'],['Melting point','High (801°C)','Low (-78°C)'],['Conducts (aq)','Yes','No']];
+    const colW = [140,150,150], startX = [20,165,320], startY = 32;
+    headers.forEach((h,i) => {
+      svg += `<rect x="${startX[i]}" y="${startY}" width="${colW[i]}" height="22" rx="0" fill="rgba(0,229,255,.15)" stroke="#333" stroke-width="0.5"/>`;
+      svg += `<text x="${startX[i]+colW[i]/2}" y="${startY+15}" text-anchor="middle" font-size="9" fill="#00e5ff" font-weight="bold">${h}</text>`;
+    });
+    rows.forEach((row,ri) => {
+      const rowY = startY + 22 + ri*22;
+      const bg = ri%2===0?'rgba(255,255,255,.03)':'rgba(255,255,255,.01)';
+      row.forEach((cell,ci) => {
+        svg += `<rect x="${startX[ci]}" y="${rowY}" width="${colW[ci]}" height="22" fill="${bg}" stroke="#333" stroke-width="0.5"/>`;
+        const col = ci===1?'#ffd93d':ci===2?'#00e5a0':'#aaa';
+        svg += `<text x="${startX[ci]+colW[ci]/2}" y="${rowY+15}" text-anchor="middle" font-size="8.5" fill="${col}">${cell}</text>`;
+      });
+    });
+  }
+
+  else if (diag.type === 'structural_formula') {
+    const mol = diag.molecule || 'propane';
+    const formula = diag.formula || 'C₃H₈';
+    svg += `<text x="250" y="20" text-anchor="middle" font-size="11" fill="#ff8c00" font-weight="bold">Structural Formula: ${mol} (${formula})</text>`;
+    // Draw propane C-C-C chain
+    const cx = [120, 220, 320], cy = 85;
+    cx.forEach((x,i) => {
+      // C atom
+      svg += `<circle cx="${x}" cy="${cy}" r="16" fill="rgba(100,100,100,.6)" stroke="#888" stroke-width="1.5"/>`;
+      svg += `<text x="${x}" y="${cy+5}" text-anchor="middle" font-size="11" fill="#ddd" font-weight="bold">C</text>`;
+      // C-C bond
+      if(i<2) { svg += `<line x1="${x+16}" y1="${cy}" x2="${cx[i+1]-16}" y2="${cy}" stroke="#aaa" stroke-width="2.5"/>`; }
+      // H atoms above and below (2 each for middle, 3 for ends)
+      const hCount = (i===0||i===2) ? 3 : 2;
+      const hPositions = i===0 ? [{dx:-30,dy:0},{dx:0,dy:-30},{dx:0,dy:30}] :
+                         i===2 ? [{dx:30,dy:0},{dx:0,dy:-30},{dx:0,dy:30}] :
+                                 [{dx:0,dy:-30},{dx:0,dy:30}];
+      hPositions.forEach(hp => {
+        svg += `<circle cx="${x+hp.dx}" cy="${cy+hp.dy}" r="10" fill="rgba(200,220,255,.35)" stroke="#aabbff" stroke-width="1.2"/>`;
+        svg += `<text x="${x+hp.dx}" y="${cy+hp.dy+4}" text-anchor="middle" font-size="9" fill="#ccd" font-weight="bold">H</text>`;
+        svg += `<line x1="${x+(hp.dx>0?16:hp.dx<0?-16:0)}" y1="${cy+(hp.dy>0?16:hp.dy<0?-16:0)}" x2="${x+hp.dx+(hp.dx>0?-10:hp.dx<0?10:0)}" y2="${cy+hp.dy+(hp.dy>0?-10:hp.dy<0?10:0)}" stroke="#888" stroke-width="1.5"/>`;
+      });
+    });
+    svg += `<text x="250" y="148" text-anchor="middle" font-size="9" fill="#aaa">All single bonds — saturated hydrocarbon (alkane)</text>`;
+  }
+
   else {
-    // Fallback — text description
-    svg += `<rect x="20" y="20" width="460" height="120" rx="8" fill="rgba(255,255,255,.04)" stroke="#333" stroke-width="1" stroke-dasharray="4"/>
-    <text x="250" y="70" text-anchor="middle" font-size="12" fill="#666">[Diagram: ${diag.type}]</text>
-    <text x="250" y="90" text-anchor="middle" font-size="10" fill="#555">${diag.elements ? diag.elements.join(', ') : ''}</text>`;
+    // Generic fallback with styled box
+    const label = diag.type.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    svg += `<rect x="30" y="25" width="440" height="110" rx="10" fill="rgba(0,229,255,.04)" stroke="rgba(0,229,255,.2)" stroke-width="1.5" stroke-dasharray="5,3"/>`;
+    svg += `<text x="250" y="68" text-anchor="middle" font-size="13" fill="rgba(0,229,255,.5)">📊</text>`;
+    svg += `<text x="250" y="90" text-anchor="middle" font-size="11" fill="rgba(0,229,255,.6)" font-weight="bold">${label}</text>`;
+    if(diag.elements) svg += `<text x="250" y="110" text-anchor="middle" font-size="9" fill="#555">${diag.elements.join(' · ')}</text>`;
+    if(diag.molecule) svg += `<text x="250" y="110" text-anchor="middle" font-size="9" fill="#555">${diag.name||diag.molecule}</text>`;
   }
 
   svg += `</svg></div>`;
