@@ -743,7 +743,7 @@ import { getAuth, createUserWithEmailAndPassword,
          onAuthStateChanged }                           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc,
          updateDoc, collection, getDocs,
-         serverTimestamp }                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+         deleteDoc, serverTimestamp }                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey:            "AIzaSyCALIoHk_wxZnz-OGKMOsxZa8qOHkHhu7Q",
@@ -764,7 +764,7 @@ window.FB = {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp
+  doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp, deleteDoc
 };
 
 onAuthStateChanged(auth, async user => {
@@ -791,6 +791,7 @@ onAuthStateChanged(auth, async user => {
     <button class="ntab" onclick="goPage('game',this)">Game</button>
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
     <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
+    <button class="ntab" onclick="goPage('classboard',this)" id="nav-classboard">My Classboard</button>
     <button class="ntab" data-page="teacher" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
   <div class="hbtns">
@@ -1201,6 +1202,108 @@ onAuthStateChanged(auth, async user => {
       <div id="pv-content"></div>
     </div>
   </div>
+</div>
+
+<!-- CLASSBOARD -->
+<div id="page-classboard" class="page">
+
+  <!-- Student view: My Classboard -->
+  <div id="classboard-student-view">
+    <div class="sec">
+      <div class="sec-hd"><h2>🖊️ My Classboard</h2><div class="sec-line"></div></div>
+      <p style="color:var(--dim);font-size:.85rem;margin-bottom:1.25rem;line-height:1.7">Your teacher's whiteboards from each class session — saved automatically by date.</p>
+      <div id="classboard-sessions-list"></div>
+    </div>
+    <!-- Whiteboard viewer for students -->
+    <div id="classboard-viewer" style="display:none">
+      <div class="sec">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem">
+          <div>
+            <div style="font-family:var(--head);font-size:1.05rem;font-weight:700" id="cb-viewer-title"></div>
+            <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="cb-viewer-meta"></div>
+          </div>
+          <button class="btn" onclick="closeClassboardViewer()">← Back</button>
+        </div>
+        <canvas id="cb-view-canvas" style="width:100%;border-radius:12px;border:1px solid var(--border);background:#fff;display:block;touch-action:none"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher view: Whiteboard -->
+  <div id="classboard-teacher-view" style="display:none">
+    <div class="sec">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.65rem;margin-bottom:1rem">
+        <div>
+          <div style="font-family:var(--head);font-size:1.05rem;font-weight:700">🖊️ Whiteboard</div>
+          <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="cb-session-meta">Auto-saves every 10 seconds</div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+          <div id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">✓ Saved</div>
+          <button class="btn" onclick="clearWhiteboard()">🗑 Clear</button>
+          <button class="btn green" onclick="saveWhiteboardNow()">💾 Save Now</button>
+          <button class="btn" onclick="showSessionHistory()">📅 Sessions</button>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div id="wb-toolbar" style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.6rem .75rem;margin-bottom:.75rem">
+        <!-- Tools -->
+        <div style="display:flex;gap:.3rem">
+          <button class="wb-tool on" id="tool-pen" onclick="setTool('pen')" title="Pen">✏️</button>
+          <button class="wb-tool" id="tool-marker" onclick="setTool('marker')" title="Marker">🖊</button>
+          <button class="wb-tool" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">🧹</button>
+          <button class="wb-tool" id="tool-line" onclick="setTool('line')" title="Line">╱</button>
+          <button class="wb-tool" id="tool-rect" onclick="setTool('rect')" title="Rectangle">▭</button>
+          <button class="wb-tool" id="tool-circle" onclick="setTool('circle')" title="Circle">○</button>
+          <button class="wb-tool" id="tool-text" onclick="setTool('text')" title="Text">T</button>
+        </div>
+        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
+        <!-- Colours -->
+        <div style="display:flex;gap:.3rem;align-items:center">
+          <div class="wb-color on" style="background:#1a1a2e" data-color="#1a1a2e" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#3498db" data-color="#3498db" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#2ecc71" data-color="#2ecc71" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#f39c12" data-color="#f39c12" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#9b59b6" data-color="#9b59b6" onclick="setColor(this)"></div>
+          <div class="wb-color" style="background:#ffffff;border:1px solid #ccc" data-color="#ffffff" onclick="setColor(this)"></div>
+          <input type="color" id="custom-color" value="#1a1a2e" onchange="setCustomColor(this.value)" style="width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:0;background:none">
+        </div>
+        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
+        <!-- Brush size -->
+        <div style="display:flex;align-items:center;gap:.4rem">
+          <span style="font-size:.7rem;color:var(--dim)">Size</span>
+          <input type="range" id="wb-size" min="1" max="30" value="3" style="width:70px" oninput="setBrushSize(this.value)">
+          <span style="font-size:.7rem;color:var(--cyan);min-width:16px" id="wb-size-val">3</span>
+        </div>
+        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
+        <!-- Undo/Redo -->
+        <button class="wb-tool" onclick="wbUndo()" title="Undo">↩</button>
+        <button class="wb-tool" onclick="wbRedo()" title="Redo">↪</button>
+        <!-- Background toggle -->
+        <button class="wb-tool" id="tool-bg" onclick="toggleBg()" title="Background">📄</button>
+      </div>
+
+      <!-- Canvas -->
+      <div style="position:relative;border-radius:12px;overflow:hidden;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.3)">
+        <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:crosshair;background:#fff"></canvas>
+        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px">
+      </div>
+      <div style="font-size:.72rem;color:var(--dim);margin-top:.5rem;text-align:right" id="cb-last-saved"></div>
+    </div>
+
+    <!-- Session history panel -->
+    <div id="session-history-panel" style="display:none">
+      <div class="sec">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <div style="font-family:var(--head);font-size:1rem;font-weight:700">📅 Saved Sessions</div>
+          <button class="btn" onclick="hideSessionHistory()">← Back to Board</button>
+        </div>
+        <div id="session-history-list"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- TEACHER DASHBOARD -->
@@ -5411,6 +5514,29 @@ function openPrintWindow(paper, isMarkScheme) {
       }
     
 @keyframes hb{from{transform:scale(1)}to{transform:scale(1.12)}}
+
+/* ══ WHITEBOARD / CLASSBOARD ══ */
+.wb-tool{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:var(--s3);color:var(--text);font-size:.85rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.wb-tool:hover{border-color:var(--border2);background:var(--s2)}
+.wb-tool.on{background:rgba(56,189,248,.15);border-color:var(--cyan);color:var(--cyan)}
+.wb-color{width:26px;height:26px;border-radius:50%;cursor:pointer;transition:.15s;
+  border:2px solid transparent;flex-shrink:0}
+.wb-color:hover{transform:scale(1.15)}
+.wb-color.on{border-color:var(--cyan);transform:scale(1.2);box-shadow:0 0 0 2px rgba(56,189,248,.3)}
+.cb-session-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.25rem;margin-bottom:.65rem;display:flex;align-items:center;
+  justify-content:space-between;gap:1rem;cursor:pointer;transition:.2s}
+.cb-session-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.cb-session-date{font-family:var(--head);font-size:.95rem;font-weight:700}
+.cb-session-time{font-size:.75rem;color:var(--dim);margin-top:.15rem}
+.cb-session-preview{width:80px;height:50px;border-radius:7px;object-fit:cover;
+  border:1px solid var(--border);flex-shrink:0;background:#fff}
+.cb-empty{text-align:center;padding:3rem 1rem;color:var(--dim)}
+.cb-empty-icon{font-size:2.5rem;margin-bottom:.75rem}
+.cb-empty-text{font-size:.9rem;margin-bottom:.35rem}
+.cb-empty-sub{font-size:.78rem;color:var(--dim2)}
 </style>
   </head><body>
     <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:12px">
@@ -5460,6 +5586,270 @@ goPage = function(id, btn) {
   }
 };
 
+
+// ════════════════════════════════════════════════════════════
+// WHITEBOARD / CLASSBOARD SYSTEM
+// ════════════════════════════════════════════════════════════
+
+let wbCanvas, wbCtx, wbDrawing=false, wbTool='pen', wbColor='#1a1a2e', wbSize=3;
+let wbHistory=[], wbUndoRedo=[], wbSnapshot=null;
+let wbAutoSaveTimer=null, wbBgWhite=true, wbSessionKey=null;
+let wbStartX=0, wbStartY=0;
+
+function initClassboard() {
+  const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
+  document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('classboard-student-view').style.display = isAdmin ? 'none' : 'block';
+  if (isAdmin) { initWhiteboard(); loadSessionHistory(); }
+  else { loadStudentSessions(); }
+}
+
+function initWhiteboard() {
+  wbCanvas = document.getElementById('wb-canvas');
+  if (!wbCanvas || wbCanvas.dataset.init) return;
+  wbCanvas.dataset.init = '1';
+  wbCtx = wbCanvas.getContext('2d');
+  const resize = () => {
+    const rect = wbCanvas.parentElement.getBoundingClientRect();
+    const W = Math.max(400, Math.floor(rect.width) - 4);
+    const H = Math.max(400, Math.floor(W * 0.6));
+    const img = wbCanvas.toDataURL();
+    wbCanvas.width = W; wbCanvas.height = H;
+    fillBackground();
+    const i = new Image(); i.onload = () => wbCtx.drawImage(i,0,0); i.src = img;
+  };
+  resize();
+  try { new ResizeObserver(resize).observe(wbCanvas.parentElement); } catch(e) {}
+
+  fillBackground();
+  wbHistory = [wbCanvas.toDataURL()];
+  wbSessionKey = new Date().toISOString().split('T')[0];
+  const meta = document.getElementById('cb-session-meta');
+  if (meta) meta.textContent = formatDate(wbSessionKey) + ' · Auto-saves every 10s';
+
+  wbCanvas.addEventListener('mousedown',  wbDown);
+  wbCanvas.addEventListener('mousemove',  wbMove);
+  wbCanvas.addEventListener('mouseup',    wbUp);
+  wbCanvas.addEventListener('mouseleave', wbUp);
+  wbCanvas.addEventListener('touchstart', e => { e.preventDefault(); wbDown(wbT(e)); }, {passive:false});
+  wbCanvas.addEventListener('touchmove',  e => { e.preventDefault(); wbMove(wbT(e)); }, {passive:false});
+  wbCanvas.addEventListener('touchend',   e => { e.preventDefault(); wbUp(wbT(e)); },  {passive:false});
+
+  const ti = document.getElementById('wb-text-input');
+  if (ti) ti.addEventListener('keydown', e => {
+    if (e.key==='Enter') { commitText(); e.preventDefault(); }
+    if (e.key==='Escape') { ti.style.display='none'; }
+  });
+
+  loadTodaySession();
+  if (wbAutoSaveTimer) clearInterval(wbAutoSaveTimer);
+  wbAutoSaveTimer = setInterval(saveWhiteboardNow, 10000);
+}
+
+function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
+function wbPos(e) { const r=wbCanvas.getBoundingClientRect(),sx=wbCanvas.width/r.width,sy=wbCanvas.height/r.height; return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy}; }
+function fillBackground() { if(!wbCtx)return; wbCtx.fillStyle=wbBgWhite?'#ffffff':'#1a1a2e'; wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height); }
+
+function wbDown(e) {
+  const p=wbPos(e); wbStartX=p.x; wbStartY=p.y;
+  if (wbTool==='text') { placeTextInput(p.x,p.y); return; }
+  wbDrawing=true;
+  wbSnapshot=wbCtx.getImageData(0,0,wbCanvas.width,wbCanvas.height);
+  if(['pen','marker','eraser'].includes(wbTool)) { wbCtx.beginPath(); wbCtx.moveTo(p.x,p.y); }
+}
+function wbMove(e) { if(!wbDrawing)return; const p=wbPos(e); applyTool(p.x,p.y,false); }
+function wbUp(e) {
+  if(!wbDrawing)return; wbDrawing=false;
+  const p=wbPos(e); applyTool(p.x,p.y,true);
+  wbUndoRedo=[]; wbHistory.push(wbCanvas.toDataURL());
+  if(wbHistory.length>50)wbHistory.shift();
+}
+
+function applyTool(x,y,end) {
+  wbCtx.lineCap='round'; wbCtx.lineJoin='round'; wbCtx.globalAlpha=1;
+  if(wbTool==='pen'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
+  else if(wbTool==='marker'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize*3; wbCtx.globalAlpha=0.4; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
+  else if(wbTool==='eraser'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle='#ffffff'; wbCtx.lineWidth=wbSize*4; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
+  else if(end) {
+    wbCtx.globalCompositeOperation='source-over'; wbCtx.globalAlpha=1;
+    wbCtx.putImageData(wbSnapshot,0,0);
+    wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.beginPath();
+    if(wbTool==='line'){wbCtx.moveTo(wbStartX,wbStartY);wbCtx.lineTo(x,y);}
+    else if(wbTool==='rect'){wbCtx.rect(wbStartX,wbStartY,x-wbStartX,y-wbStartY);}
+    else if(wbTool==='circle'){const rx=(x-wbStartX)/2,ry=(y-wbStartY)/2;wbCtx.ellipse(wbStartX+rx,wbStartY+ry,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);}
+    wbCtx.stroke();
+  } else if(!['pen','marker','eraser'].includes(wbTool)) {
+    wbCtx.putImageData(wbSnapshot,0,0);
+    wbCtx.globalAlpha=0.55; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.beginPath();
+    if(wbTool==='line'){wbCtx.moveTo(wbStartX,wbStartY);wbCtx.lineTo(x,y);}
+    else if(wbTool==='rect'){wbCtx.rect(wbStartX,wbStartY,x-wbStartX,y-wbStartY);}
+    else if(wbTool==='circle'){const rx=(x-wbStartX)/2,ry=(y-wbStartY)/2;wbCtx.ellipse(wbStartX+rx,wbStartY+ry,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);}
+    wbCtx.stroke(); wbCtx.globalAlpha=1;
+  }
+}
+
+function placeTextInput(x,y) {
+  const ti=document.getElementById('wb-text-input'); if(!ti)return;
+  const r=wbCanvas.getBoundingClientRect();
+  ti.style.display='block'; ti.style.left=(r.left+x*(r.width/wbCanvas.width))+'px'; ti.style.top=(r.top+y*(r.height/wbCanvas.height))+'px';
+  ti.style.fontSize=(wbSize*4+12)+'px'; ti.dataset.x=x; ti.dataset.y=y; ti.value=''; ti.focus();
+}
+function commitText() {
+  const ti=document.getElementById('wb-text-input'); if(!ti||!ti.value.trim()){if(ti)ti.style.display='none';return;}
+  wbCtx.font=`${wbSize*4+12}px Poppins,sans-serif`; wbCtx.fillStyle=wbColor; wbCtx.globalAlpha=1;
+  wbCtx.fillText(ti.value,+ti.dataset.x,+ti.dataset.y); ti.style.display='none';
+  wbHistory.push(wbCanvas.toDataURL());
+}
+
+function setTool(tool) {
+  wbTool=tool;
+  document.querySelectorAll('.wb-tool').forEach(b=>b.classList.remove('on'));
+  const btn=document.getElementById('tool-'+tool); if(btn)btn.classList.add('on');
+  if(wbCanvas)wbCanvas.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
+}
+function setColor(el) {
+  wbColor=el.dataset.color;
+  document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  const cc=document.getElementById('custom-color'); if(cc)cc.value=wbColor;
+}
+function setCustomColor(val) { wbColor=val; document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on')); }
+function setBrushSize(val) { wbSize=+val; const el=document.getElementById('wb-size-val'); if(el)el.textContent=val; }
+function toggleBg() { wbBgWhite=!wbBgWhite; const btn=document.getElementById('tool-bg'); if(btn)btn.classList.toggle('on',!wbBgWhite); fillBackground(); }
+function wbUndo() {
+  if(wbHistory.length<=1)return; wbUndoRedo.push(wbHistory.pop());
+  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=wbHistory[wbHistory.length-1];
+}
+function wbRedo() {
+  if(!wbUndoRedo.length)return; const data=wbUndoRedo.pop(); wbHistory.push(data);
+  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=data;
+}
+function clearWhiteboard() {
+  if(!confirm('Clear the whiteboard? This cannot be undone.'))return;
+  fillBackground(); wbHistory=[wbCanvas.toDataURL()]; wbUndoRedo=[];
+}
+
+async function saveWhiteboardNow() {
+  if(!wbCanvas||!window.FB||!window._fbUser)return;
+  const{db,doc,setDoc,serverTimestamp}=window.FB;
+  const dataURL=wbCanvas.toDataURL('image/jpeg',0.65);
+  const key=wbSessionKey||new Date().toISOString().split('T')[0];
+  try {
+    await setDoc(doc(db,'whiteboards',key),{date:key,dataURL,savedBy:window._fbUser.email,updatedAt:serverTimestamp(),label:formatDate(key)});
+    const ind=document.getElementById('cb-save-indicator'); if(ind){ind.style.display='inline';setTimeout(()=>ind.style.display='none',2000);}
+    const ls=document.getElementById('cb-last-saved'); if(ls)ls.textContent='Last saved: '+new Date().toLocaleTimeString();
+  } catch(e){console.warn('WB save:',e);}
+}
+
+async function loadTodaySession() {
+  if(!window.FB||!window._fbUser)return;
+  const{db,doc,getDoc}=window.FB;
+  const key=new Date().toISOString().split('T')[0]; wbSessionKey=key;
+  try {
+    const snap=await getDoc(doc(db,'whiteboards',key));
+    if(snap.exists()){const img=new Image();img.onload=()=>{if(wbCanvas&&wbCtx){wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0,wbCanvas.width,wbCanvas.height);wbHistory=[wbCanvas.toDataURL()];}};img.src=snap.data().dataURL;}
+  } catch(e){console.warn('WB load:',e);}
+}
+
+async function loadSessionHistory() {
+  if(!window.FB)return;
+  const{db,collection,getDocs}=window.FB;
+  try {
+    const snap=await getDocs(collection(db,'whiteboards'));
+    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>b.date.localeCompare(a.date));
+    renderSessionHistory(sessions,'session-history-list',true);
+  } catch(e){console.warn('WB history:',e);}
+}
+
+async function loadStudentSessions() {
+  const list=document.getElementById('classboard-sessions-list'); if(!list)return;
+  if(!window.FB){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">🔌</div><div class="cb-empty-text">Not connected</div></div>';return;}
+  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading sessions…</div>';
+  const{db,collection,getDocs}=window.FB;
+  try {
+    const snap=await getDocs(collection(db,'whiteboards'));
+    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>b.date.localeCompare(a.date));
+    if(!sessions.length){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions yet</div><div class="cb-empty-sub">Your teacher\'s whiteboard sessions will appear here after each class.</div></div>';return;}
+    renderSessionHistory(sessions,'classboard-sessions-list',false);
+  } catch(e){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">⚠️</div><div class="cb-empty-text">Could not load sessions</div></div>';}
+}
+
+function renderSessionHistory(sessions,containerId,isAdmin) {
+  const wrap=document.getElementById(containerId); if(!wrap)return;
+  wrap.innerHTML='';
+  sessions.forEach(s=>{
+    const card=document.createElement('div'); card.className='cb-session-card';
+    card.innerHTML=`<div><div class="cb-session-date">${s.label||formatDate(s.date)}</div><div class="cb-session-time">${s.date}</div></div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <img class="cb-session-preview" src="${s.dataURL}" alt="preview">
+        <button class="btn" onclick="viewSession('${s.date}')">View →</button>
+        ${isAdmin?`<button class="btn red" onclick="deleteSession('${s.date}')">🗑</button>`:''}
+      </div>`;
+    wrap.appendChild(card);
+  });
+}
+
+async function viewSession(date) {
+  if(!window.FB)return;
+  const{db,doc,getDoc}=window.FB;
+  const snap=await getDoc(doc(db,'whiteboards',date));
+  if(!snap.exists()){toast('Session not found');return;}
+  const data=snap.data();
+  const isAdmin=window._fbUser&&window._fbUser.email===ADMIN_EMAIL;
+  if(isAdmin) {
+    const img=new Image();
+    img.onload=()=>{if(wbCtx){wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0,wbCanvas.width,wbCanvas.height);wbHistory=[wbCanvas.toDataURL()];}};
+    img.src=data.dataURL; wbSessionKey=date; hideSessionHistory();
+    const meta=document.getElementById('cb-session-meta'); if(meta)meta.textContent=formatDate(date)+' · Auto-saves every 10s';
+    toast('Loaded: '+formatDate(date));
+  } else {
+    document.getElementById('classboard-sessions-list').parentElement.style.display='none';
+    document.getElementById('classboard-viewer').style.display='block';
+    document.getElementById('cb-viewer-title').textContent=formatDate(date);
+    document.getElementById('cb-viewer-meta').textContent='Saved by your teacher · Read only';
+    const vc=document.getElementById('cb-view-canvas');
+    const W=vc.parentElement.getBoundingClientRect().width||800;
+    vc.width=W; vc.height=Math.floor(W*0.6);
+    const vCtx=vc.getContext('2d');
+    const img=new Image(); img.onload=()=>vCtx.drawImage(img,0,0,vc.width,vc.height); img.src=data.dataURL;
+  }
+}
+
+function closeClassboardViewer() {
+  document.getElementById('classboard-viewer').style.display='none';
+  document.getElementById('classboard-sessions-list').parentElement.style.display='block';
+}
+
+async function deleteSession(date) {
+  if(!confirm('Delete session '+formatDate(date)+'?'))return;
+  if(!window.FB)return;
+  const{db,doc,deleteDoc}=window.FB;
+  try{await deleteDoc(doc(db,'whiteboards',date));toast('Session deleted');loadSessionHistory();}
+  catch(e){toast('Could not delete');}
+}
+
+function showSessionHistory() {
+  const ph=document.getElementById('session-history-panel');
+  const ms=document.querySelector('#classboard-teacher-view > .sec');
+  if(ph)ph.style.display='block'; if(ms)ms.style.display='none';
+  loadSessionHistory();
+}
+function hideSessionHistory() {
+  const ph=document.getElementById('session-history-panel');
+  const ms=document.querySelector('#classboard-teacher-view > .sec');
+  if(ph)ph.style.display='none'; if(ms)ms.style.display='block';
+}
+
+function formatDate(dateStr) {
+  try{ const d=new Date(dateStr+'T12:00:00'); return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+  catch(e){ return dateStr; }
+}
+
+const _prevGoPageCB=goPage;
+goPage=function(id,btn){
+  _prevGoPageCB(id,btn);
+  if(id==='classboard') requestAnimationFrame(()=>{try{initClassboard();}catch(e){console.warn('CB:',e);}});
+};
 </script>
 
 <!-- ════════ FOOTER ════════ -->
