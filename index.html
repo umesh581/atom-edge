@@ -1255,97 +1255,69 @@ onAuthStateChanged(auth, async user => {
       <!-- Active whiteboard UI -->
       <div id="wb-active-header" style="display:none">
 
-        <!-- Top bar: student info + action buttons -->
-        <div class="wb-topbar">
-          <div class="wb-topbar-left">
-            <div class="wb-topbar-title">
-              <span id="wb-student-badge" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:var(--cyan);border-radius:20px;padding:.2rem .75rem;font-size:.78rem;font-weight:600"></span>
-              <span id="wb-topic-badge" style="background:var(--s2);border:1px solid var(--border);color:var(--dim);border-radius:20px;padding:.2rem .75rem;font-size:.75rem"></span>
-            </div>
-            <div id="cb-session-meta" style="font-size:.72rem;color:var(--dim2);margin-top:.2rem"></div>
+        <!-- Top info bar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+            <span id="wb-student-badge" style="background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:#38bdf8;border-radius:20px;padding:.2rem .75rem;font-size:.78rem;font-weight:600"></span>
+            <span id="wb-topic-badge" style="background:#1c2235;border:1px solid #252d45;color:#8892b0;border-radius:20px;padding:.2rem .75rem;font-size:.75rem"></span>
+            <span id="cb-save-indicator" style="font-size:.72rem;color:#34d399;display:none">✓ Saved</span>
           </div>
-          <div class="wb-topbar-right">
-            <div id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none;align-items:center;gap:.3rem">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Saved
-            </div>
-            <button class="wb-action-btn" onclick="changeStudent()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              Change
-            </button>
-            <button class="wb-action-btn" onclick="clearWhiteboard()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-              Clear
-            </button>
-            <button class="wb-action-btn green" onclick="saveWhiteboardNow()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Save
-            </button>
-            <button class="wb-action-btn" onclick="showSessionHistory()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Sessions
-            </button>
+          <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap">
+            <span id="cb-session-meta" style="font-size:.72rem;color:#566080"></span>
+            <button onclick="changeStudent()" style="display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:7px;border:1px solid #252d45;background:#1c2235;color:#eef2ff;font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit">Change</button>
+            <button onclick="saveWhiteboardNow()" style="display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:7px;border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.08);color:#34d399;font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit">💾 Save</button>
+            <button onclick="showSessionHistory()" style="display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:7px;border:1px solid #252d45;background:#1c2235;color:#eef2ff;font-size:.75rem;font-weight:500;cursor:pointer;font-family:inherit">📅 Sessions</button>
           </div>
         </div>
 
         <!-- Toolbar -->
-        <div id="wb-toolbar" style="display:flex;align-items:center;gap:3px;background:#1c2235;border:1px solid #252d45;border-radius:14px;padding:6px 10px;margin-bottom:12px;overflow-x:auto;overflow-y:visible;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-wrap:nowrap">
-
-          <button class="wbt on" id="tool-pen" onclick="setTool('pen')" title="Pen" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid rgba(56,189,248,.4);background:rgba(56,189,248,.12);color:#38bdf8;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>PEN</button>
-          <button class="wbt" id="tool-marker" onclick="setTool('marker')" title="Marker" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>MARK</button>
-          <button class="wbt" id="tool-eraser" onclick="setTool('eraser')" title="Eraser" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/></svg>ERASE</button>
-          <div style="width:1px;height:24px;background:#252d45;margin:0 4px;flex-shrink:0"></div>
-          <button class="wbt" id="tool-line" onclick="setTool('line')" title="Line" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>LINE</button>
-          <button class="wbt" id="tool-rect" onclick="setTool('rect')" title="Rectangle" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>RECT</button>
-          <button class="wbt" id="tool-circle" onclick="setTool('circle')" title="Circle" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>OVAL</button>
-          <button class="wbt" id="tool-text" onclick="setTool('text')" title="Text" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>TEXT</button>
-          <div style="width:1px;height:24px;background:#252d45;margin:0 4px;flex-shrink:0"></div>
-
-          <!-- Colours -->
-          <div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
-            <div class="wbc on" style="width:20px;height:20px;border-radius:50%;background:#1a1a1a;cursor:pointer;border:2.5px solid #38bdf8;flex-shrink:0;box-shadow:0 0 0 2px rgba(56,189,248,.3)" data-color="#1a1a1a" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#e74c3c;cursor:pointer;border:2.5px solid transparent;flex-shrink:0" data-color="#e74c3c" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#2980b9;cursor:pointer;border:2.5px solid transparent;flex-shrink:0" data-color="#2980b9" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#27ae60;cursor:pointer;border:2.5px solid transparent;flex-shrink:0" data-color="#27ae60" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#f39c12;cursor:pointer;border:2.5px solid transparent;flex-shrink:0" data-color="#f39c12" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#8e44ad;cursor:pointer;border:2.5px solid transparent;flex-shrink:0" data-color="#8e44ad" onclick="setColor(this)"></div>
-            <div class="wbc" style="width:20px;height:20px;border-radius:50%;background:#ffffff;cursor:pointer;border:2.5px solid #555;flex-shrink:0" data-color="#ffffff" onclick="setColor(this)"></div>
-            <label style="width:20px;height:20px;border-radius:50%;border:2px dashed #566080;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#8892b0;position:relative;flex-shrink:0" title="Custom">
-              <input type="color" id="custom-color" value="#1a1a1a" onchange="setCustomColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%;width:100%;height:100%">
+        <div id="wb-toolbar" style="display:flex;align-items:center;gap:3px;background:#1c2235;border:1px solid #252d45;border-radius:12px;padding:6px 10px;margin-bottom:10px;overflow-x:auto;white-space:nowrap;scrollbar-width:none">
+          <button class="wbt on" id="tool-pen"    onclick="setTool('pen')"    style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid rgba(56,189,248,.4);background:rgba(56,189,248,.12);color:#38bdf8;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>PEN</button>
+          <button class="wbt"    id="tool-marker" onclick="setTool('marker')" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>MARK</button>
+          <button class="wbt"    id="tool-eraser" onclick="setTool('eraser')" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/></svg>ERASE</button>
+          <div style="width:1px;height:22px;background:#252d45;margin:0 3px;flex-shrink:0"></div>
+          <button class="wbt"    id="tool-line"   onclick="setTool('line')"   style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>LINE</button>
+          <button class="wbt"    id="tool-rect"   onclick="setTool('rect')"   style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>RECT</button>
+          <button class="wbt"    id="tool-circle" onclick="setTool('circle')" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>OVAL</button>
+          <button class="wbt"    id="tool-text"   onclick="setTool('text')"   style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>TEXT</button>
+          <div style="width:1px;height:22px;background:#252d45;margin:0 3px;flex-shrink:0"></div>
+          <div style="display:inline-flex;align-items:center;gap:4px;flex-shrink:0">
+            <div class="wbc on" data-color="#1a1a1a" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#1a1a1a;cursor:pointer;border:2.5px solid #38bdf8;flex-shrink:0"></div>
+            <div class="wbc" data-color="#e74c3c" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#e74c3c;cursor:pointer;border:2.5px solid transparent;flex-shrink:0"></div>
+            <div class="wbc" data-color="#2980b9" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#2980b9;cursor:pointer;border:2.5px solid transparent;flex-shrink:0"></div>
+            <div class="wbc" data-color="#27ae60" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#27ae60;cursor:pointer;border:2.5px solid transparent;flex-shrink:0"></div>
+            <div class="wbc" data-color="#f39c12" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#f39c12;cursor:pointer;border:2.5px solid transparent;flex-shrink:0"></div>
+            <div class="wbc" data-color="#8e44ad" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#8e44ad;cursor:pointer;border:2.5px solid transparent;flex-shrink:0"></div>
+            <div class="wbc" data-color="#ffffff" onclick="setColor(this)" style="width:20px;height:20px;border-radius:50%;background:#fff;cursor:pointer;border:2.5px solid #555;flex-shrink:0"></div>
+            <label style="width:20px;height:20px;border-radius:50%;border:2px dashed #566080;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#8892b0;position:relative;flex-shrink:0">
+              <input type="color" id="custom-color" value="#1a1a1a" onchange="setCustomColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </label>
           </div>
-          <div style="width:1px;height:24px;background:#252d45;margin:0 4px;flex-shrink:0"></div>
-
-          <!-- Size -->
-          <div style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0">
-            <div id="wb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0"></div>
-            <input type="range" id="wb-size" min="1" max="40" value="3" oninput="setBrushSize(this.value)" style="-webkit-appearance:none;appearance:none;width:80px;height:3px;border-radius:3px;background:#222a3f;outline:none;cursor:pointer;flex-shrink:0">
-            <span id="wb-size-val" style="font-family:monospace;font-size:11px;color:#38bdf8;min-width:16px">3</span>
+          <div style="width:1px;height:22px;background:#252d45;margin:0 3px;flex-shrink:0"></div>
+          <div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
+            <div id="wb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0;pointer-events:none"></div>
+            <input type="range" id="wb-size" min="1" max="40" value="3" oninput="setBrushSize(this.value)" style="-webkit-appearance:none;width:75px;height:3px;border-radius:3px;background:#252d45;outline:none;cursor:pointer;flex-shrink:0">
+            <span id="wb-size-val" style="font-family:monospace;font-size:11px;color:#38bdf8;min-width:14px;flex-shrink:0">3</span>
           </div>
-          <div style="width:1px;height:24px;background:#252d45;margin:0 4px;flex-shrink:0"></div>
-
-          <button class="wbt" onclick="wbUndo()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 6.5 13 4 18 6"/></svg>UNDO</button>
-          <button class="wbt" onclick="wbRedo()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C18.5 6.5 11 4 6 6"/></svg>REDO</button>
-          <button class="wbt" id="tool-bg" onclick="toggleBg()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>BG</button>
-          <div style="width:1px;height:24px;background:#252d45;margin:0 4px;flex-shrink:0"></div>
-          <button onclick="addWbPage()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>PAGE</button>
-          <button onclick="printClassboard()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;min-width:40px;border-radius:8px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:9px;font-weight:700;flex-shrink:0;font-family:inherit;letter-spacing:.03em"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>PRINT</button>
+          <div style="width:1px;height:22px;background:#252d45;margin:0 3px;flex-shrink:0"></div>
+          <button onclick="wbUndo()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 6.5 13 4 18 6"/></svg>UNDO</button>
+          <button onclick="wbRedo()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C18.5 6.5 11 4 6 6"/></svg>REDO</button>
+          <button id="tool-bg" onclick="toggleBg()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#8892b0;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>BG</button>
+          <button onclick="clearWhiteboard()" style="display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:5px 7px;min-width:38px;border-radius:7px;border:1.5px solid transparent;background:transparent;color:#f87171;cursor:pointer;font-size:8px;font-weight:700;flex-shrink:0;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>CLEAR</button>
         </div>
 
-        <!-- Canvas -->        <!-- Canvas -->
+        <!-- Canvas container — FIXED height, internal scroll -->
         <div id="wb-canvas-wrap" style="display:none">
-          <div style="position:relative;width:100%;">
-            <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:none;background:#fff;border-radius:8px;box-shadow:0 2px 24px rgba(0,0,0,.18)"></canvas>
-            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);display:none;z-index:5"></div>
+          <div id="wb-scroll-container" style="width:100%;height:80vh;overflow-y:auto;overflow-x:hidden;background:#e8ecf0;border-radius:10px;border:2px solid #252d45">
+            <canvas id="wb-canvas" style="display:block;background:#fff;cursor:crosshair"></canvas>
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.7rem;color:var(--dim2)">
-            <span>Scroll down to draw more · <span id="wb-page-count">1</span> page(s)</span>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.7rem;color:#566080">
             <span id="cb-last-saved"></span>
           </div>
         </div>
 
-        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:fixed;border:2px solid var(--cyan);border-radius:6px;padding:6px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:var(--font);min-width:180px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.2)">
-
+        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:fixed;border:2px solid #38bdf8;border-radius:6px;padding:6px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:inherit;min-width:180px;z-index:100">
       </div>
 
     <!-- Session history panel -->
@@ -5739,152 +5711,115 @@ goPage = function(id, btn) {
 
 
 // ════════════════════════════════════════════════════════════
-// WHITEBOARD / CLASSBOARD SYSTEM
+// WHITEBOARD — CLEAN REBUILD
+// Simple canvas, getBoundingClientRect for coords, no infinite scroll
 // ════════════════════════════════════════════════════════════
 
-let wbCanvas, wbCtx, wbDrawing=false, wbTool='pen', wbColor='#1a1a2e', wbSize=3;
-let wbCurrentStudent=null, wbCurrentTopic='';
-let wbHistory=[], wbUndoRedo=[], wbSnapshot=null;
-let wbAutoSaveTimer=null, wbBgWhite=true, wbSessionKey=null;
-let wbStartX=0, wbStartY=0;
+let wbCanvas, wbCtx;
+let wbDrawing = false;
+let wbTool = 'pen', wbColor = '#1a1a1a', wbSize = 3;
+let wbHistory = [], wbUndoStack = [];
+let wbSnapshot = null, wbStartX = 0, wbStartY = 0;
+let wbBgWhite = true, wbAutoSaveTimer = null;
+let wbCurrentStudent = null, wbCurrentTopic = '';
+let wbSessionKey = null;
 
+// ── Init classboard page ──────────────────────────────────────
 function initClassboard() {
   const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
   document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
   document.getElementById('classboard-student-view').style.display = isAdmin ? 'none' : 'block';
-  if (isAdmin) { loadStudentsIntoDropdown(); }
-  else { loadStudentSessions(); }
+  if (isAdmin) loadStudentsIntoDropdown();
+  else loadStudentSessions();
 }
 
 async function loadStudentsIntoDropdown() {
   const sel = document.getElementById('wb-student-select');
   if (!sel) return;
-  sel.innerHTML = '<option value="">— Loading students… —</option>';
+  sel.innerHTML = '<option value="">— Loading… —</option>';
   try {
     const students = await window.loadAllStudents();
     sel.innerHTML = '<option value="">— Select student —</option>';
     students.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.uid;
-      opt.textContent = s.name || s.email;
-      sel.appendChild(opt);
+      const o = document.createElement('option');
+      o.value = s.uid; o.textContent = s.name || s.email;
+      sel.appendChild(o);
     });
-  } catch(e) {
-    sel.innerHTML = '<option value="">— Could not load students —</option>';
-  }
+  } catch(e) { sel.innerHTML = '<option value="">— Error loading —</option>'; }
 }
 
 function startStudentSession() {
-  const sel    = document.getElementById('wb-student-select');
-  const errEl  = document.getElementById('wb-selector-err');
-  const topic  = document.getElementById('wb-topic-input').value.trim();
+  const sel   = document.getElementById('wb-student-select');
+  const errEl = document.getElementById('wb-selector-err');
+  const topic = document.getElementById('wb-topic-input').value.trim();
   if (!sel || !sel.value) {
     if (errEl) { errEl.style.display='block'; setTimeout(()=>errEl.style.display='none',2500); }
     return;
   }
-  const studentName = sel.options[sel.selectedIndex].text;
-  wbCurrentStudent = { uid: sel.value, name: studentName };
+  wbCurrentStudent = { uid: sel.value, name: sel.options[sel.selectedIndex].text };
   wbCurrentTopic   = topic || 'General';
+  wbSessionKey     = wbCurrentStudent.name.replace(/\s+/g,'-') + '_' + new Date().toISOString().split('T')[0];
 
-  // Hide selector, show canvas
   document.getElementById('wb-student-selector').style.display = 'none';
   document.getElementById('wb-active-header').style.display    = 'block';
   document.getElementById('wb-canvas-wrap').style.display      = 'block';
 
-  // Update meta
-  const today = new Date().toISOString().split('T')[0];
-  wbSessionKey  = studentName.replace(/\s+/g,'-') + '_' + today;
-  const meta = document.getElementById('cb-session-meta');
-  if (meta) meta.textContent = 'Auto-saves every 10s · ' + formatDate(wbSessionKey.split('_')[1]||wbSessionKey);
-  const sb = document.getElementById('wb-student-badge');
-  if (sb) sb.textContent = '👤 ' + studentName;
-  const tb = document.getElementById('wb-topic-badge');
-  if (tb) tb.textContent = wbCurrentTopic || 'General';
+  const sb = document.getElementById('wb-student-badge'); if(sb) sb.textContent = '👤 '+wbCurrentStudent.name;
+  const tb = document.getElementById('wb-topic-badge');   if(tb) tb.textContent = wbCurrentTopic;
+  const mt = document.getElementById('cb-session-meta');  if(mt) mt.textContent = 'Auto-saves every 10s · '+formatDate(new Date().toISOString().split('T')[0]);
 
   initWhiteboard();
-  // Always start with a clean canvas — teacher can restore via Sessions button
 }
 
 function changeStudent() {
-  // Save current board first then go back to selector
-  saveWhiteboardNow().then(() => {
-    document.getElementById('wb-student-selector').style.display = 'block';
-    document.getElementById('wb-active-header').style.display    = 'none';
-    document.getElementById('wb-toolbar').style.display          = 'none';
-    document.getElementById('wb-canvas-wrap').style.display      = 'none';
-    document.getElementById('cb-last-saved').style.display       = 'none';
-    wbCurrentStudent = null; wbCurrentTopic = '';
-    if (wbAutoSaveTimer) { clearInterval(wbAutoSaveTimer); wbAutoSaveTimer = null; }
-  });
+  saveWhiteboardNow();
+  document.getElementById('wb-student-selector').style.display = 'block';
+  document.getElementById('wb-active-header').style.display    = 'none';
+  document.getElementById('wb-canvas-wrap').style.display      = 'none';
+  wbCurrentStudent = null;
+  if (wbAutoSaveTimer) { clearInterval(wbAutoSaveTimer); wbAutoSaveTimer = null; }
 }
 
-// A4 dimensions at 96dpi: 794 x 1123 px
-const A4_W = 992;   // A4 at 120dpi — sharper drawing, prints cleanly
-const A4_H = 1403;  // A4 height at 120dpi (√2 ratio)
-let wbPages = 1;
-
+// ── Canvas init ───────────────────────────────────────────────
 function initWhiteboard() {
   wbCanvas = document.getElementById('wb-canvas');
-  if (!wbCanvas || wbCanvas.dataset.init) return;
-  wbCanvas.dataset.init = '1';
+  if (!wbCanvas) return;
+
+  // Size canvas to match container width, A4 ratio height
+  const sc = document.getElementById('wb-scroll-container');
+  const W  = sc ? sc.clientWidth - 4 : 800;
+  const H  = Math.round(W * 1.4142);  // A4 ratio
+
+  wbCanvas.width  = W;
+  wbCanvas.height = H;
+  wbCanvas.style.width  = W + 'px';
+  wbCanvas.style.height = H + 'px';
+
   wbCtx = wbCanvas.getContext('2d');
+  wbCtx.fillStyle = '#ffffff';
+  wbCtx.fillRect(0, 0, W, H);
 
-  // Set canvas to A4 dimensions
-  // CSS width:100% + height:auto makes it scale proportionally
-  wbPages = 1;
-  wbCanvas.width  = A4_W;
-  wbCanvas.height = A4_H;
+  wbHistory  = [wbCanvas.toDataURL()];
+  wbUndoStack = [];
 
-  fillBackground();
-  drawPageGuides();
-  wbHistory = [wbCanvas.toDataURL()];
-
-  // Mouse events
+  // Event listeners
   wbCanvas.addEventListener('mousedown',  wbDown);
   wbCanvas.addEventListener('mousemove',  wbMove);
   wbCanvas.addEventListener('mouseup',    wbUp);
-  wbCanvas.addEventListener('mouseleave', e => {
-    wbUp(e);
-    const dot = document.getElementById('wb-cursor');
-    if (dot) dot.style.display = 'none';
-  });
-
-  // Touch events — allow vertical scroll on canvas but capture draw gestures
-  wbCanvas.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) { e.preventDefault(); wbDown(wbT(e)); }
-  }, {passive:false});
-  wbCanvas.addEventListener('touchmove', e => {
-    if (e.touches.length === 1 && wbDrawing) { e.preventDefault(); wbMove(wbT(e)); }
-  }, {passive:false});
-  wbCanvas.addEventListener('touchend', e => {
-    if (wbDrawing) { e.preventDefault(); wbUp(wbT(e)); }
-  }, {passive:false});
-
-  // Auto-expand canvas when drawing near bottom
-  wbCanvas.addEventListener('mousemove', checkAutoExpand);
+  wbCanvas.addEventListener('mouseleave', wbUp);
+  wbCanvas.addEventListener('touchstart', e => { e.preventDefault(); wbDown(wbTouch(e)); }, {passive:false});
+  wbCanvas.addEventListener('touchmove',  e => { e.preventDefault(); wbMove(wbTouch(e)); }, {passive:false});
+  wbCanvas.addEventListener('touchend',   e => { e.preventDefault(); wbUp();             }, {passive:false});
 
   const ti = document.getElementById('wb-text-input');
   if (ti) ti.addEventListener('keydown', e => {
-    if (e.key==='Enter') { commitText(); e.preventDefault(); }
-    if (e.key==='Escape') { ti.style.display='none'; }
+    if (e.key === 'Enter') { commitText(); e.preventDefault(); }
+    if (e.key === 'Escape') ti.style.display = 'none';
   });
 
   if (wbAutoSaveTimer) clearInterval(wbAutoSaveTimer);
   wbAutoSaveTimer = setInterval(saveWhiteboardNow, 10000);
 
-  // Force canvas to display at correct A4 height
-  const enforceA4Height = () => {
-    if (!wbCanvas) return;
-    const w = wbCanvas.getBoundingClientRect().width;
-    if (w > 0) {
-      const h = Math.round(w * A4_H / A4_W) * wbPages;
-      wbCanvas.style.height = h + 'px';
-    }
-  };
-  enforceA4Height();
-  window.addEventListener('resize', enforceA4Height);
-
-  // Keyboard shortcuts
   document.addEventListener('keydown', e => {
     if (!wbCurrentStudent) return;
     if ((e.ctrlKey||e.metaKey) && e.key==='z') { e.preventDefault(); wbUndo(); }
@@ -5893,228 +5828,170 @@ function initWhiteboard() {
   });
 }
 
-function drawPageGuides() {
-  if (!wbCtx) return;
-  // Draw subtle dashed lines at each A4 page break
-  wbCtx.save();
-  wbCtx.setLineDash([8, 6]);
-  wbCtx.strokeStyle = 'rgba(56,189,248,0.25)';
-  wbCtx.lineWidth = 1.5;
-  for (let p = 1; p < wbPages; p++) {
-    const y = A4_H * p;
-    wbCtx.beginPath();
-    wbCtx.moveTo(0, y);
-    wbCtx.lineTo(wbCanvas.width, y);
-    wbCtx.stroke();
-    // Page number label
-    wbCtx.setLineDash([]);
-    wbCtx.font = '11px monospace';
-    wbCtx.fillStyle = 'rgba(56,189,248,0.4)';
-    wbCtx.fillText('Page ' + (p+1), wbCanvas.width - 60, y + 14);
-    wbCtx.setLineDash([8, 6]);
-  }
-  wbCtx.restore();
-  // Update page count display
-  const pc = document.getElementById('wb-page-count');
-  if (pc) pc.textContent = wbPages;
-}
-
-function checkAutoExpand(e) {
-  if (!wbDrawing) return;
-  const pos = wbPos(e);
-  // If drawing within 150px of bottom, add a new page
-  if (pos.y > wbCanvas.height - 150) addWbPage();
-}
-
-function addWbPage() {
-  if (!wbCanvas || !wbCtx) return;
-  // Save current content
-  const img = new Image();
-  const data = wbCanvas.toDataURL();
-  wbPages++;
-  const oldH = wbCanvas.height;
-  wbCanvas.height = A4_H * wbPages;
-  // Restore content
-  img.onload = () => {
-    wbCtx.drawImage(img, 0, 0);
-    // Fill new page with white
-    wbCtx.fillStyle = '#ffffff';
-    wbCtx.fillRect(0, oldH, wbCanvas.width, A4_H);
-    drawPageGuides();
-    wbHistory.push(wbCanvas.toDataURL());
-    // Scroll to new page
-    const sc = document.getElementById('wb-scroll-container');
-    if (sc) sc.scrollTop = oldH * (sc.clientWidth / A4_W);
-  };
-  img.src = data;
-  const pc = document.getElementById('wb-page-count');
-  if (pc) pc.textContent = wbPages;
-  // Update displayed height
-  if (wbCanvas) {
-    const w = wbCanvas.getBoundingClientRect().width;
-    if (w > 0) wbCanvas.style.height = Math.round(w * A4_H / A4_W * wbPages) + 'px';
-  }
-  toast('📄 Page ' + wbPages + ' added');
-}
-
-function printClassboard() {
-  if (!wbCanvas) return;
-  const win = window.open('', '_blank');
-  const printDiv = document.createElement('div');
-  printDiv.id = 'wb-print-area';
-
-  // Split canvas into A4 pages and create one image per page
-  const totalPages = Math.ceil(wbCanvas.height / A4_H);
-  const pageImgs = [];
-
-  for (let p = 0; p < totalPages; p++) {
-    const pc = document.createElement('canvas');
-    pc.width  = A4_W;
-    pc.height = A4_H;
-    const pCtx = pc.getContext('2d');
-    pCtx.fillStyle = '#ffffff';
-    pCtx.fillRect(0, 0, A4_W, A4_H);
-    pCtx.drawImage(wbCanvas, 0, p * A4_H, A4_W, A4_H, 0, 0, A4_W, A4_H);
-    pageImgs.push(pc.toDataURL('image/jpeg', 0.95));
-  }
-
-  const studentName = wbCurrentStudent ? wbCurrentStudent.name : 'Student';
-  const topic = wbCurrentTopic || 'Class Notes';
-  const date  = formatDate(new Date().toISOString().split('T')[0]);
-
-  win.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8">
-    <title>Classboard — ${studentName}</title>
-    <style>
-      * { margin:0; padding:0; box-sizing:border-box; }
-      body { background:#fff; font-family:Arial,sans-serif; }
-      .page { width:210mm; height:297mm; position:relative; page-break-after:always; overflow:hidden; }
-      .page:last-child { page-break-after:auto; }
-      .page-header { display:flex; justify-content:space-between; align-items:center;
-        padding:6px 12px; border-bottom:1.5px solid #ddd; margin-bottom:4px; }
-      .page-header-left { font-size:9pt; font-weight:bold; color:#333; }
-      .page-header-right { font-size:8pt; color:#888; }
-      .page-img { width:100%; height:calc(297mm - 32px); object-fit:contain; object-position:top; }
-      @media print {
-        @page { size: A4; margin: 0; }
-        body { width:210mm; }
-      }
-    
-/* ══ WHITEBOARD CANVAS SIZING ══ */
-#wb-canvas-wrap { width: 100%; }
-#wb-scroll-container { width: 100%; max-height: 88vh; }
-#wb-canvas { display: block; width: 100% !important; }
-</style>
-  </head><body>`);
-
-  pageImgs.forEach((src, i) => {
-    win.document.write(`
-      <div class="page">
-        <div class="page-header">
-          <div class="page-header-left">⚗️ Atom Edge Classboard &nbsp;·&nbsp; ${studentName} &nbsp;·&nbsp; ${topic}</div>
-          <div class="page-header-right">${date} &nbsp;·&nbsp; Page ${i+1} of ${pageImgs.length}</div>
-        </div>
-        <img class="page-img" src="${src}">
-      </div>`);
-  });
-
-  win.document.write('</body></html>');
-  win.document.close();
-  setTimeout(() => win.print(), 800);
-}
-
-function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
+// ── THE KEY FUNCTION — correct coordinates ────────────────────
+// Canvas is pixel-perfect: width/height set to exact pixel values
+// offsetX/offsetY give coords directly in canvas pixels — no scaling needed
 function wbPos(e) {
-  const r = wbCanvas.getBoundingClientRect();
-  // Scale from CSS pixels to canvas pixels
-  // Canvas internal size: A4_W x (A4_H * wbPages)
-  // Displayed size: r.width x r.height
-  const sx = wbCanvas.width  / r.width;
-  const sy = wbCanvas.height / r.height;
-  const x = (e.clientX - r.left) * sx;
-  const y = (e.clientY - r.top)  * sy;
-  return { x: Math.round(x), y: Math.round(y) };
-}
-function fillBackground() {
-  if(!wbCtx)return;
-  wbCtx.fillStyle = wbBgWhite ? '#ffffff' : '#1a1a2e';
-  wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
-  drawPageGuides();
+  return {
+    x: Math.round(e.offsetX),
+    y: Math.round(e.offsetY)
+  };
 }
 
+function wbTouch(e) {
+  const t = e.touches[0] || e.changedTouches[0];
+  const r = wbCanvas.getBoundingClientRect();
+  return { offsetX: t.clientX - r.left, offsetY: t.clientY - r.top };
+}
+
+// ── Drawing ───────────────────────────────────────────────────
 function wbDown(e) {
-  const p=wbPos(e); wbStartX=p.x; wbStartY=p.y;
-  if (wbTool==='text') { placeTextInput(p.x,p.y); return; }
-  wbDrawing=true;
-  wbSnapshot=wbCtx.getImageData(0,0,wbCanvas.width,wbCanvas.height);
-  if(['pen','marker','eraser'].includes(wbTool)) { wbCtx.beginPath(); wbCtx.moveTo(p.x,p.y); }
-}
-function wbMove(e) {
-  // Show cursor preview dot
   const p = wbPos(e);
-  if (!wbDrawing) { showCursorDot(p.x, p.y); return; }
-  applyTool(p.x, p.y, false);
-}
-function wbUp(e) {
-  if(!wbDrawing)return; wbDrawing=false;
-  const p=wbPos(e); applyTool(p.x,p.y,true);
-  wbUndoRedo=[]; wbHistory.push(wbCanvas.toDataURL());
-  if(wbHistory.length>50)wbHistory.shift();
-}
-
-function showCursorDot(cx, cy) {
-  const dot = document.getElementById('wb-cursor');
-  if (!dot || !wbCanvas) return;
-  const r = wbCanvas.getBoundingClientRect();
-  const scale = r.width / wbCanvas.width;
-  const sz = Math.max(6, wbSize * scale * 2);
-  const screenX = cx * scale;
-  const screenY = cy * scale;
-  dot.style.display = 'block';
-  dot.style.width  = sz + 'px';
-  dot.style.height = sz + 'px';
-  dot.style.left   = screenX + 'px';
-  dot.style.top    = screenY + 'px';
-  dot.style.background = wbTool === 'eraser'
-    ? 'rgba(255,255,255,0.8)'
-    : wbColor + '55';
-  dot.style.borderColor = wbTool === 'eraser' ? '#aaa' : wbColor;
-}
-
-function applyTool(x,y,end) {
-  wbCtx.lineCap='round'; wbCtx.lineJoin='round'; wbCtx.globalAlpha=1;
-  if(wbTool==='pen'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
-  else if(wbTool==='marker'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize*3; wbCtx.globalAlpha=0.4; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
-  else if(wbTool==='eraser'){ wbCtx.globalCompositeOperation='source-over'; wbCtx.strokeStyle='#ffffff'; wbCtx.lineWidth=wbSize*4; wbCtx.lineTo(x,y); wbCtx.stroke(); wbCtx.beginPath(); wbCtx.moveTo(x,y); }
-  else if(end) {
-    wbCtx.globalCompositeOperation='source-over'; wbCtx.globalAlpha=1;
-    wbCtx.putImageData(wbSnapshot,0,0);
-    wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.beginPath();
-    if(wbTool==='line'){wbCtx.moveTo(wbStartX,wbStartY);wbCtx.lineTo(x,y);}
-    else if(wbTool==='rect'){wbCtx.rect(wbStartX,wbStartY,x-wbStartX,y-wbStartY);}
-    else if(wbTool==='circle'){const rx=(x-wbStartX)/2,ry=(y-wbStartY)/2;wbCtx.ellipse(wbStartX+rx,wbStartY+ry,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);}
-    wbCtx.stroke();
-  } else if(!['pen','marker','eraser'].includes(wbTool)) {
-    wbCtx.putImageData(wbSnapshot,0,0);
-    wbCtx.globalAlpha=0.55; wbCtx.strokeStyle=wbColor; wbCtx.lineWidth=wbSize; wbCtx.beginPath();
-    if(wbTool==='line'){wbCtx.moveTo(wbStartX,wbStartY);wbCtx.lineTo(x,y);}
-    else if(wbTool==='rect'){wbCtx.rect(wbStartX,wbStartY,x-wbStartX,y-wbStartY);}
-    else if(wbTool==='circle'){const rx=(x-wbStartX)/2,ry=(y-wbStartY)/2;wbCtx.ellipse(wbStartX+rx,wbStartY+ry,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);}
-    wbCtx.stroke(); wbCtx.globalAlpha=1;
+  wbStartX = p.x; wbStartY = p.y;
+  if (wbTool === 'text') { placeTextInput(p.x, p.y); return; }
+  wbDrawing  = true;
+  wbSnapshot = wbCtx.getImageData(0, 0, wbCanvas.width, wbCanvas.height);
+  wbCtx.lineCap = 'round'; wbCtx.lineJoin = 'round';
+  if (['pen','marker','eraser'].includes(wbTool)) {
+    wbCtx.beginPath();
+    wbCtx.moveTo(p.x, p.y);
   }
 }
 
-function placeTextInput(x,y) {
-  const ti=document.getElementById('wb-text-input'); if(!ti)return;
-  const r=wbCanvas.getBoundingClientRect();
-  const scale=r.width/wbCanvas.width;
-  // Position input at screen coordinates (not canvas coordinates)
-  ti.style.display='block';
-  ti.style.left=(r.left + x * scale)+'px';
-  ti.style.top =(r.top  + x * scale * (y/x||0))+'px'; // approximate screen y
-  ti.style.top =(r.top  + y * scale)+'px';
-  ti.style.fontSize=(wbSize*4+12)+'px'; ti.dataset.x=x; ti.dataset.y=y; ti.value=''; ti.focus();
+function wbMove(e) {
+  if (!wbDrawing) return;
+  const p = wbPos(e);
+  draw(p.x, p.y, false);
 }
+
+function wbUp() {
+  if (!wbDrawing) return;
+  wbDrawing = false;
+  wbUndoStack = [];
+  wbHistory.push(wbCanvas.toDataURL());
+  if (wbHistory.length > 60) wbHistory.shift();
+}
+
+function draw(x, y, isPreview) {
+  wbCtx.lineCap  = 'round';
+  wbCtx.lineJoin = 'round';
+  wbCtx.globalAlpha = 1;
+
+  if (wbTool === 'pen') {
+    wbCtx.globalCompositeOperation = 'source-over';
+    wbCtx.strokeStyle = wbColor;
+    wbCtx.lineWidth   = wbSize;
+    wbCtx.lineTo(x, y); wbCtx.stroke();
+    wbCtx.beginPath(); wbCtx.moveTo(x, y);
+
+  } else if (wbTool === 'marker') {
+    wbCtx.globalCompositeOperation = 'source-over';
+    wbCtx.strokeStyle = wbColor;
+    wbCtx.lineWidth   = wbSize * 4;
+    wbCtx.globalAlpha = 0.35;
+    wbCtx.lineTo(x, y); wbCtx.stroke();
+    wbCtx.beginPath(); wbCtx.moveTo(x, y);
+
+  } else if (wbTool === 'eraser') {
+    wbCtx.globalCompositeOperation = 'source-over';
+    wbCtx.strokeStyle = wbBgWhite ? '#ffffff' : '#1a1a2e';
+    wbCtx.lineWidth   = wbSize * 5;
+    wbCtx.lineTo(x, y); wbCtx.stroke();
+    wbCtx.beginPath(); wbCtx.moveTo(x, y);
+
+  } else {
+    // Shape tools: restore snapshot then draw
+    wbCtx.globalCompositeOperation = 'source-over';
+    wbCtx.putImageData(wbSnapshot, 0, 0);
+    wbCtx.globalAlpha = isPreview ? 0.6 : 1;
+    wbCtx.strokeStyle = wbColor;
+    wbCtx.lineWidth   = wbSize;
+    wbCtx.beginPath();
+    if (wbTool === 'line') {
+      wbCtx.moveTo(wbStartX, wbStartY); wbCtx.lineTo(x, y);
+    } else if (wbTool === 'rect') {
+      wbCtx.rect(wbStartX, wbStartY, x - wbStartX, y - wbStartY);
+    } else if (wbTool === 'circle') {
+      const rx = (x - wbStartX) / 2, ry = (y - wbStartY) / 2;
+      wbCtx.ellipse(wbStartX + rx, wbStartY + ry, Math.abs(rx), Math.abs(ry), 0, 0, Math.PI * 2);
+    }
+    wbCtx.stroke();
+    wbCtx.globalAlpha = 1;
+  }
+}
+
+// ── Tools ─────────────────────────────────────────────────────
+function setTool(t) {
+  wbTool = t;
+  document.querySelectorAll('.wbt').forEach(b => {
+    b.style.background   = 'transparent';
+    b.style.borderColor  = 'transparent';
+    b.style.color        = '#8892b0';
+  });
+  const btn = document.getElementById('tool-' + t);
+  if (btn) { btn.style.background='rgba(56,189,248,.12)'; btn.style.borderColor='rgba(56,189,248,.4)'; btn.style.color='#38bdf8'; }
+  if (wbCanvas) wbCanvas.style.cursor = t === 'eraser' ? 'cell' : t === 'text' ? 'text' : 'crosshair';
+}
+
+function setColor(el) {
+  wbColor = el.dataset.color;
+  document.querySelectorAll('.wbc').forEach(b => { b.style.borderColor = 'transparent'; b.style.transform = 'scale(1)'; });
+  el.style.borderColor = '#38bdf8'; el.style.transform = 'scale(1.15)';
+  const dot = document.getElementById('wb-dot'); if(dot) dot.style.background = wbColor;
+  const cc  = document.getElementById('custom-color'); if(cc) cc.value = wbColor;
+}
+
+function setCustomColor(v) {
+  wbColor = v;
+  document.querySelectorAll('.wbc').forEach(b => { b.style.borderColor='transparent'; b.style.transform='scale(1)'; });
+  const dot = document.getElementById('wb-dot'); if(dot) dot.style.background = v;
+}
+
+function setBrushSize(v) {
+  wbSize = +v;
+  const el = document.getElementById('wb-size-val'); if(el) el.textContent = v;
+  const sz = Math.max(4, Math.min(20, +v));
+  const dot = document.getElementById('wb-dot');
+  if(dot) { dot.style.width=sz+'px'; dot.style.height=sz+'px'; dot.style.background=wbColor; }
+}
+
+function toggleBg() {
+  wbBgWhite = !wbBgWhite;
+  const btn = document.getElementById('tool-bg');
+  if(btn) { btn.style.background=wbBgWhite?'transparent':'rgba(56,189,248,.12)'; btn.style.borderColor=wbBgWhite?'transparent':'rgba(56,189,248,.4)'; btn.style.color=wbBgWhite?'#8892b0':'#38bdf8'; }
+  if(wbCtx) { wbCtx.fillStyle=wbBgWhite?'#ffffff':'#1a1a2e'; wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height); }
+}
+
+function wbUndo() {
+  if(wbHistory.length<=1)return;
+  wbUndoStack.push(wbHistory.pop());
+  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=wbHistory[wbHistory.length-1];
+}
+
+function wbRedo() {
+  if(!wbUndoStack.length)return;
+  const d=wbUndoStack.pop(); wbHistory.push(d);
+  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=d;
+}
+
+function clearWhiteboard() {
+  if(!confirm('Clear the whiteboard and sync to database? This cannot be undone.'))return;
+  wbCtx.fillStyle='#ffffff'; wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
+  wbHistory=[wbCanvas.toDataURL()]; wbUndoStack=[];
+  saveWhiteboardNow().then(()=>toast('🗑 Canvas cleared and saved'));
+}
+
+// ── Text tool ─────────────────────────────────────────────────
+function placeTextInput(x, y) {
+  const ti = document.getElementById('wb-text-input'); if(!ti)return;
+  const r  = wbCanvas.getBoundingClientRect();
+  ti.style.display = 'block';
+  ti.style.left    = (r.left + x) + 'px';
+  ti.style.top     = (r.top  + y) + 'px';
+  ti.style.fontSize = (wbSize * 4 + 12) + 'px';
+  ti.dataset.x = x; ti.dataset.y = y; ti.value = ''; ti.focus();
+}
+
 function commitText() {
   const ti=document.getElementById('wb-text-input'); if(!ti||!ti.value.trim()){if(ti)ti.style.display='none';return;}
   wbCtx.font=`${wbSize*4+12}px Poppins,sans-serif`; wbCtx.fillStyle=wbColor; wbCtx.globalAlpha=1;
@@ -6122,188 +5999,63 @@ function commitText() {
   wbHistory.push(wbCanvas.toDataURL());
 }
 
-function setTool(tool) {
-  wbTool=tool;
-  // Reset all tool buttons
-  document.querySelectorAll('.wbt').forEach(b=>{
-    b.style.background='transparent';
-    b.style.borderColor='transparent';
-    b.style.color='#8892b0';
-  });
-  // Highlight active
-  const btn=document.getElementById('tool-'+tool);
-  if(btn){
-    btn.style.background='rgba(56,189,248,.12)';
-    btn.style.borderColor='rgba(56,189,248,.4)';
-    btn.style.color='#38bdf8';
-  }
-  if(wbCanvas)wbCanvas.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'none';
-}
-function setColor(el) {
-  wbColor=el.dataset.color;
-  document.querySelectorAll('.wbc').forEach(b=>{
-    b.style.borderColor='transparent';
-    b.style.transform='scale(1)';
-    b.style.boxShadow='none';
-  });
-  el.style.borderColor='#38bdf8';
-  el.style.transform='scale(1.15)';
-  el.style.boxShadow='0 0 0 2px rgba(56,189,248,.3)';
-  const cc=document.getElementById('custom-color'); if(cc)cc.value=wbColor;
-  const dot=document.getElementById('wb-dot');
-  if(dot){dot.style.background=wbColor;}
-}
-function setCustomColor(val) {
-  wbColor=val;
-  document.querySelectorAll('.wbc').forEach(b=>b.classList.remove('on'));
-  const dot=document.getElementById('wb-dot');
-  if(dot){dot.style.background=val;}
-}
-function setBrushSize(val) {
-  wbSize=+val;
-  const el=document.getElementById('wb-size-val'); if(el)el.textContent=val;
-  const dot=document.getElementById('wb-dot');
-  if(dot){const sz=Math.min(18,Math.max(3,+val));dot.style.width=sz+'px';dot.style.height=sz+'px';dot.style.background=wbColor;}
-}
-function toggleBg() { wbBgWhite=!wbBgWhite; const btn=document.getElementById('tool-bg'); if(btn)btn.classList.toggle('on',!wbBgWhite); fillBackground(); drawPageGuides(); }
-function wbUndo() {
-  if(wbHistory.length<=1)return; wbUndoRedo.push(wbHistory.pop());
-  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=wbHistory[wbHistory.length-1];
-}
-function wbRedo() {
-  if(!wbUndoRedo.length)return; const data=wbUndoRedo.pop(); wbHistory.push(data);
-  const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=data;
-}
-function clearWhiteboard() {
-  if (!confirm('Clear the whiteboard and sync to database? This cannot be undone.')) return;
-  // Reset canvas to single blank page
-  wbPages = 1;
-  wbCanvas.width  = A4_W;
-  wbCanvas.height = A4_H;
-  wbCtx.fillStyle = wbBgWhite ? '#ffffff' : '#1a1a2e';
-  wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
-  drawPageGuides();
-  wbHistory  = [wbCanvas.toDataURL()];
-  wbUndoRedo = [];
-  const pc = document.getElementById('wb-page-count');
-  if (pc) pc.textContent = 1;
-  const sc = document.getElementById('wb-scroll-container');
-  if (sc) sc.scrollTop = 0;
-  // Save blank canvas to Firebase immediately
-  saveWhiteboardNow().then(() => {
-    toast('🗑 Canvas cleared and saved');
-  });
-}
-
+// ── Firebase save / load ──────────────────────────────────────
 async function saveWhiteboardNow() {
   if(!wbCanvas||!window.FB||!window._fbUser||!wbCurrentStudent)return;
   const{db,doc,setDoc,serverTimestamp}=window.FB;
-  const dataURL=wbCanvas.toDataURL('image/jpeg',0.65);
-  const key=wbSessionKey||new Date().toISOString().split('T')[0];
+  const dataURL=wbCanvas.toDataURL('image/jpeg',0.85);
   const today=new Date().toISOString().split('T')[0];
   try {
-    await setDoc(doc(db,'whiteboards',key),{
-      date:today, key,
-      dataURL,
+    await setDoc(doc(db,'whiteboards',wbSessionKey),{
+      date:today,key:wbSessionKey,dataURL,
       savedBy:window._fbUser.email,
       studentUid:wbCurrentStudent.uid,
       studentName:wbCurrentStudent.name,
       topic:wbCurrentTopic||'General',
       updatedAt:serverTimestamp(),
-      label:formatDate(today) + (wbCurrentTopic ? ' · '+wbCurrentTopic : '')
+      label:formatDate(today)+(wbCurrentTopic?' · '+wbCurrentTopic:'')
     });
-    const ind=document.getElementById('cb-save-indicator'); if(ind){ind.style.display='inline';setTimeout(()=>ind.style.display='none',2000);}
-    const ls=document.getElementById('cb-last-saved'); if(ls)ls.textContent='Last saved: '+new Date().toLocaleTimeString();
+    const ind=document.getElementById('cb-save-indicator');
+    if(ind){ind.style.display='inline';setTimeout(()=>ind.style.display='none',2000);}
+    const ls=document.getElementById('cb-last-saved');
+    if(ls)ls.textContent='Last saved: '+new Date().toLocaleTimeString();
   } catch(e){console.warn('WB save:',e);}
-}
-
-async function loadTodaySession() {
-  if(!window.FB||!window._fbUser||!wbSessionKey)return;
-  const{db,doc,getDoc}=window.FB;
-  // Start with clean fresh canvas
-  wbPages = 1;
-  wbCanvas.width  = A4_W;
-  wbCanvas.height = A4_H;
-  wbCtx.fillStyle = '#ffffff';
-  wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
-  drawPageGuides();
-  wbHistory = [wbCanvas.toDataURL()];
-  const pc=document.getElementById('wb-page-count'); if(pc)pc.textContent=1;
-  // Enforce correct display height
-  const rr = wbCanvas.getBoundingClientRect();
-  if (rr.width > 0) wbCanvas.style.height = Math.round(rr.width * A4_H / A4_W) + 'px';
-  try {
-    const snap=await getDoc(doc(db,'whiteboards',wbSessionKey));
-    if(snap.exists()){
-      const data = snap.data();
-      const img  = new Image();
-      img.onload = () => {
-        if(!wbCanvas||!wbCtx) return;
-        // Restore saved content
-        wbCtx.fillStyle = '#ffffff';
-        wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
-        wbCtx.drawImage(img, 0, 0, wbCanvas.width, wbCanvas.height);
-        drawPageGuides();
-        wbHistory = [wbCanvas.toDataURL()];
-        const ls=document.getElementById('cb-last-saved');
-        if(ls){ls.style.display='block';ls.textContent='Restored: '+formatDate(data.date);}
-        toast('Session restored for '+wbCurrentStudent.name);
-      };
-      img.src = data.dataURL;
-    } else {
-      const ls=document.getElementById('cb-last-saved');
-      if(ls){ls.style.display='block';ls.textContent='New session started';}
-    }
-  } catch(e){console.warn('WB load:',e);}
-}
-
-async function loadSessionHistory() {
-  if(!window.FB)return;
-  const{db,collection,getDocs}=window.FB;
-  const wrap=document.getElementById('session-history-list');
-  if(wrap)wrap.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading sessions…</div>';
-  try {
-    const snap=await getDocs(collection(db,'whiteboards'));
-    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>{
-      if(b.date!==a.date)return b.date.localeCompare(a.date);
-      return (b.studentName||'').localeCompare(a.studentName||'');
-    });
-    if(!sessions.length&&wrap){wrap.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions saved yet</div></div>';return;}
-    renderSessionHistory(sessions,'session-history-list',true);
-  } catch(e){console.warn('WB history:',e);}
 }
 
 async function loadStudentSessions() {
   const list=document.getElementById('classboard-sessions-list'); if(!list)return;
   if(!window.FB||!window._fbUser){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">🔌</div><div class="cb-empty-text">Not connected</div></div>';return;}
-  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading your sessions…</div>';
-  const{db,collection,getDocs,query,where}=window.FB;
+  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading…</div>';
+  const{db,collection,getDocs}=window.FB;
   try {
     const snap=await getDocs(collection(db,'whiteboards'));
-    // Filter to only this student's sessions
     const myUid=window._fbUser.uid;
-    const sessions=snap.docs.map(d=>d.data())
-      .filter(s=>s.studentUid===myUid)
-      .sort((a,b)=>b.date.localeCompare(a.date));
-    if(!sessions.length){
-      list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions yet</div><div class="cb-empty-sub">Your whiteboard sessions from class will appear here. Each session is saved by date.</div></div>';
-      return;
-    }
+    const sessions=snap.docs.map(d=>d.data()).filter(s=>s.studentUid===myUid).sort((a,b)=>b.date.localeCompare(a.date));
+    if(!sessions.length){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions yet</div><div class="cb-empty-sub">Your whiteboard sessions will appear here after class.</div></div>';return;}
     renderSessionHistory(sessions,'classboard-sessions-list',false);
   } catch(e){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">⚠️</div><div class="cb-empty-text">Could not load sessions</div></div>';}
+}
+
+async function loadSessionHistory() {
+  const wrap=document.getElementById('session-history-list');
+  if(wrap)wrap.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading…</div>';
+  if(!window.FB)return;
+  const{db,collection,getDocs}=window.FB;
+  try {
+    const snap=await getDocs(collection(db,'whiteboards'));
+    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>b.date.localeCompare(a.date)||( (a.studentName||'').localeCompare(b.studentName||'')));
+    if(!sessions.length&&wrap){wrap.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions saved yet</div></div>';return;}
+    renderSessionHistory(sessions,'session-history-list',true);
+  } catch(e){console.warn('WB history:',e);}
 }
 
 function renderSessionHistory(sessions,containerId,isAdmin) {
   const wrap=document.getElementById(containerId); if(!wrap)return;
   wrap.innerHTML='';
   sessions.forEach(s=>{
+    const key=s.key||s.date;
     const card=document.createElement('div'); card.className='cb-session-card';
-    card.innerHTML=`<div><div class="cb-session-date">${s.label||formatDate(s.date)}</div><div class="cb-session-time">${s.date}</div></div>
-      <div style="display:flex;gap:.5rem;align-items:center">
-        <img class="cb-session-preview" src="${s.dataURL}" alt="preview">
-        <button class="btn" onclick="viewSession('${s.date}')">View →</button>
-        ${isAdmin?`<button class="btn red" onclick="deleteSession('${s.date}')">🗑</button>`:''}
-      </div>`;
+    card.innerHTML=`<div style="flex:1"><div class="cb-session-date">${formatDate(s.date)}</div>${isAdmin&&s.studentName?`<div style="font-size:.75rem;color:var(--cyan);margin-top:.15rem;font-weight:600">👤 ${s.studentName}</div>`:''}<div class="cb-session-time">${s.topic||'General'}</div></div><div style="display:flex;gap:.5rem;align-items:center"><img class="cb-session-preview" src="${s.dataURL}" alt="preview"><button class="btn" onclick="viewSession('${key}')">View →</button>${isAdmin?`<button class="btn red" onclick="deleteSession('${key}')">🗑</button>`:''}</div>`;
     wrap.appendChild(card);
   });
 }
@@ -6315,32 +6067,31 @@ async function viewSession(date) {
   if(!snap.exists()){toast('Session not found');return;}
   const data=snap.data();
   const isAdmin=window._fbUser&&window._fbUser.email===ADMIN_EMAIL;
-  if(isAdmin) {
-    if(!confirm('Load session from ' + formatDate(date) + ' onto the whiteboard?')) return;
+  if(isAdmin){
+    if(!confirm('Load session from '+formatDate(data.date)+' onto the whiteboard?'))return;
     const img=new Image();
     img.onload=()=>{if(wbCtx){wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0,wbCanvas.width,wbCanvas.height);wbHistory=[wbCanvas.toDataURL()];}};
     img.src=data.dataURL; wbSessionKey=date; hideSessionHistory();
-    const meta=document.getElementById('cb-session-meta'); if(meta)meta.textContent=formatDate(date)+' · Editing past session';
-    toast('Session loaded: '+formatDate(date));
+    toast('Session loaded: '+formatDate(data.date));
   } else {
     document.getElementById('classboard-sessions-list').parentElement.style.display='none';
     document.getElementById('classboard-viewer').style.display='block';
-    document.getElementById('cb-viewer-title').textContent=formatDate(date);
-    document.getElementById('cb-viewer-meta').textContent='Saved by your teacher · Read only';
+    document.getElementById('cb-viewer-title').textContent=formatDate(data.date);
+    document.getElementById('cb-viewer-meta').textContent=(data.topic||'General')+' · Read only';
     const vc=document.getElementById('cb-view-canvas');
     const W=vc.parentElement.getBoundingClientRect().width||800;
-    vc.width=W; vc.height=Math.floor(W*0.6);
+    vc.width=W; vc.height=Math.floor(W*1.4142);
     const vCtx=vc.getContext('2d');
     const img=new Image(); img.onload=()=>vCtx.drawImage(img,0,0,vc.width,vc.height); img.src=data.dataURL;
   }
 }
 
-function closeClassboardViewer() {
+function closeClassboardViewer(){
   document.getElementById('classboard-viewer').style.display='none';
   document.getElementById('classboard-sessions-list').parentElement.style.display='block';
 }
 
-async function deleteSession(date) {
+async function deleteSession(date){
   if(!confirm('Delete session '+formatDate(date)+'?'))return;
   if(!window.FB)return;
   const{db,doc,deleteDoc}=window.FB;
@@ -6348,51 +6099,23 @@ async function deleteSession(date) {
   catch(e){toast('Could not delete');}
 }
 
-function showSessionHistory() {
+function showSessionHistory(){
   const ph=document.getElementById('session-history-panel');
-  const ms=document.querySelector('#classboard-teacher-view > .sec');
-  if(ph)ph.style.display='block'; if(ms)ms.style.display='none';
+  const ms=document.querySelector('#classboard-teacher-view > div > .sec');
+  if(!ms){const ms2=document.getElementById('wb-active-header');if(ms2)ms2.style.display='none';}
+  else ms.style.display='none';
+  if(ph)ph.style.display='block';
   loadSessionHistory();
 }
-function hideSessionHistory() {
+
+function hideSessionHistory(){
   const ph=document.getElementById('session-history-panel');
-  const ms=document.querySelector('#classboard-teacher-view > .sec');
-  if(ph)ph.style.display='none'; if(ms)ms.style.display='block';
+  if(ph)ph.style.display='none';
+  const ms=document.getElementById('wb-active-header');
+  if(ms)ms.style.display='block';
 }
 
-function formatDate(dateStr) {
-  try{ const d=new Date(dateStr+'T12:00:00'); return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
-  catch(e){ return dateStr; }
+function formatDate(dateStr){
+  try{const d=new Date(dateStr+'T12:00:00');return d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
+  catch(e){return dateStr;}
 }
-
-const _prevGoPageCB=goPage;
-goPage=function(id,btn){
-  _prevGoPageCB(id,btn);
-  if(id==='classboard') requestAnimationFrame(()=>{try{initClassboard();}catch(e){console.warn('CB:',e);}});
-};
-</script>
-
-<!-- ════════ FOOTER ════════ -->
-<footer style="border-top:1px solid var(--border);padding:1.5rem 1.25rem;text-align:center;background:var(--s1);margin-top:2rem">
-  <div style="max-width:900px;margin:0 auto">
-    <div style="font-family:var(--head);font-size:.95rem;font-weight:700;margin-bottom:.3rem">
-      ⚗️ Atom Edge
-    </div>
-    <div style="font-size:.8rem;color:var(--dim);margin-bottom:.5rem;line-height:1.7">
-      Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> · IGCSE Chemistry Educator
-    </div>
-    <div style="font-size:.75rem;color:var(--dim2)">
-      © 2026 Aishwarya Priya. All rights reserved. &nbsp;·&nbsp; atomedge.pro
-    </div>
-    <div style="font-size:.7rem;color:var(--dim2);margin-top:.35rem">
-      All content, question papers and simulations are original works created for educational purposes.
-    </div>
-    <div style="font-size:.9rem;margin-top:.6rem;animation:hb .8s ease-in-out infinite alternate">
-      Made with 💓 for every curious student
-    </div>
-  </div>
-</footer>
-
-
-</body>
-</html>
