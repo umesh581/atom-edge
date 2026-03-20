@@ -1379,7 +1379,9 @@ onAuthStateChanged(auth, async user => {
           <!-- Page guides overlay -->
           <div id="wb-page-guides" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:2"></div>
           <div style="position:relative;width:100%;padding-bottom:141.42%;background:#fff;">
-            <canvas id="wb-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:crosshair;background:#fff"></canvas>
+            <canvas id="wb-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:none;background:#fff"></canvas>
+            <!-- Cursor dot overlay -->
+            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;border:2px solid rgba(0,0,0,0.5);transform:translate(-50%,-50%);display:none;z-index:5;transition:width .05s,height .05s"></div>
           </div>
           <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px;z-index:10">
         </div>
@@ -5616,10 +5618,13 @@ function openPrintWindow(paper, isMarkScheme) {
 
 /* ══ WHITEBOARD TOOLBAR — CLEAN ══ */
 .wb-bar{
-  display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;
+  display:flex;align-items:center;gap:.3rem;flex-wrap:nowrap;
   background:var(--s2);border:1px solid var(--border);
   border-radius:12px;padding:.5rem .75rem;margin-bottom:.75rem;
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;
 }
+.wb-bar::-webkit-scrollbar{display:none}
 .wb-section{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
 .wb-sep{width:1px;height:32px;background:var(--border);margin:0 .3rem;flex-shrink:0}
 .wbt{
@@ -5845,7 +5850,11 @@ function initWhiteboard() {
   wbCanvas.addEventListener('mousedown',  wbDown);
   wbCanvas.addEventListener('mousemove',  wbMove);
   wbCanvas.addEventListener('mouseup',    wbUp);
-  wbCanvas.addEventListener('mouseleave', wbUp);
+  wbCanvas.addEventListener('mouseleave', e => {
+    wbUp(e);
+    const dot = document.getElementById('wb-cursor');
+    if (dot) dot.style.display = 'none';
+  });
 
   // Touch events — allow vertical scroll on canvas but capture draw gestures
   wbCanvas.addEventListener('touchstart', e => {
@@ -6026,18 +6035,12 @@ function printClassboard() {
 
 function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
 function wbPos(e) {
-  // getBoundingClientRect gives position relative to viewport
-  // For a scrollable canvas, we need position relative to canvas top-left
-  // canvas.getBoundingClientRect().top is ALREADY scroll-adjusted by the browser
-  // So we just need to scale from display pixels to canvas pixels
   const r  = wbCanvas.getBoundingClientRect();
-  const sx = wbCanvas.width  / r.width;
-  // sy must account for the full canvas height vs displayed height
-  // since canvas overflows the scroll container, r.height = actual rendered height
-  // which equals r.width * (canvasHeight/canvasWidth) — same scale as sx
+  // Canvas is uniformly scaled — same ratio in both X and Y
+  const sx = wbCanvas.width / r.width;
   return {
     x: (e.clientX - r.left) * sx,
-    y: (e.clientY - r.top)  * sx   // use sx for both — canvas is uniformly scaled
+    y: (e.clientY - r.top)  * sx
   };
 }
 function fillBackground() {
@@ -6054,12 +6057,36 @@ function wbDown(e) {
   wbSnapshot=wbCtx.getImageData(0,0,wbCanvas.width,wbCanvas.height);
   if(['pen','marker','eraser'].includes(wbTool)) { wbCtx.beginPath(); wbCtx.moveTo(p.x,p.y); }
 }
-function wbMove(e) { if(!wbDrawing)return; const p=wbPos(e); applyTool(p.x,p.y,false); }
+function wbMove(e) {
+  // Show cursor preview dot
+  const p = wbPos(e);
+  if (!wbDrawing) { showCursorDot(p.x, p.y); return; }
+  applyTool(p.x, p.y, false);
+}
 function wbUp(e) {
   if(!wbDrawing)return; wbDrawing=false;
   const p=wbPos(e); applyTool(p.x,p.y,true);
   wbUndoRedo=[]; wbHistory.push(wbCanvas.toDataURL());
   if(wbHistory.length>50)wbHistory.shift();
+}
+
+function showCursorDot(cx, cy) {
+  const dot = document.getElementById('wb-cursor');
+  if (!dot || !wbCanvas) return;
+  const r = wbCanvas.getBoundingClientRect();
+  const scale = r.width / wbCanvas.width;
+  const sz = Math.max(6, wbSize * scale * 2);
+  const screenX = cx * scale;
+  const screenY = cy * scale;
+  dot.style.display = 'block';
+  dot.style.width  = sz + 'px';
+  dot.style.height = sz + 'px';
+  dot.style.left   = screenX + 'px';
+  dot.style.top    = screenY + 'px';
+  dot.style.background = wbTool === 'eraser'
+    ? 'rgba(255,255,255,0.8)'
+    : wbColor + '55';
+  dot.style.borderColor = wbTool === 'eraser' ? '#aaa' : wbColor;
 }
 
 function applyTool(x,y,end) {
@@ -6173,6 +6200,14 @@ async function saveWhiteboardNow() {
 async function loadTodaySession() {
   if(!window.FB||!window._fbUser||!wbSessionKey)return;
   const{db,doc,getDoc}=window.FB;
+  // Start with clean fresh canvas
+  wbPages = 1;
+  wbCanvas.width  = A4_W;
+  wbCanvas.height = A4_H;
+  wbCtx.fillStyle = '#ffffff';
+  wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
+  drawPageGuides();
+  wbHistory = [wbCanvas.toDataURL()];
   try {
     const snap=await getDoc(doc(db,'whiteboards',wbSessionKey));
     if(snap.exists()){
@@ -6180,20 +6215,20 @@ async function loadTodaySession() {
       const img  = new Image();
       img.onload = () => {
         if(!wbCanvas||!wbCtx) return;
-        // Resize canvas to match saved image proportions
-        const savedH = img.naturalHeight;
-        wbPages = Math.max(2, Math.ceil(savedH / A4_H));
-        wbCanvas.height = A4_H * wbPages;
+        // Restore saved content
         wbCtx.fillStyle = '#ffffff';
         wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
         wbCtx.drawImage(img, 0, 0, wbCanvas.width, wbCanvas.height);
         drawPageGuides();
-        wbHistory=[wbCanvas.toDataURL()];
-        const pc=document.getElementById('wb-page-count'); if(pc)pc.textContent=wbPages;
+        wbHistory = [wbCanvas.toDataURL()];
         const ls=document.getElementById('cb-last-saved');
-        if(ls){ls.style.display='block';ls.textContent='Loaded: '+formatDate(data.date);}
+        if(ls){ls.style.display='block';ls.textContent='Restored: '+formatDate(data.date);}
+        toast('Session restored for '+wbCurrentStudent.name);
       };
       img.src = data.dataURL;
+    } else {
+      const ls=document.getElementById('cb-last-saved');
+      if(ls){ls.style.display='block';ls.textContent='New session started';}
     }
   } catch(e){console.warn('WB load:',e);}
 }
