@@ -556,68 +556,75 @@ button:focus-visible,input:focus-visible,select:focus-visible{
   background:rgba(255,71,87,.15);padding:.15rem .5rem;border-radius:5px;flex-shrink:0}
 
 /* ══════════════════════════════════
-   HOME PAGE — REDESIGNED
+   HOME PAGE — CLEAN REDESIGN
 ══════════════════════════════════ */
 .home-hero{
-  position:relative;overflow:hidden;
-  padding:2.5rem 1.5rem 2rem;
-  background:linear-gradient(160deg,var(--s2) 0%,var(--bg) 60%);
   border-bottom:1px solid var(--border);
+  background:var(--s1);
+  padding:2.5rem 1.5rem 2rem;
 }
-.home-hero::before{
-  content:'';position:absolute;top:-60px;right:-60px;
-  width:320px;height:320px;border-radius:50%;
-  background:radial-gradient(circle,rgba(0,229,255,.07) 0%,transparent 70%);
-  pointer-events:none;
+.home-hero-inner{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr auto;
+  gap:2rem;align-items:center;
 }
-.home-hero::after{
-  content:'';position:absolute;bottom:-40px;left:20%;
-  width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,107,53,.05) 0%,transparent 70%);
-  pointer-events:none;
-}
-.home-hero-content{position:relative;z-index:1;max-width:640px}
 .home-hero-badge{
   display:inline-flex;align-items:center;gap:.4rem;
   font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
   color:var(--cyan);background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);
-  border-radius:20px;padding:.28rem .75rem;margin-bottom:1rem;
+  border-radius:20px;padding:.28rem .75rem;margin-bottom:.85rem;
 }
 .home-hero-title{
-  font-family:var(--head);font-size:clamp(1.7rem,4.5vw,3.2rem);
-  font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:.75rem;
+  font-family:var(--head);
+  font-size:clamp(1.6rem,3.5vw,2.6rem);
+  font-weight:800;line-height:1.15;
+  letter-spacing:-.02em;margin-bottom:.75rem;
+  color:var(--text);
 }
 .home-hero-em{
+  font-style:normal;
   background:linear-gradient(120deg,var(--cyan),var(--orange));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.home-hero-sub{color:var(--dim);font-size:.88rem;line-height:1.75;margin-bottom:1.5rem;max-width:480px}
+.home-hero-sub{
+  color:var(--dim);font-size:.88rem;line-height:1.75;
+  margin-bottom:1.35rem;max-width:480px;
+}
 .home-cta-row{display:flex;gap:.65rem;flex-wrap:wrap}
 .home-cta-btn{
-  padding:.55rem 1.35rem;border-radius:9px;font-family:var(--head);
-  font-size:.85rem;font-weight:700;cursor:pointer;transition:.2s;border:none;
+  padding:.55rem 1.35rem;border-radius:9px;
+  font-family:var(--head);font-size:.85rem;font-weight:700;
+  cursor:pointer;transition:.2s;border:none;
 }
 .home-cta-btn.primary{
-  background:linear-gradient(120deg,var(--cyan),var(--purple));
-  color:#000;
+  background:linear-gradient(120deg,var(--cyan),var(--purple));color:#000;
 }
 .home-cta-btn.primary:hover{opacity:.88;transform:translateY(-1px)}
 .home-cta-btn:not(.primary){
-  background:var(--s2);color:var(--text);
+  background:transparent;color:var(--text);
   border:1px solid var(--border2);
 }
 .home-cta-btn:not(.primary):hover{border-color:var(--cyan);color:var(--cyan)}
-.home-hero-stats{
-  display:flex;align-items:center;gap:0;
-  margin-top:2rem;background:var(--s1);border:1px solid var(--border);
-  border-radius:12px;padding:.85rem 1.25rem;width:fit-content;max-width:100%;
-  flex-wrap:wrap;row-gap:.5rem;
-}
-.home-stat{text-align:center;padding:0 1.1rem}
-.home-stat-n{font-family:var(--head);font-size:1.5rem;font-weight:800;color:var(--cyan)}
-.home-stat-l{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em}
-.home-stat-div{width:1px;height:36px;background:var(--border)}
 
+/* Stats grid (right side of hero) */
+.home-hero-right{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:.6rem;
+}
+.home-stat-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:.85rem 1rem;text-align:center;min-width:90px;
+}
+.home-stat-n{
+  font-family:var(--head);font-size:1.6rem;font-weight:800;color:var(--cyan);
+  line-height:1;margin-bottom:.2rem;
+}
+.home-stat-l{
+  font-size:.62rem;color:var(--dim);
+  text-transform:uppercase;letter-spacing:.08em;
+}
+
+/* Topic category grid */
 /* Topic category grid */
 .topic-cat-grid{
   display:grid;
@@ -675,11 +682,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{
 .cat-header-count{font-size:.68rem;color:var(--dim2);white-space:nowrap}
 
 @media(max-width:480px){
-  .home-hero{padding:1.5rem .85rem 1.5rem}
-  .home-hero-stats{padding:.65rem .85rem;gap:0}
-  .home-stat{padding:0 .75rem}
+  .home-hero{padding:1.25rem .85rem 1.5rem}
+  .home-hero-inner{grid-template-columns:1fr;gap:1.25rem}
+  .home-hero-right{grid-template-columns:repeat(4,1fr);gap:.4rem}
+  .home-stat-card{padding:.6rem .5rem}
   .home-stat-n{font-size:1.2rem}
-  .home-stat-div{height:28px}
+  .home-stat-l{font-size:.56rem}
+  .home-hero-title{font-size:1.5rem}
   .topic-cat-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.5rem}
   .quick-actions-grid{grid-template-columns:repeat(3,1fr);gap:.5rem}
   .qa-card{padding:.75rem .5rem}
@@ -831,23 +840,22 @@ onAuthStateChanged(auth, async user => {
 
   <!-- ── HERO ── -->
   <div class="home-hero">
-    <div class="home-hero-content">
-      <div class="home-hero-badge">⚗️ IGCSE Chemistry · Grade 9–10</div>
-      <h1 class="home-hero-title">Chemistry <span class="home-hero-em">Comes Alive</span><br>With Atom Edge</h1>
-      <p class="home-hero-sub">Interactive simulations, exam practice and guided discovery — built for IGCSE students with love.</p>
-      <div class="home-cta-row">
-        <button class="home-cta-btn primary" onclick="goPage('sims',document.querySelectorAll('.ntab')[2]);syncBnav('sims',document.querySelectorAll('.bnav-btn')[2])">Start Learning →</button>
-        <button class="home-cta-btn" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',document.querySelectorAll('.bnav-btn')[3])">Take Practice Exam</button>
+    <div class="home-hero-inner">
+      <div class="home-hero-left">
+        <div class="home-hero-badge">⚗️ IGCSE Chemistry · Grade 9–10</div>
+        <h1 class="home-hero-title">Chemistry <em class="home-hero-em">Comes Alive</em> With Atom Edge</h1>
+        <p class="home-hero-sub">Interactive simulations, exam practice and guided discovery — built for IGCSE students with love.</p>
+        <div class="home-cta-row">
+          <button class="home-cta-btn primary" onclick="goPage('sims',document.querySelectorAll('.ntab')[2]);syncBnav('sims',document.querySelectorAll('.bnav-btn')[2])">Start Learning →</button>
+          <button class="home-cta-btn" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',document.querySelectorAll('.bnav-btn')[3])">Practice Exam</button>
+        </div>
       </div>
-    </div>
-    <div class="home-hero-stats">
-      <div class="home-stat"><div class="home-stat-n" id="home-xp-disp">0</div><div class="home-stat-l">XP Earned</div></div>
-      <div class="home-stat-div"></div>
-      <div class="home-stat"><div class="home-stat-n" id="sim-count">28</div><div class="home-stat-l">Simulations</div></div>
-      <div class="home-stat-div"></div>
-      <div class="home-stat"><div class="home-stat-n">118</div><div class="home-stat-l">Elements</div></div>
-      <div class="home-stat-div"></div>
-      <div class="home-stat"><div class="home-stat-n">30</div><div class="home-stat-l">Quiz Questions</div></div>
+      <div class="home-hero-right">
+        <div class="home-stat-card"><div class="home-stat-n" id="home-xp-disp">0</div><div class="home-stat-l">XP Earned</div></div>
+        <div class="home-stat-card"><div class="home-stat-n">28</div><div class="home-stat-l">Simulations</div></div>
+        <div class="home-stat-card"><div class="home-stat-n">118</div><div class="home-stat-l">Elements</div></div>
+        <div class="home-stat-card"><div class="home-stat-n">30</div><div class="home-stat-l">Quiz Questions</div></div>
+      </div>
     </div>
   </div>
 
@@ -3270,52 +3278,58 @@ function nextQ(){
 // ════════════ EXAM FOCUS GUARD ════════════
 let examViolations = 0;
 let examFocusActive = false;
-let examViolationLog = []; // stored per student
+let examViolationLog = [];
+let _blurTimeout = null;
 
 function startFocusGuard() {
+  // Remove any stale listeners first
+  stopFocusGuard();
   examViolations = 0;
   examFocusActive = true;
   examViolationLog = [];
   updateWarningBar();
 
-  // Method 1: Page Visibility API (tab switch, minimize)
   document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  // Method 2: Window blur (alt-tab, clicking outside browser)
   window.addEventListener('blur', handleWindowBlur);
-
-  // Method 3: Right-click disable during exam
+  window.addEventListener('focus', handleWindowFocus);
   document.addEventListener('contextmenu', blockContextMenu);
-
-  // Method 4: Keyboard shortcuts that leave the page
   document.addEventListener('keydown', blockExamKeys);
+
+  // Show a small "exam mode on" toast
+  toast('🔒 Exam mode active — tab switching is monitored');
 }
 
 function stopFocusGuard() {
   examFocusActive = false;
+  if (_blurTimeout) { clearTimeout(_blurTimeout); _blurTimeout = null; }
   document.removeEventListener('visibilitychange', handleVisibilityChange);
   window.removeEventListener('blur', handleWindowBlur);
+  window.removeEventListener('focus', handleWindowFocus);
   document.removeEventListener('contextmenu', blockContextMenu);
   document.removeEventListener('keydown', blockExamKeys);
   hideExamWarning();
-  document.getElementById('exam-warning-bar').classList.remove('show');
+  const wb = document.getElementById('exam-warning-bar');
+  if (wb) wb.classList.remove('show');
 }
 
 function handleVisibilityChange() {
   if (!examFocusActive) return;
-  if (document.hidden) {
-    recordViolation('Tab hidden / switched');
-  }
+  if (document.hidden) recordViolation('Switched to another tab or minimised');
 }
 
 function handleWindowBlur() {
   if (!examFocusActive) return;
-  // Small delay to avoid false positives (clicking within the page)
-  setTimeout(() => {
-    if (!document.hasFocus() && examFocusActive) {
-      recordViolation('Window lost focus');
+  // Delay to avoid false positives when clicking within page elements
+  _blurTimeout = setTimeout(() => {
+    if (examFocusActive && !document.hasFocus()) {
+      recordViolation('Switched to another app');
     }
-  }, 300);
+  }, 500);
+}
+
+function handleWindowFocus() {
+  // Cancel pending blur violation if user quickly came back
+  if (_blurTimeout) { clearTimeout(_blurTimeout); _blurTimeout = null; }
 }
 
 function blockContextMenu(e) {
@@ -3325,10 +3339,11 @@ function blockContextMenu(e) {
 
 function blockExamKeys(e) {
   if (!examFocusActive) return;
-  // Block: Ctrl+T (new tab), Ctrl+W (close tab), Ctrl+N (new window), Alt+Tab feel
-  if ((e.ctrlKey || e.metaKey) && ['t','w','n','Tab'].includes(e.key)) {
+  const key = e.key.toLowerCase();
+  // Block Ctrl/Cmd + T/W/N (new tab, close, new window)
+  if ((e.ctrlKey || e.metaKey) && ['t','w','n'].includes(key)) {
     e.preventDefault();
-    recordViolation('Keyboard shortcut: ' + e.key);
+    recordViolation('Tried keyboard shortcut: Ctrl+' + e.key.toUpperCase());
   }
 }
 
@@ -3411,6 +3426,7 @@ function startExam(){
   document.getElementById('eq-tot').textContent=qcount;
   renderExamQ();
   if(timeLimit>0){examTimeLeft=timeLimit;startExamTimer();}
+  startFocusGuard();
 }
 function renderExamQ(){
   document.getElementById('eq-cur').textContent=examCur+1;
