@@ -700,6 +700,41 @@ button:focus-visible,input:focus-visible,select:focus-visible{
 @media(max-width:360px){
   .quick-actions-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ══ AI PAPER GENERATOR ══ */
+.ai-paper-toggle{display:flex;gap:.4rem;background:var(--s2);border-radius:10px;padding:.3rem;margin-bottom:1.25rem}
+.apt-btn{flex:1;padding:.5rem;border:none;border-radius:7px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;background:transparent;color:var(--dim)}
+.apt-btn.on{background:var(--s1);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.api-key-wrap{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.api-key-wrap label{font-size:.72rem;color:var(--dim);display:block;margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.06em}
+.api-key-input{width:100%;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:.55rem .75rem;color:var(--text);font-family:var(--mono);font-size:.8rem;outline:none}
+.api-key-input:focus{border-color:var(--cyan)}
+.ai-generating{text-align:center;padding:3rem 1rem}
+.ai-gen-spinner{font-size:2.5rem;animation:spin 1.5s linear infinite;margin-bottom:1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai-gen-text{font-size:.9rem;color:var(--dim);margin-bottom:.35rem}
+.ai-gen-sub{font-size:.78rem;color:var(--dim2)}
+.ai-paper-q{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.ai-paper-q .q-meta{font-size:.68rem;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;gap:.75rem}
+.ai-paper-q .q-text{font-size:.9rem;line-height:1.65;margin-bottom:.85rem;font-weight:500}
+.ai-paper-q .q-sub{font-size:.82rem;color:var(--dim);margin-bottom:.5rem;padding-left:.75rem;border-left:2px solid var(--border)}
+.answer-box{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.65rem .85rem;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none;resize:vertical;min-height:70px;margin-top:.4rem;transition:.18s}
+.answer-box:focus{border-color:var(--cyan)}
+.mcq-opts{display:flex;flex-direction:column;gap:.35rem;margin-top:.5rem}
+.mcq-opt{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.6rem .9rem;cursor:pointer;font-size:.84rem;transition:.18s;display:flex;align-items:center;gap:.75rem;min-height:42px}
+.mcq-opt:hover{border-color:var(--border2)}
+.mcq-opt.sel{border-color:var(--cyan);background:rgba(0,229,255,.08)}
+.mcq-opt.correct{border-color:var(--green);background:rgba(0,229,160,.1)}
+.mcq-opt.wrong{border-color:var(--red);background:rgba(255,71,87,.08)}
+.mcq-letter{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+.mark-btn{margin-top:.85rem}
+.marking-result{margin-top:.75rem;background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:9px;padding:.85rem;font-size:.82rem;line-height:1.7;display:none}
+.marking-result.show{display:block}
+.marking-result .mark-score{font-family:var(--head);font-size:1.1rem;font-weight:700;margin-bottom:.35rem}
+.marking-result .mark-score.full{color:var(--green)}
+.marking-result .mark-score.partial{color:var(--yellow)}
+.marking-result .mark-score.zero{color:var(--red)}
+.marks-badge{display:inline-flex;align-items:center;gap:.25rem;background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:5px;padding:.15rem .45rem;font-size:.68rem;font-family:var(--mono);color:var(--cyan);margin-left:.4rem}
 </style>
 <script type="module">
 import { initializeApp }                                from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -755,6 +790,7 @@ onAuthStateChanged(auth, async user => {
     <button class="ntab" onclick="goPage('exam',this)">Exam Mode</button>
     <button class="ntab" onclick="goPage('game',this)">Game</button>
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
+    <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
     <button class="ntab" data-page="teacher" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
   <div class="hbtns">
@@ -774,6 +810,7 @@ onAuthStateChanged(auth, async user => {
     <button class="bnav-btn" onclick="goPage('sims',document.querySelectorAll('.ntab')[2]);syncBnav('sims',this)" data-page="sims"><span class="bni">🔬</span><span class="bnl">Labs</span></button>
     <button class="bnav-btn" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',this)" data-page="exam"><span class="bni">📝</span><span class="bnl">Exam</span></button>
     <button class="bnav-btn" onclick="goPage('game',document.querySelectorAll('.ntab')[5]);syncBnav('game',this)" data-page="game"><span class="bni">🎮</span><span class="bnl">Game</span></button>
+    <button class="bnav-btn" onclick="goPage('papers',document.querySelectorAll('.ntab')[6])" data-page="papers"><span class="bni">📄</span><span class="bnl">Papers</span></button>
   </div>
 </div>
 
@@ -967,33 +1004,115 @@ onAuthStateChanged(auth, async user => {
   <div class="sec">
     <div id="exam-setup">
       <div class="sec-hd"><h2>📝 Exam Mode</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Timed IGCSE-style practice. Choose your settings and test yourself under real conditions.</p>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.65rem;margin-bottom:1.25rem">
-        <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
-          <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Questions</div>
-          <select id="exam-qcount" style="width:100%"><option value="10">10 questions (Quick)</option><option value="20" selected>20 questions (Standard)</option><option value="40">40 questions (Full Paper)</option></select>
+
+      <!-- Mode toggle -->
+      <div class="ai-paper-toggle">
+        <button class="apt-btn on" id="mode-standard" onclick="switchExamMode('standard')">📋 Standard Practice</button>
+        <button class="apt-btn" id="mode-ai" onclick="switchExamMode('ai')">🤖 AI Cambridge Paper</button>
+      </div>
+
+      <!-- Standard mode settings -->
+      <div id="standard-settings">
+        <p style="color:var(--dim);font-size:.83rem;margin-bottom:1rem;line-height:1.7">Timed practice from our built-in question bank. Choose topic and time.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.65rem;margin-bottom:1.25rem">
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Questions</div>
+            <select id="exam-qcount" style="width:100%"><option value="10">10 questions (Quick)</option><option value="20" selected>20 questions (Standard)</option><option value="40">40 questions (Full Paper)</option></select>
+          </div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Topic</div>
+            <select id="exam-topic" style="width:100%">
+              <option value="all">All Topics</option>
+              <option value="Acids & Bases">Acids & Bases</option>
+              <option value="Electrochemistry">Electrochemistry</option>
+              <option value="Atomic Structure">Atomic Structure</option>
+              <option value="States of Matter">States of Matter</option>
+              <option value="Metals & Reactivity">Metals & Reactivity</option>
+              <option value="Separation">Separation</option>
+              <option value="Chemical Bonding">Chemical Bonding</option>
+              <option value="Rates of Reaction">Rates of Reaction</option>
+              <option value="Organic Chemistry">Organic Chemistry</option>
+              <option value="Energetics">Energetics</option>
+              <option value="Industrial Chemistry">Industrial Chemistry</option>
+              <option value="Organic Chemistry">Organic Chemistry</option>
+              <option value="Quantitative Chemistry">Quantitative Chemistry</option>
+            </select>
+          </div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Time Limit</div>
+            <select id="exam-time" style="width:100%"><option value="0">No limit</option><option value="600">10 minutes</option><option value="1200" selected>20 minutes</option><option value="2400">40 minutes</option></select>
+          </div>
         </div>
-        <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
-          <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Topic</div>
-          <select id="exam-topic" style="width:100%">
-            <option value="all">All Topics</option>
-            <option value="Acids & Bases">Acids & Bases</option>
-            <option value="Electrochemistry">Electrochemistry</option>
-            <option value="Atomic Structure">Atomic Structure</option>
-            <option value="States of Matter">States of Matter</option>
-            <option value="Metals & Reactivity">Metals & Reactivity</option>
-            <option value="Separation">Separation</option>
-            <option value="Chemical Bonding">Chemical Bonding</option>
-            <option value="Rates of Reaction">Rates of Reaction</option>
-            <option value="Organic Chemistry">Organic Chemistry</option>
-          </select>
+        <button class="btn green" style="font-size:.95rem;padding:.65rem 2rem" onclick="startExam()">🚀 Start Standard Exam</button>
+      </div>
+
+      <!-- AI mode settings -->
+      <div id="ai-settings" style="display:none">
+        <p style="color:var(--dim);font-size:.83rem;margin-bottom:1rem;line-height:1.7">Generate a unique Cambridge-style IGCSE paper using AI. Every paper is different — structured questions, calculations, extended writing — all auto-marked with detailed feedback.</p>
+
+        <div class="api-key-wrap">
+          <label>Your Anthropic API Key</label>
+          <input class="api-key-input" type="password" id="anthropic-key" placeholder="sk-ant-api03-..." value="">
+          <div style="font-size:.7rem;color:var(--dim);margin-top:.4rem">Get your key at <span style="color:var(--cyan)">console.anthropic.com</span> · Key is stored locally, never sent to our servers</div>
         </div>
-        <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
-          <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Time Limit</div>
-          <select id="exam-time" style="width:100%"><option value="0">No limit</option><option value="600">10 minutes</option><option value="1200" selected>20 minutes</option><option value="2400">40 minutes</option></select>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.65rem;margin-bottom:1.25rem">
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Topic</div>
+            <select id="ai-topic" style="width:100%">
+              <option value="mixed">Mixed — Full Paper</option>
+              <option value="Acids & Bases">Acids & Bases</option>
+              <option value="Atomic Structure">Atomic Structure</option>
+              <option value="Chemical Bonding">Chemical Bonding</option>
+              <option value="Electrochemistry">Electrochemistry</option>
+              <option value="Energetics">Energetics</option>
+              <option value="Industrial Chemistry">Industrial Chemistry</option>
+              <option value="Metals & Reactivity">Metals & Reactivity</option>
+              <option value="Organic Chemistry">Organic Chemistry</option>
+              <option value="Quantitative Chemistry">Quantitative Chemistry</option>
+              <option value="Rates of Reaction">Rates of Reaction</option>
+              <option value="Separation">Separation</option>
+              <option value="States of Matter">States of Matter</option>
+            </select>
+          </div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Difficulty</div>
+            <select id="ai-difficulty" style="width:100%">
+              <option value="foundation">Foundation (Grade 5–6)</option>
+              <option value="core" selected>Core (Grade 6–7)</option>
+              <option value="extended">Extended (Grade 8–9)</option>
+            </select>
+          </div>
+          <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.85rem">
+            <div style="font-size:.7rem;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.08em">Paper Type</div>
+            <select id="ai-paper-type" style="width:100%">
+              <option value="mcq">MCQ Only (Paper 1 style)</option>
+              <option value="structured" selected>Structured Questions (Paper 2)</option>
+              <option value="mixed">Mixed Paper (Full)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn green" style="font-size:.95rem;padding:.65rem 2rem" onclick="generateAIPaper()" id="gen-btn">🤖 Generate AI Paper</button>
+        <div style="font-size:.75rem;color:var(--dim);margin-top:.6rem">Takes 15–30 seconds · Each paper is unique · Costs ~₹0.50 per paper</div>
+      </div>
+    </div>
+
+    <!-- AI Paper Display -->
+    <div id="ai-paper-display" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem">
+        <div>
+          <div style="font-family:var(--head);font-size:1.1rem;font-weight:700" id="ai-paper-title">IGCSE Chemistry — AI Generated Paper</div>
+          <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="ai-paper-meta"></div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn" onclick="markAllAI()">✓ Mark Paper</button>
+          <button class="btn green" onclick="generateAIPaper()">↺ New Paper</button>
+          <button class="btn" onclick="backToSetup()">← Back</button>
         </div>
       </div>
-      <button class="btn green" style="font-size:.95rem;padding:.65rem 2rem" onclick="startExam()">🚀 Start Exam</button>
+      <div id="ai-paper-content"></div>
+      <div id="ai-paper-results" style="display:none"></div>
     </div>
     <div id="exam-active" style="display:none">
       <div id="exam-wrap">
@@ -1055,6 +1174,32 @@ onAuthStateChanged(auth, async user => {
     <div class="pt-legend" id="pt-legend"></div>
     <div id="pt-wrap"><div class="pt-grid" id="pt-grid"></div></div>
     <div id="el-detail"></div>
+  </div>
+</div>
+
+<!-- PAST PAPERS -->
+<div id="page-papers" class="page">
+  <div class="sec">
+    <div class="sec-hd"><h2>📄 IGCSE Practice Papers</h2><div class="sec-line"></div></div>
+    <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">10 Cambridge-style practice papers with diagrams — fully printable. Each paper has 30 marks and covers the full IGCSE Chemistry syllabus.</p>
+    <div id="papers-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;margin-bottom:1.5rem"></div>
+  </div>
+  <!-- Paper Viewer -->
+  <div id="paper-viewer" style="display:none">
+    <div class="sec">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem">
+        <div>
+          <div style="font-family:var(--head);font-size:1.1rem;font-weight:700" id="pv-title"></div>
+          <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="pv-meta"></div>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn green" onclick="printPaper()" id="print-btn">🖨️ Print Paper</button>
+          <button class="btn green" onclick="printMarkScheme()">📋 Print Mark Scheme</button>
+          <button class="btn" onclick="closePaperViewer()">← Back</button>
+        </div>
+      </div>
+      <div id="pv-content"></div>
+    </div>
   </div>
 </div>
 
@@ -1450,7 +1595,7 @@ const EXPS=[
   {id:'periodic_trends',topic:'Periodic Table',name:'Periodic Trends',desc:'Visualise atomic radius, ionisation energy, electronegativity.',tags:['Trends','IE'],color:'#00e5a0',render:renderTrends},
   {id:'covalent',topic:'Chemical Bonding',name:'Covalent Bonding',desc:'Share electron pairs and form molecules.',tags:['Covalent','Shapes'],color:'#00e5ff',render:renderCovalent},
   {id:'ionic',topic:'Chemical Bonding',name:'Ionic Bonding',desc:'Transfer electrons and build ionic lattices.',tags:['Ionic','Lattice'],color:'#ffd93d',render:renderIonic},
-  {id:'equilibrium',topic:'Reversible Reactions',name:'Dynamic Equilibrium',desc:"Apply Le Chatelier\'s principle interactively.",tags:['Equilibrium'],color:'#00e5a0',render:renderEquil},
+  {id:'equilibrium',topic:'Reversible Reactions',name:'Dynamic Equilibrium',desc:"Apply Le Chatelier principle interactively.",tags:['Equilibrium'],color:'#00e5a0',render:renderEquil},
   {id:'displacement',topic:'Metals & Reactivity',name:'Metal Displacement',desc:'Watch displacement reactions in real time.',tags:['Redox','Reactivity'],color:'#ff8c00',render:renderDisplace},
   {id:'crystallisation',topic:'Separation',name:'Crystallisation',desc:'Cool saturated solutions and watch crystals grow.',tags:['Crystals','Solubility'],color:'#88ccff',render:renderCrystal},
   {id:'rates',topic:'Rates of Reaction',name:'Rate of Reaction',desc:'Heat reactions and observe collision frequency.',tags:['Rate','Temperature'],color:'#ff4757',render:renderRates},
@@ -3968,6 +4113,1114 @@ window.addEventListener('load', () => {
     if (xpEl) xpEl.textContent = xp;
   }, 500);
 });
+
+
+// ════════════════════════════════════════════════════════════
+// AI CAMBRIDGE PAPER GENERATOR
+// ════════════════════════════════════════════════════════════
+
+let aiExamMode = 'standard';
+let aiPaperData = null;
+let aiAnswers   = {};
+
+function switchExamMode(mode) {
+  aiExamMode = mode;
+  document.getElementById('mode-standard').classList.toggle('on', mode === 'standard');
+  document.getElementById('mode-ai').classList.toggle('on', mode === 'ai');
+  document.getElementById('standard-settings').style.display = mode === 'standard' ? 'block' : 'none';
+  document.getElementById('ai-settings').style.display       = mode === 'ai'       ? 'block' : 'none';
+  // Restore saved API key
+  const saved = localStorage.getItem('ae_anthropic_key');
+  if (saved && mode === 'ai') document.getElementById('anthropic-key').value = saved;
+}
+
+function backToSetup() {
+  document.getElementById('ai-paper-display').style.display = 'none';
+  document.getElementById('exam-setup').style.display       = 'block';
+  aiPaperData = null; aiAnswers = {};
+}
+
+async function generateAIPaper() {
+  const apiKey = document.getElementById('anthropic-key').value.trim();
+  if (!apiKey || !apiKey.startsWith('sk-ant')) {
+    toast('⚠️ Please enter your Anthropic API key first'); return;
+  }
+  // Save key locally (not to Firebase)
+  localStorage.setItem('ae_anthropic_key', apiKey);
+
+  const topic      = document.getElementById('ai-topic').value;
+  const difficulty = document.getElementById('ai-difficulty').value;
+  const paperType  = document.getElementById('ai-paper-type').value;
+
+  // Show generating screen
+  document.getElementById('exam-setup').style.display       = 'none';
+  document.getElementById('ai-paper-display').style.display = 'block';
+  document.getElementById('ai-paper-content').innerHTML = `
+    <div class="ai-generating">
+      <div class="ai-gen-spinner">⚗️</div>
+      <div class="ai-gen-text">Generating your Cambridge-style paper…</div>
+      <div class="ai-gen-sub">Creating ${paperType === 'mcq' ? 'multiple choice' : paperType === 'structured' ? 'structured' : 'mixed'} questions on ${topic === 'mixed' ? 'all topics' : topic}</div>
+    </div>`;
+  document.getElementById('ai-paper-results').style.display = 'none';
+  aiAnswers = {};
+
+  const diffLabel = {foundation:'Foundation',core:'Core',extended:'Extended'}[difficulty];
+  const topicLine = topic === 'mixed' ? 'covering all major IGCSE Chemistry topics (0620 syllabus)' : `focused on: ${topic}`;
+
+  const prompt = `You are an expert IGCSE Chemistry examiner for Cambridge International (0620 syllabus).
+Generate a ${diffLabel}-level IGCSE Chemistry practice paper ${topicLine}.
+
+Paper type: ${paperType === 'mcq' ? 'Multiple Choice (Paper 1 style) — 15 MCQ questions' : paperType === 'structured' ? 'Structured Questions (Paper 2 style) — 4 structured questions with sub-parts' : 'Mixed — 8 MCQ + 3 structured questions'}
+
+STRICT FORMAT — respond with ONLY valid JSON, no markdown, no extra text:
+{
+  "title": "IGCSE Chemistry — ${diffLabel} Level Practice Paper",
+  "topic": "${topic === 'mixed' ? 'Mixed Topics' : topic}",
+  "totalMarks": <number>,
+  "questions": [
+    {
+      "id": 1,
+      "type": "mcq",
+      "topic": "topic name",
+      "marks": 1,
+      "question": "question text",
+      "options": ["A. option", "B. option", "C. option", "D. option"],
+      "answer": "A",
+      "explanation": "Why A is correct and others are wrong"
+    },
+    {
+      "id": 2,
+      "type": "structured",
+      "topic": "topic name",
+      "totalMarks": 6,
+      "context": "optional context/data/diagram description",
+      "parts": [
+        {
+          "part": "a",
+          "question": "sub-question text",
+          "marks": 2,
+          "markScheme": "Model answer with mark allocation — [1] for each point",
+          "commandWord": "State/Explain/Calculate/Deduce/Describe"
+        }
+      ]
+    }
+  ]
+}
+
+Requirements:
+- Use REAL Cambridge command words: State, Explain, Describe, Calculate, Deduce, Suggest, Define, Outline
+- Include calculation questions with working marks
+- Mark scheme must show each marking point clearly with [1]
+- Questions must be original, not copied from real papers
+- Difficulty: ${diffLabel} — ${difficulty === 'foundation' ? 'straightforward recall and simple application' : difficulty === 'core' ? 'mix of recall, application and some analysis' : 'complex analysis, evaluation and multi-step calculations'}
+- All chemistry must be accurate to IGCSE level`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API error ' + response.status);
+    }
+
+    const data = await response.json();
+    let raw = data.content[0].text.trim();
+    // Strip markdown code fences if present
+    raw = raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+    aiPaperData = JSON.parse(raw);
+    renderAIPaper(aiPaperData);
+    addXP(10, 'AI paper generated!');
+
+  } catch(e) {
+    document.getElementById('ai-paper-content').innerHTML = `
+      <div style="background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.3);border-radius:10px;padding:1.25rem;text-align:center">
+        <div style="font-size:1.3rem;margin-bottom:.5rem">❌</div>
+        <div style="font-size:.9rem;font-weight:600;color:var(--red);margin-bottom:.35rem">Failed to generate paper</div>
+        <div style="font-size:.8rem;color:var(--dim);margin-bottom:1rem">${e.message}</div>
+        <button class="btn" onclick="backToSetup()">← Back to Setup</button>
+      </div>`;
+  }
+}
+
+function renderAIPaper(paper) {
+  document.getElementById('ai-paper-title').textContent = paper.title;
+  document.getElementById('ai-paper-meta').textContent  =
+    `Topic: ${paper.topic} · Total marks: ${paper.totalMarks} · ${paper.questions.length} questions`;
+
+  const wrap = document.getElementById('ai-paper-content');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  paper.questions.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'ai-paper-q';
+
+    if (q.type === 'mcq') {
+      div.innerHTML = `
+        <div class="q-meta">
+          <span>Question ${q.id}</span>
+          <span>${q.topic}</span>
+          <span class="marks-badge">${q.marks} mark${q.marks>1?'s':''}</span>
+        </div>
+        <div class="q-text">${q.question}</div>
+        <div class="mcq-opts" id="mcq-${qi}">
+          ${q.options.map((opt,oi) => `
+            <div class="mcq-opt" onclick="selectMCQ(${qi},${oi},'${opt[0]}','${q.answer}')" data-letter="${opt[0]}">
+              <span class="mcq-letter">${opt[0]}</span>${opt.slice(3)}
+            </div>`).join('')}
+        </div>
+        <div class="marking-result" id="mcq-result-${qi}"></div>`;
+    } else {
+      const parts = q.parts.map((p, pi) => `
+        <div style="margin-bottom:1rem">
+          <div class="q-sub">
+            <span style="font-weight:600">(${p.part})</span>
+            <span class="marks-badge">${p.marks} mark${p.marks>1?'s':''}</span>
+            <span style="margin-left:.3rem;font-size:.65rem;color:var(--cyan);text-transform:uppercase">${p.commandWord||''}</span><br>
+            <span style="display:block;margin-top:.3rem">${p.question}</span>
+          </div>
+          <textarea class="answer-box" id="ans-${qi}-${pi}" placeholder="Write your answer here…" rows="3" oninput="aiAnswers['${qi}-${pi}']=this.value"></textarea>
+          <div class="marking-result" id="struct-result-${qi}-${pi}"></div>
+        </div>`).join('');
+
+      div.innerHTML = `
+        <div class="q-meta">
+          <span>Question ${q.id}</span>
+          <span>${q.topic}</span>
+          <span class="marks-badge">${q.totalMarks} marks</span>
+        </div>
+        ${q.context ? `<div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:7px;padding:.75rem;margin-bottom:.85rem;font-size:.82rem;color:var(--dim);line-height:1.7">${q.context}</div>` : ''}
+        <div class="q-text">${q.question||''}</div>
+        ${parts}`;
+    }
+
+    wrap.appendChild(div);
+  });
+
+  // Add submit button
+  const submitDiv = document.createElement('div');
+  submitDiv.style.cssText = 'text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)';
+  submitDiv.innerHTML = `<button class="btn green" style="font-size:.95rem;padding:.65rem 2.5rem" onclick="markAllAI()">✓ Submit & Mark Paper</button>`;
+  wrap.appendChild(submitDiv);
+}
+
+function selectMCQ(qi, oi, letter, correct) {
+  // Store answer
+  aiAnswers['mcq-' + qi] = letter;
+  // Update UI selection
+  document.querySelectorAll(`#mcq-${qi} .mcq-opt`).forEach(opt => opt.classList.remove('sel'));
+  document.querySelectorAll(`#mcq-${qi} .mcq-opt`)[oi].classList.add('sel');
+}
+
+async function markAllAI() {
+  if (!aiPaperData) return;
+  const apiKey = localStorage.getItem('ae_anthropic_key');
+
+  let totalEarned = 0, totalPossible = 0;
+  const markingPromises = [];
+
+  // Mark MCQs instantly (no AI needed)
+  aiPaperData.questions.forEach((q, qi) => {
+    if (q.type === 'mcq') {
+      totalPossible += q.marks;
+      const studentAns = aiAnswers['mcq-' + qi] || '';
+      const correct    = studentAns === q.answer;
+      if (correct) totalEarned += q.marks;
+      const el = document.getElementById('mcq-result-' + qi);
+      if (el) {
+        el.className = 'marking-result show';
+        el.innerHTML = `
+          <div class="mark-score ${correct ? 'full' : 'zero'}">${correct ? '✓ Correct' : '✗ Incorrect'} — ${correct ? q.marks : 0}/${q.marks}</div>
+          <div style="margin-top:.35rem;font-size:.8rem;color:var(--dim)">${q.explanation}</div>`;
+        // Highlight options
+        document.querySelectorAll(`#mcq-${qi} .mcq-opt`).forEach(opt => {
+          opt.style.pointerEvents = 'none';
+          if (opt.dataset.letter === q.answer) opt.classList.add('correct');
+          else if (opt.dataset.letter === studentAns && !correct) opt.classList.add('wrong');
+        });
+      }
+    }
+  });
+
+  // Mark structured questions with AI
+  if (apiKey) {
+    for (const [qi_pi, answer] of Object.entries(aiAnswers)) {
+      if (qi_pi.startsWith('mcq')) continue;
+      const [qi, pi] = qi_pi.split('-').map(Number);
+      const q  = aiPaperData.questions[qi];
+      if (!q || q.type !== 'structured') continue;
+      const part = q.parts[pi];
+      if (!part) continue;
+      totalPossible += part.marks;
+
+      const resultEl = document.getElementById(`struct-result-${qi}-${pi}`);
+      if (resultEl) { resultEl.className = 'marking-result show'; resultEl.innerHTML = '<div style="color:var(--dim);font-size:.8rem">⏳ Marking…</div>'; }
+
+      try {
+        const markResp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 500,
+            messages: [{
+              role: 'user',
+              content: `You are an IGCSE Chemistry examiner. Mark this student answer strictly.
+
+Question: ${part.question}
+Mark scheme: ${part.markScheme}
+Available marks: ${part.marks}
+Student answer: "${answer || '(no answer)'}"
+
+Respond ONLY with JSON:
+{"marks": <number 0 to ${part.marks}>, "feedback": "detailed feedback explaining marks awarded and lost", "modelAnswer": "ideal full answer"}`
+            }]
+          })
+        });
+        const mdata = await markResp.json();
+        let mraw = mdata.content[0].text.trim().replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'');
+        const result = JSON.parse(mraw);
+        totalEarned += result.marks;
+        if (resultEl) {
+          const pct = result.marks / part.marks;
+          resultEl.innerHTML = `
+            <div class="mark-score ${pct===1?'full':pct>0?'partial':'zero'}">${result.marks}/${part.marks} marks</div>
+            <div style="margin-top:.4rem;font-size:.8rem;color:var(--dim);line-height:1.6">${result.feedback}</div>
+            <div style="margin-top:.5rem;background:rgba(0,229,160,.06);border-radius:6px;padding:.6rem;font-size:.78rem;color:var(--dim)"><strong style="color:var(--green)">Model answer:</strong> ${result.modelAnswer}</div>`;
+        }
+      } catch(e) {
+        if (resultEl) resultEl.innerHTML = '<div style="color:var(--red);font-size:.8rem">Could not mark — check API key</div>';
+      }
+    }
+  }
+
+  // Show overall results
+  const pct   = totalPossible ? Math.round(totalEarned / totalPossible * 100) : 0;
+  const grade = pct>=90?'A*':pct>=80?'A':pct>=70?'B':pct>=60?'C':pct>=50?'D':'U';
+  const resDiv = document.getElementById('ai-paper-results');
+  if (resDiv) {
+    resDiv.style.display = 'block';
+    resDiv.innerHTML = `
+      <div style="background:var(--s2);border:1px solid var(--border2);border-radius:14px;padding:1.5rem;text-align:center;margin-top:1.5rem">
+        <div style="font-family:var(--head);font-size:3rem;font-weight:800;background:linear-gradient(120deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${pct}%</div>
+        <div style="font-size:1rem;color:var(--dim);margin-bottom:1rem">Grade ${grade} · ${totalEarned}/${totalPossible} marks</div>
+        <div style="display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn green" onclick="generateAIPaper()">Generate New Paper →</button>
+          <button class="btn" onclick="backToSetup()">← Back to Setup</button>
+        </div>
+      </div>`;
+    resDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Save to history
+  quizHistory.push({
+    pct, correct: totalEarned, total: totalPossible,
+    grade, topic: aiPaperData.topic + ' (AI)', date: new Date().toLocaleDateString(), duration: '—'
+  });
+  DB.save('quizHistory', quizHistory);
+  addXP(Math.round(pct/5), 'AI paper completed');
+  checkBadges();
+}
+
+// ════════════════════════════════════════════════════════════
+// 10 IGCSE CHEMISTRY PRACTICE PAPERS
+// Cambridge 0620 style — 30 marks each
+// ════════════════════════════════════════════════════════════
+
+const PAPERS = [
+
+// ══════════════════════════════════
+// PAPER 1 — Atomic Structure & Bonding
+// ══════════════════════════════════
+{
+  id:1, title:'Paper 1', subtitle:'Atomic Structure & Chemical Bonding',
+  marks:30, time:45, difficulty:'Core',
+  questions:[
+    {
+      n:1, marks:6, topic:'Atomic Structure',
+      diagram:{type:'atom', element:'Na', shells:[2,8,1]},
+      parts:[
+        {p:'a', q:'The diagram shows the structure of a sodium atom.\\n(i) State the number of protons in a sodium atom.', marks:1, ms:'11 [1]'},
+        {p:'b', q:'(ii) State the number of neutrons in a sodium-23 atom.', marks:1, ms:'12 [1]'},
+        {p:'c', q:'(iii) Write the electron configuration of sodium.', marks:1, ms:'2,8,1 [1]'},
+        {p:'d', q:'(iv) Sodium reacts with chlorine to form sodium chloride. Describe what happens to the outer electrons of sodium and chlorine during this reaction.', marks:2, ms:'Sodium loses 1 electron [1] from its outer shell / Chlorine gains 1 electron [1] into its outer shell — both achieve full outer shells [1] (max 2)'},
+        {p:'e', q:'(v) State the type of bonding in sodium chloride.', marks:1, ms:'Ionic bonding [1]'},
+      ]
+    },
+    {
+      n:2, marks:5, topic:'Covalent Bonding',
+      diagram:{type:'molecule', name:'H₂O', shape:'V-shaped / bent', angle:'104.5°'},
+      parts:[
+        {p:'a', q:'The diagram shows a water molecule.\\n(i) State the shape of a water molecule.', marks:1, ms:'V-shaped / bent [1]'},
+        {p:'b', q:'(ii) State the bond angle in water.', marks:1, ms:'104.5° (accept 104°–105°) [1]'},
+        {p:'c', q:'(iii) Explain why the bond angle in water is less than 109.5°.', marks:2, ms:'Water has 2 lone pairs [1] which repel more strongly than bonding pairs [1] pushing the H atoms closer together [1] (max 2)'},
+        {p:'d', q:'(iv) Compare the bond angle in water (H₂O) with that in carbon dioxide (CO₂). CO₂ is linear with a bond angle of 180°.', marks:1, ms:'CO₂ has no lone pairs on carbon [1] so bond angle is larger (180°) [1] (max 1)'},
+      ]
+    },
+    {
+      n:3, marks:6, topic:'Periodic Table',
+      diagram:{type:'pt_section', elements:['Li','Be','B','C','N','O','F','Ne'], period:2},
+      parts:[
+        {p:'a', q:'The diagram shows Period 2 of the periodic table.\\n(i) State the trend in atomic radius across Period 2 from Li to Ne.', marks:1, ms:'Decreases [1]'},
+        {p:'b', q:'(ii) Explain why atomic radius decreases across Period 2.', marks:2, ms:'Number of protons (nuclear charge) increases [1] attracting electrons more strongly [1] but electrons added to same shell [1] (max 2)'},
+        {p:'c', q:'(iii) Which element in Period 2 has the highest first ionisation energy? Explain your answer.', marks:2, ms:'Neon (Ne) [1] because it has a full outer shell [1] which is very stable / strongly attracted to nucleus [1] (max 2)'},
+        {p:'d', q:'(iv) State the trend in electronegativity across Period 2.', marks:1, ms:'Increases (from Li to F) [1]'},
+      ]
+    },
+    {
+      n:4, marks:5, topic:'Isotopes',
+      parts:[
+        {p:'a', q:'Chlorine exists as two isotopes: ³⁵Cl and ³⁷Cl.\\n(i) Define the term isotope.', marks:2, ms:'Atoms of the same element [1] with the same number of protons but different numbers of neutrons [1]'},
+        {p:'b', q:'(ii) State the number of neutrons in ³⁷Cl.', marks:1, ms:'20 [1]'},
+        {p:'c', q:'(iii) The relative atomic mass of chlorine is 35.5. Calculate the percentage of ³⁵Cl in a sample of chlorine. Show your working.', marks:2, ms:'Let x = % of ³⁵Cl. (35x + 37(100-x))/100 = 35.5 [1]. Solving: x = 75% [1]'},
+      ]
+    },
+    {
+      n:5, marks:8, topic:'Ionic & Covalent Compounds',
+      diagram:{type:'properties_table'},
+      parts:[
+        {p:'a', q:'The table below compares properties of sodium chloride (NaCl) and carbon dioxide (CO₂).\\nComplete the table by filling in the missing values.\\n\\nProperty | NaCl | CO₂\\nBonding | Ionic | [i]\\nMelting point | High | [ii]\\nConduction when dissolved in water | [iii] | Does not conduct', marks:3, ms:'[i] Covalent [1] / [ii] Low [1] / [iii] Conducts [1]'},
+        {p:'b', q:'(i) Explain why sodium chloride has a high melting point.', marks:2, ms:'Strong electrostatic forces [1] between oppositely charged ions [1] in a giant ionic lattice [1] require a lot of energy to break [1] (max 2)'},
+        {p:'c', q:'(ii) Explain why solid sodium chloride does not conduct electricity but molten sodium chloride does.', marks:2, ms:'In solid NaCl ions are fixed in the lattice [1] and cannot move to carry charge [1]. In molten NaCl ions are free to move [1] and carry the current [1] (max 2)'},
+        {p:'d', q:'(iii) Predict whether silicon dioxide (SiO₂) has a high or low melting point. Give a reason.', marks:1, ms:'High [1] because SiO₂ has a giant covalent structure with many strong covalent bonds [1] (max 1)'},
+      ]
+    },
+  ]
+},
+
+// ══════════════════════════════════
+// PAPER 2 — Acids, Bases & Salts
+// ══════════════════════════════════
+{
+  id:2, title:'Paper 2', subtitle:'Acids, Bases & Salts',
+  marks:30, time:45, difficulty:'Core',
+  questions:[
+    {
+      n:1, marks:7, topic:'pH Scale & Indicators',
+      diagram:{type:'ph_scale'},
+      parts:[
+        {p:'a', q:'The diagram shows the pH scale.\\n(i) State the pH of a neutral solution.', marks:1, ms:'7 [1]'},
+        {p:'b', q:'(ii) A solution has a pH of 2. State whether this solution is acidic, neutral or alkaline.', marks:1, ms:'Acidic [1]'},
+        {p:'c', q:'(iii) Universal indicator is added to four solutions. Complete the table.\\n\\nSolution | pH | Colour\\nHydrochloric acid | 1 | [i]\\nEthanoic acid | 4 | [ii]\\nPure water | 7 | [iii]\\nSodium hydroxide | 13 | [iv]', marks:4, ms:'[i] Red [1] / [ii] Orange/yellow [1] / [iii] Green [1] / [iv] Purple/violet [1]'},
+        {p:'d', q:'(iv) Describe a test you could carry out, other than using an indicator, to distinguish between an acid and an alkali.', marks:1, ms:'Add a metal/carbonate — acid fizzes/reacts, alkali does not [1]'},
+      ]
+    },
+    {
+      n:2, marks:8, topic:'Neutralisation & Titration',
+      diagram:{type:'titration_setup'},
+      parts:[
+        {p:'a', q:'The diagram shows apparatus used in a titration.\\n(i) Name the piece of apparatus labelled A (the graduated tube above the flask).', marks:1, ms:'Burette [1]'},
+        {p:'b', q:'(ii) 25.0 cm³ of sodium hydroxide solution of concentration 0.1 mol/dm³ is placed in the conical flask. Calculate the number of moles of NaOH.', marks:2, ms:'n = c × V = 0.1 × (25.0/1000) [1] = 0.0025 mol [1]'},
+        {p:'c', q:'(iii) The reaction is: NaOH + HCl → NaCl + H₂O\\nCalculate the volume of 0.1 mol/dm³ HCl required to neutralise the NaOH.', marks:2, ms:'Moles HCl = moles NaOH = 0.0025 mol [1]. V = n/c = 0.0025/0.1 = 0.025 dm³ = 25.0 cm³ [1]'},
+        {p:'d', q:'(iv) Name a suitable indicator for this titration and state the colour change at the end point.', marks:2, ms:'Phenolphthalein [1]: pink/purple to colourless [1] OR methyl orange [1]: yellow to orange/red [1]'},
+        {p:'e', q:'(v) Write the ionic equation for the neutralisation reaction.', marks:1, ms:'H⁺(aq) + OH⁻(aq) → H₂O(l) [1]'},
+      ]
+    },
+    {
+      n:3, marks:8, topic:'Making Salts',
+      parts:[
+        {p:'a', q:'Copper sulfate crystals can be made by reacting copper oxide with sulfuric acid.\\nCuO + H₂SO₄ → CuSO₄ + H₂O\\n(i) State why excess copper oxide is used in this preparation.', marks:1, ms:'To ensure all the acid is used up / neutralised [1]'},
+        {p:'b', q:'(ii) After the reaction, the mixture is filtered. State what is removed by filtration.', marks:1, ms:'Excess copper oxide [1]'},
+        {p:'c', q:'(iii) The filtrate is then heated to evaporate water until a saturated solution is formed. The solution is left to cool. Explain why crystals form when the solution is cooled.', marks:2, ms:'Solubility decreases as temperature falls [1] so the solution becomes supersaturated and excess solute crystallises out [1]'},
+        {p:'d', q:'(iv) Describe how you would obtain dry copper sulfate crystals from the crystallisation mixture.', marks:2, ms:'Filter to separate crystals [1] and dry between filter papers / in a warm oven [1]'},
+        {p:'e', q:'(v) Suggest one other way to make copper sulfate, using a different starting material. Write a word equation.', marks:2, ms:'Copper carbonate + sulfuric acid → copper sulfate + water + carbon dioxide [1] (or other valid example with equation) [1]'},
+      ]
+    },
+    {
+      n:4, marks:7, topic:'Electrolysis',
+      diagram:{type:'electrolysis_cell', electrolyte:'dilute H₂SO₄'},
+      parts:[
+        {p:'a', q:'The diagram shows the electrolysis of dilute sulfuric acid.\\n(i) State which electrode is the anode.', marks:1, ms:'Positive electrode [1]'},
+        {p:'b', q:'(ii) State the gas produced at the cathode.', marks:1, ms:'Hydrogen (H₂) [1]'},
+        {p:'c', q:'(iii) State the gas produced at the anode.', marks:1, ms:'Oxygen (O₂) [1]'},
+        {p:'d', q:'(iv) Write the half-equation for the reaction at the cathode.', marks:2, ms:'2H⁺ + 2e⁻ → H₂ [1] (correct formula and balancing) [1]'},
+        {p:'e', q:'(v) The volume of gas collected at the cathode is twice the volume collected at the anode. Explain this observation.', marks:2, ms:'2 moles of H₂ are produced for every 1 mole of O₂ [1] because the ratio in water is 2:1 / ratio from equations [1]'},
+      ]
+    },
+  ]
+},
+
+// ══════════════════════════════════
+// PAPER 3 — Metals & Reactivity
+// ══════════════════════════════════
+{
+  id:3, title:'Paper 3', subtitle:'Metals, Reactivity & Extraction',
+  marks:30, time:45, difficulty:'Core',
+  questions:[
+    {
+      n:1, marks:8, topic:'Reactivity Series',
+      diagram:{type:'reactivity_series'},
+      parts:[
+        {p:'a', q:'The diagram shows the reactivity series.\\n(i) A piece of zinc is added to copper sulfate solution. State what you would observe.', marks:2, ms:'Blue colour fades / solution goes colourless [1]. Brown/red solid (copper) deposits on zinc [1]'},
+        {p:'b', q:'(ii) Write the ionic equation for this reaction.', marks:2, ms:'Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s) [1] (correct state symbols) [1]'},
+        {p:'c', q:'(iii) Identify which species is oxidised and which is reduced in this reaction. Explain your answer.', marks:2, ms:'Zn is oxidised — loses 2 electrons (Zn → Zn²⁺) [1]. Cu²⁺ is reduced — gains 2 electrons (Cu²⁺ → Cu) [1]'},
+        {p:'d', q:'(iv) Would iron displace copper from copper sulfate solution? Explain using the reactivity series.', marks:2, ms:'Yes [1] because iron is more reactive than copper [1] and can displace it from solution [1] (max 2)'},
+      ]
+    },
+    {
+      n:2, marks:8, topic:'Rusting & Prevention',
+      diagram:{type:'rusting_experiment', tubes:['water only','air only','boiled water + oil']},
+      parts:[
+        {p:'a', q:'The diagram shows three test tubes used to investigate rusting.\\nTube A contains iron nails in water open to air. Tube B contains iron nails with dry air only. Tube C contains iron nails in boiled water sealed with oil.\\n(i) In which tube(s) does rusting occur? Explain your answer.', marks:2, ms:'Tube A only [1] because both water AND oxygen are needed for rusting [1]'},
+        {p:'b', q:'(ii) Write the word equation for rusting.', marks:1, ms:'Iron + oxygen + water → hydrated iron(III) oxide [1]'},
+        {p:'c', q:'(iii) State two methods of preventing rusting and explain how each works.', marks:4, ms:'Any two of: Painting [1] — acts as a barrier preventing water/oxygen reaching iron [1]; Galvanising [1] — zinc coating acts as barrier AND sacrificial anode [1]; Sacrificial anode [1] — zinc is more reactive so oxidises instead of iron [1]; Alloying with chromium [1] — forms protective chromium oxide layer [1] (2 marks per method, max 4)'},
+        {p:'d', q:'(iv) Explain why salt water causes iron to rust faster than pure water.', marks:1, ms:'Salt water is a better electrolyte [1] increasing the rate of the electrochemical corrosion reaction [1] (max 1)'},
+      ]
+    },
+    {
+      n:3, marks:7, topic:'Blast Furnace',
+      diagram:{type:'blast_furnace'},
+      parts:[
+        {p:'a', q:'The diagram shows a blast furnace used to extract iron.\\n(i) Name the three raw materials charged into the blast furnace.', marks:3, ms:'Iron ore (haematite/Fe₂O₃) [1] / Coke (carbon) [1] / Limestone (calcium carbonate) [1]'},
+        {p:'b', q:'(ii) Write the equation for the reduction of iron oxide by carbon monoxide.', marks:2, ms:'Fe₂O₃ + 3CO → 2Fe + 3CO₂ [1] (balanced correctly) [1]'},
+        {p:'c', q:'(iii) State the purpose of limestone in the blast furnace.', marks:2, ms:'Limestone decomposes to CaO + CO₂ [1]. CaO reacts with acidic impurities (e.g. SiO₂) to form slag [1]'},
+      ]
+    },
+    {
+      n:4, marks:7, topic:'Alloys',
+      parts:[
+        {p:'a', q:'(i) Define the term alloy.', marks:1, ms:'A mixture of a metal with one or more other elements [1]'},
+        {p:'b', q:'(ii) Explain why alloys are generally harder than pure metals.', marks:2, ms:'Different-sized atoms [1] distort the regular lattice structure [1] making it harder for layers to slide over each other [1] (max 2)'},
+        {p:'c', q:'(iii) Stainless steel is an alloy of iron containing chromium and nickel. State one advantage of stainless steel over pure iron.', marks:1, ms:'Does not rust / more resistant to corrosion [1]'},
+        {p:'d', q:'(iv) Brass is an alloy of copper and zinc. State one use of brass and explain why it is suitable.', marks:2, ms:'Musical instruments / door fittings / plumbing [1]. Harder than copper / resistant to corrosion / attractive appearance [1] (any valid pair)'},
+        {p:'e', q:'(v) Bronze contains 90% copper and 10% tin. Calculate the mass of tin in 500g of bronze.', marks:1, ms:'500 × 10/100 = 50 g [1]'},
+      ]
+    },
+  ]
+},
+
+// ══════════════════════════════════
+// PAPER 4 — Energy & Rates of Reaction
+// ══════════════════════════════════
+{
+  id:4, title:'Paper 4', subtitle:'Energetics & Rates of Reaction',
+  marks:30, time:45, difficulty:'Core',
+  questions:[
+    {
+      n:1, marks:8, topic:'Energetics',
+      diagram:{type:'energy_profile', type2:'exothermic'},
+      parts:[
+        {p:'a', q:'The diagram shows the energy profile for an exothermic reaction.\\n(i) On the diagram, label the activation energy (Eₐ) and the enthalpy change (ΔH).', marks:2, ms:'Eₐ: arrow from reactants level to peak [1] / ΔH: arrow from reactants to products level [1]'},
+        {p:'b', q:'(ii) State what is meant by activation energy.', marks:1, ms:'The minimum energy needed for reactant particles to react [1]'},
+        {p:'c', q:'(iii) The reaction releases 285 kJ/mol. State the sign of ΔH and explain what this means.', marks:2, ms:'ΔH is negative [1] meaning energy is released to the surroundings / the products have less energy than the reactants [1]'},
+        {p:'d', q:'(iv) A catalyst is added to the same reaction. State the effect on: the activation energy; the enthalpy change (ΔH).', marks:2, ms:'Activation energy decreases [1] / ΔH remains unchanged [1]'},
+        {p:'e', q:'(v) Name one exothermic reaction that occurs in everyday life.', marks:1, ms:'Any one of: Combustion/burning / neutralisation / respiration / rusting [1]'},
+      ]
+    },
+    {
+      n:2, marks:9, topic:'Rates of Reaction',
+      diagram:{type:'rate_graph', reactions:['marble chips + HCl (large)','marble chips + HCl (small)','marble chips + HCl (heated)']},
+      parts:[
+        {p:'a', q:'The graph shows the volume of CO₂ produced over time when marble chips (CaCO₃) react with hydrochloric acid under three different conditions.\\nCurve A: large chips at 25°C. Curve B: small chips at 25°C. Curve C: large chips at 40°C.\\n(i) State which curve (A, B or C) has the fastest initial rate. Justify your answer.', marks:2, ms:'Curve B or C [1] because it has the steepest gradient at the start [1]'},
+        {p:'b', q:'(ii) The total volume of gas collected is the same for all three curves. Explain why.', marks:1, ms:'The same mass/amount of marble chips is used in each experiment [1]'},
+        {p:'c', q:'(iii) Explain why smaller marble chips react faster than large chips.', marks:2, ms:'Smaller chips have a greater surface area [1] so more particles are exposed for collision [1] increasing the frequency of successful collisions [1] (max 2)'},
+        {p:'d', q:'(iv) Explain, using collision theory, why increasing temperature increases the rate of reaction.', marks:3, ms:'Particles move faster at higher temperature [1] so they collide more frequently [1] and more particles have energy ≥ activation energy [1] so more successful collisions per second [1] (max 3)'},
+        {p:'e', q:'(v) Write the equation for the reaction of marble chips with hydrochloric acid.', marks:1, ms:'CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂ [1]'},
+      ]
+    },
+    {
+      n:3, marks:7, topic:'Catalysts',
+      parts:[
+        {p:'a', q:'(i) Define the term catalyst.', marks:2, ms:'A substance that increases the rate of a chemical reaction [1] without being used up / without being permanently chemically changed [1]'},
+        {p:'b', q:'(ii) Explain how a catalyst increases reaction rate in terms of activation energy.', marks:2, ms:'A catalyst provides an alternative reaction pathway [1] with a lower activation energy [1] so more particles have sufficient energy to react [1] (max 2)'},
+        {p:'c', q:'(iii) Name the catalyst used in the Haber process and state the reaction conditions.', marks:3, ms:'Iron catalyst [1] / Temperature: approximately 450°C [1] / Pressure: approximately 200 atm [1]'},
+      ]
+    },
+  ]
+},
+
+// ══════════════════════════════════
+// PAPER 5 — Organic Chemistry
+// ══════════════════════════════════
+{
+  id:5, title:'Paper 5', subtitle:'Organic Chemistry',
+  marks:30, time:45, difficulty:'Extended',
+  questions:[
+    {
+      n:1, marks:8, topic:'Homologous Series',
+      diagram:{type:'structural_formula', molecule:'propane', formula:'C₃H₈'},
+      parts:[
+        {p:'a', q:'(i) Define the term homologous series.', marks:2, ms:'A series of compounds with the same general formula [1] and similar chemical properties, differing by CH₂ each time [1]'},
+        {p:'b', q:'(ii) Give the molecular formula of the alkane with 5 carbon atoms.', marks:1, ms:'C₅H₁₂ [1]'},
+        {p:'c', q:'(iii) State the general formula for alkenes.', marks:1, ms:'CₙH₂ₙ [1]'},
+        {p:'d', q:'(iv) Explain why alkenes are described as unsaturated.', marks:1, ms:'They contain a C=C double bond [1]'},
+        {p:'e', q:'(v) Describe a chemical test to distinguish between propane and propene. State the result for each.', marks:3, ms:'Add bromine water [1] / propane: no colour change (stays orange/brown) [1] / propene: decolourises (goes colourless) [1]'},
+      ]
+    },
+    {
+      n:2, marks:8, topic:'Combustion',
+      parts:[
+        {p:'a', q:'(i) Write the balanced equation for the complete combustion of ethane (C₂H₆).', marks:2, ms:'2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O [1] (correct products) [1] (correctly balanced) [1] (max 2)'},
+        {p:'b', q:'(ii) State two products formed during the incomplete combustion of a hydrocarbon.', marks:2, ms:'Carbon monoxide (CO) [1] and carbon (soot/C) [1]'},
+        {p:'c', q:'(iii) Explain why carbon monoxide is dangerous to humans.', marks:2, ms:'CO binds to haemoglobin [1] more strongly than oxygen [1] preventing oxygen transport to cells [1] causing suffocation/death (max 2)'},
+        {p:'d', q:'(iv) State two environmental problems caused by burning fossil fuels.', marks:2, ms:'Any two of: Greenhouse effect / global warming (CO₂) [1] / Acid rain (SO₂/NOₓ) [1] / Particulate pollution [1] (max 2)'},
+      ]
+    },
+    {
+      n:3, marks:7, topic:'Polymerisation',
+      diagram:{type:'polymer', monomer:'ethene', polymer:'poly(ethene)'},
+      parts:[
+        {p:'a', q:'The diagram shows the polymerisation of ethene.\\n(i) State the type of polymerisation shown.', marks:1, ms:'Addition polymerisation [1]'},
+        {p:'b', q:'(ii) Draw the repeat unit of poly(ethene).', marks:2, ms:'—(CH₂—CH₂)— [1] drawn correctly with bonds shown [1]'},
+        {p:'c', q:'(iii) State one use of poly(ethene).', marks:1, ms:'Plastic bags / bottles / packaging / pipes [1]'},
+        {p:'d', q:'(iv) State one environmental problem caused by addition polymers.', marks:1, ms:'Non-biodegradable [1] / pollution of oceans/land [1] (max 1)'},
+        {p:'e', q:'(v) Explain the difference between addition and condensation polymerisation.', marks:2, ms:'Addition: monomers join with no other product [1] / Condensation: monomers join releasing a small molecule (H₂O or HCl) [1]'},
+      ]
+    },
+    {
+      n:4, marks:7, topic:'Fermentation & Ethanol',
+      parts:[
+        {p:'a', q:'(i) Write the word equation for fermentation of glucose.', marks:2, ms:'Glucose → ethanol + carbon dioxide [1] (requires yeast / enzymes / anaerobic conditions mentioned) [1]'},
+        {p:'b', q:'(ii) State the conditions needed for fermentation.', marks:3, ms:'Yeast [1] / warm temperature (~30°C) [1] / anaerobic (absence of oxygen) [1]'},
+        {p:'c', q:'(iii) Ethanol can also be made by the hydration of ethene. Give one advantage of this method over fermentation.', marks:1, ms:'Faster/continuous process [1] / purer product [1] / higher yield [1] (any one)'},
+        {p:'d', q:'(iv) Give one advantage of fermentation over the hydration of ethene.', marks:1, ms:'Uses renewable resources (sugar/glucose) [1] / sustainable [1] / lower energy required [1] (any one)'},
+      ]
+    },
+  ]
+},
+
+// PAPERS 6-10: shorter format for space efficiency
+{id:6, title:'Paper 6', subtitle:'Separation Techniques', marks:30, time:45, difficulty:'Core',
+  questions:[
+    {n:1, marks:10, topic:'Chromatography', diagram:{type:'chromatogram', spots:3},
+     parts:[
+      {p:'a', q:'A chromatogram is run using a mixture of food dyes. The solvent front travels 9.0 cm. Spot X travels 4.5 cm and spot Y travels 7.2 cm.\\n(i) Calculate the Rf value of spot X. Show your working.', marks:2, ms:'Rf = distance by spot / distance by solvent = 4.5/9.0 [1] = 0.50 [1]'},
+      {p:'b', q:'(ii) Calculate the Rf value of spot Y.', marks:1, ms:'7.2/9.0 = 0.80 [1]'},
+      {p:'c', q:'(iii) A reference dye Z has an Rf value of 0.50. State what this tells you about spot X and dye Z.', marks:1, ms:'Spot X is the same substance as dye Z [1]'},
+      {p:'d', q:'(iv) Explain why different dyes travel different distances in chromatography.', marks:2, ms:'Different solubility in the solvent [1] / different attraction to the stationary phase [1] so they travel at different rates [1] (max 2)'},
+      {p:'e', q:'(v) State one use of chromatography in industry or forensic science.', marks:1, ms:'Food colouring testing [1] / forensic ink analysis [1] / drug testing [1] (any one)'},
+      {p:'f', q:'(vi) Suggest why water is not always used as the solvent in chromatography.', marks:1, ms:'Some substances are insoluble in water [1] / different solvent may give better separation [1] (max 1)'},
+      {p:'g', q:'(vii) What modification would you make to separate a mixture of compounds that are all insoluble in water?', marks:2, ms:'Use an organic solvent [1] such as ethanol/propanone [1]'},
+    ]},
+    {n:2, marks:10, topic:'Distillation', diagram:{type:'distillation_apparatus'},
+     parts:[
+      {p:'a', q:'(i) State the purpose of the condenser in distillation.', marks:1, ms:'To cool and condense the vapour back to liquid [1]'},
+      {p:'b', q:'(ii) A mixture of ethanol (boiling point 78°C) and water (boiling point 100°C) is separated by distillation. Explain which liquid is collected first.', marks:2, ms:'Ethanol [1] because it has a lower boiling point [1] so vaporises first [1] (max 2)'},
+      {p:'c', q:'(iii) State the difference between simple distillation and fractional distillation.', marks:2, ms:'Simple: separates liquids with large difference in boiling points [1] / Fractional: separates liquids with similar boiling points using fractionating column [1]'},
+      {p:'d', q:'(iv) Name the process used to separate crude oil into fractions.', marks:1, ms:'Fractional distillation [1]'},
+      {p:'e', q:'(v) State two properties that increase as hydrocarbon chain length increases.', marks:2, ms:'Boiling point [1] / viscosity [1] / density [1] (any two)'},
+      {p:'f', q:'(vi) Which fraction from crude oil is most useful as a fuel and why?', marks:2, ms:'Petrol/diesel [1] because it is volatile/flammable and available in large quantities [1]'},
+    ]},
+    {n:3, marks:10, topic:'Crystallisation & Filtration',
+     parts:[
+      {p:'a', q:'(i) Describe how you would obtain pure, dry crystals of potassium nitrate from a mixture of potassium nitrate and sand.', marks:5, ms:'Add water and stir to dissolve KNO₃ [1] / filter to remove sand [1] / heat filtrate to evaporate water to saturation point [1] / allow to cool slowly for crystal growth [1] / filter crystals and dry between filter papers [1]'},
+      {p:'b', q:'(ii) Explain why slow cooling produces larger crystals than rapid cooling.', marks:2, ms:'Slow cooling allows ions/molecules time to arrange in regular lattice positions [1] producing fewer but larger crystals [1]'},
+      {p:'c', q:'(iii) State one advantage of crystallisation over evaporation to dryness as a purification technique.', marks:1, ms:'Prevents decomposition of the salt at high temperature [1] / gives purer product [1] (max 1)'},
+      {p:'d', q:'(iv) What technique would you use to separate a mixture of two liquids that are completely miscible (mix in all proportions)?', marks:1, ms:'Fractional distillation [1]'},
+      {p:'e', q:'(v) Give one example of a mixture that can be separated by filtration and state which component passes through the filter paper.', marks:1, ms:'Sand and water [1] — water passes through [1] (or other valid example)'},
+    ]},
+  ]
+},
+
+{id:7, title:'Paper 7', subtitle:'Quantitative Chemistry', marks:30, time:45, difficulty:'Extended',
+  questions:[
+    {n:1, marks:12, topic:'Mole Calculations',
+     parts:[
+      {p:'a', q:'(i) Calculate the number of moles in 40g of sodium hydroxide (NaOH). [Relative atomic masses: Na=23, O=16, H=1]', marks:2, ms:'Mᵣ of NaOH = 23+16+1 = 40 [1]. n = 40/40 = 1 mol [1]'},
+      {p:'b', q:'(ii) Calculate the mass of 0.5 mol of calcium carbonate (CaCO₃). [Ca=40, C=12, O=16]', marks:2, ms:'Mᵣ = 40+12+48 = 100 [1]. Mass = 0.5 × 100 = 50g [1]'},
+      {p:'c', q:'(iii) Calculate the concentration of a solution containing 8g of NaOH dissolved in 500cm³ of water.', marks:3, ms:'Moles NaOH = 8/40 = 0.2 mol [1]. Volume = 500/1000 = 0.5 dm³ [1]. Concentration = 0.2/0.5 = 0.4 mol/dm³ [1]'},
+      {p:'d', q:'(iv) In the reaction: Mg + 2HCl → MgCl₂ + H₂. Calculate the volume of hydrogen gas produced at RTP when 2.4g of magnesium reacts completely. [Mg=24; 1 mol of gas = 24 dm³ at RTP]', marks:3, ms:'Moles Mg = 2.4/24 = 0.1 mol [1]. Moles H₂ = 0.1 mol (1:1 ratio) [1]. Volume = 0.1 × 24 = 2.4 dm³ [1]'},
+      {p:'e', q:'(v) Calculate the percentage by mass of nitrogen in ammonium nitrate (NH₄NO₃). [N=14, H=1, O=16]', marks:2, ms:'Mᵣ NH₄NO₃ = 14+4+14+48 = 80 [1]. % N = (2×14)/80 × 100 = 35% [1]'},
+    ]},
+    {n:2, marks:10, topic:'Empirical Formula',
+     parts:[
+      {p:'a', q:'A compound contains 40% carbon, 6.7% hydrogen and 53.3% oxygen by mass. Determine its empirical formula. [C=12, H=1, O=16]', marks:4, ms:'C: 40/12=3.33 / H: 6.7/1=6.7 / O: 53.3/16=3.33 [1]. Divide by smallest (3.33): C:1, H:2, O:1 [1]. Empirical formula: CH₂O [1] (with working shown) [1]'},
+      {p:'b', q:'(ii) The relative molecular mass of this compound is 180. Determine the molecular formula.', marks:2, ms:'Mᵣ of CH₂O = 30 [1]. 180/30 = 6, so molecular formula = C₆H₁₂O₆ [1]'},
+      {p:'c', q:'(iii) Name this compound and state one biological process in which it is involved.', marks:2, ms:'Glucose [1] / photosynthesis or respiration [1]'},
+      {p:'d', q:'(iv) When 5.4g of aluminium reacts with excess oxygen, 10.2g of aluminium oxide is formed. Calculate the empirical formula of aluminium oxide. [Al=27, O=16]', marks:2, ms:'Mass O = 10.2-5.4 = 4.8g. Moles Al = 5.4/27 = 0.2, Moles O = 4.8/16 = 0.3 [1]. Ratio Al:O = 0.2:0.3 = 2:3 [1]. Al₂O₃ [1] (max 2)'},
+    ]},
+    {n:3, marks:8, topic:'Yield & Atom Economy',
+     parts:[
+      {p:'a', q:'(i) State what is meant by the percentage yield of a reaction.', marks:1, ms:'(Actual yield / theoretical yield) × 100 [1]'},
+      {p:'b', q:'(ii) In the preparation of aspirin, 2.76g of salicylic acid (Mᵣ=138) reacts to give 2.70g of aspirin (Mᵣ=180). Calculate the theoretical yield of aspirin and the percentage yield.', marks:4, ms:'Moles salicylic acid = 2.76/138 = 0.02 mol [1]. Moles aspirin = 0.02 mol (1:1) [1]. Theoretical yield = 0.02×180 = 3.6g [1]. % yield = 2.70/3.6 × 100 = 75% [1]'},
+      {p:'c', q:'(iii) State one reason why percentage yield is often less than 100%.', marks:1, ms:'Incomplete reaction / side reactions / product lost during transfer / equilibrium not complete [1]'},
+      {p:'d', q:'(iv) Define atom economy.', marks:2, ms:'(Mᵣ of desired product / sum of Mᵣ of all products) × 100 [1] — a measure of how much of the reactant atoms end up in the desired product [1]'},
+    ]},
+  ]
+},
+
+{id:8, title:'Paper 8', subtitle:'States of Matter & Gases', marks:30, time:45, difficulty:'Core',
+  questions:[
+    {n:1, marks:10, topic:'Kinetic Theory', diagram:{type:'state_changes'},
+     parts:[
+      {p:'a', q:'The diagram shows the changes of state between solid, liquid and gas.\\n(i) Name the change of state from liquid to gas.', marks:1, ms:'Evaporation/boiling [1]'},
+      {p:'b', q:'(ii) State the name of the change from gas directly to solid.', marks:1, ms:'Deposition/sublimation [1]'},
+      {p:'c', q:'(iii) Describe the arrangement and movement of particles in a liquid.', marks:3, ms:'Particles are close together [1] / randomly arranged (no fixed positions) [1] / moving freely/randomly but slower than gas [1]'},
+      {p:'d', q:'(iv) Explain, in terms of particles, why gases are compressible but liquids are not.', marks:2, ms:'Gas particles have large spaces between them [1] so can be pushed closer together [1]. Liquid particles are already close together [1] so cannot be compressed significantly (max 2)'},
+      {p:'e', q:'(v) A gas is heated at constant pressure. State what happens to the volume. Name the law this illustrates.', marks:2, ms:'Volume increases [1] / Charles Law [1]'},
+      {p:'f', q:'(vi) A gas occupies 500cm³ at 2 atm. Calculate its volume at 4 atm, temperature constant.', marks:1, ms:'P₁V₁ = P₂V₂: 2×500 = 4×V₂: V₂ = 250cm³ [1]'},
+    ]},
+    {n:2, marks:10, topic:'Diffusion',
+     parts:[
+      {p:'a', q:'(i) Define diffusion.', marks:2, ms:'The net movement of particles [1] from a region of high concentration to a region of low concentration [1]'},
+      {p:'b', q:'(ii) Ammonia (NH₃, Mᵣ=17) and hydrogen chloride (HCl, Mᵣ=36.5) are released simultaneously from opposite ends of a long tube. A white ring of ammonium chloride forms where they meet. Predict, with a reason, whether the white ring forms closer to the ammonia end or the HCl end.', marks:3, ms:'Closer to the HCl end [1] because NH₃ has a lower Mᵣ [1] so diffuses faster and travels further before meeting HCl [1]'},
+      {p:'c', q:'(iii) State two factors that affect the rate of diffusion.', marks:2, ms:'Temperature [1] / molecular mass [1] / concentration gradient [1] (any two)'},
+      {p:'d', q:'(iv) Explain why diffusion is faster in gases than in liquids.', marks:2, ms:'Gas particles move faster [1] and have more space between them [1] with less resistance to movement [1] (max 2)'},
+      {p:'e', q:'(v) State an everyday example of diffusion.', marks:1, ms:'Smell of perfume spreading [1] / smell of food cooking [1] (any valid example)'},
+    ]},
+    {n:3, marks:10, topic:'Water & Solutions',
+     parts:[
+      {p:'a', q:'(i) State what is meant by a saturated solution.', marks:1, ms:'A solution that cannot dissolve any more solute at a given temperature [1]'},
+      {p:'b', q:'(ii) The solubility of potassium nitrate at 20°C is 32g per 100g water and at 60°C is 110g per 100g water. Calculate the mass of crystals obtained when a saturated solution prepared at 60°C using 100g water is cooled to 20°C.', marks:2, ms:'At 60°C: 110g dissolves. At 20°C: 32g dissolves. Mass crystals = 110-32 = 78g [1] (with working) [1]'},
+      {p:'c', q:'(iii) State two tests you would carry out to show that a sample of water is pure. State the expected result for pure water in each test.', marks:4, ms:'Boiling point: pure water boils at exactly 100°C [1] [1] / Freezing point: pure water freezes at exactly 0°C [1] [1] (2 marks per test, max 4)'},
+      {p:'d', q:'(iv) Describe how hard water can be softened. Give one method.', marks:2, ms:'Add washing soda (sodium carbonate) [1] — Ca²⁺/Mg²⁺ ions precipitate as insoluble carbonates [1] OR use ion exchange column [1] — Ca²⁺/Mg²⁺ replaced by Na⁺/H⁺ [1] (max 2)'},
+      {p:'e', q:'(v) State the difference between temporary and permanent hard water.', marks:1, ms:'Temporary hardness can be removed by boiling [1] / permanent hardness cannot [1] (max 1)'},
+    ]},
+  ]
+},
+
+{id:9, title:'Paper 9', subtitle:'Industrial Chemistry', marks:30, time:45, difficulty:'Extended',
+  questions:[
+    {n:1, marks:12, topic:'Haber Process', diagram:{type:'haber_diagram'},
+     parts:[
+      {p:'a', q:'(i) Write the equation for the Haber process, including state symbols.', marks:2, ms:'N₂(g) + 3H₂(g) ⇌ 2NH₃(g) [1] (correct equation) [1] (state symbols and equilibrium sign)'},
+      {p:'b', q:'(ii) The Haber process uses a temperature of 450°C. The reaction is exothermic. Explain why a lower temperature is not used, even though it would give a higher yield.', marks:2, ms:'Lower temperature gives higher yield [1] but the rate would be too slow for commercial production [1]'},
+      {p:'c', q:'(iii) The process uses a pressure of 200 atm. Explain, using Le Chatelier principle, why high pressure increases the yield of ammonia.', marks:3, ms:'High pressure shifts equilibrium to the side with fewer moles of gas [1]. Left side: 4 moles gas. Right side: 2 moles gas [1]. Equilibrium shifts right [1] increasing NH₃ yield [1] (max 3)'},
+      {p:'d', q:'(iv) State the role of the iron catalyst.', marks:2, ms:'Increases the rate of reaction [1] by providing alternative pathway with lower activation energy [1] without being used up [1] (max 2)'},
+      {p:'e', q:'(v) State two large-scale uses of ammonia.', marks:2, ms:'Making fertilisers (ammonium nitrate/sulfate) [1] / making nitric acid [1] / making explosives [1] / cleaning products [1] (any two)'},
+      {p:'f', q:'(vi) Unreacted nitrogen and hydrogen are recycled back into the reactor. Explain the economic advantage of this.', marks:1, ms:'Reduces waste [1] / increases overall yield/efficiency [1] / reduces costs [1] (any one)'},
+    ]},
+    {n:2, marks:10, topic:'Contact Process & Electrolysis of Brine',
+     parts:[
+      {p:'a', q:'The electrolysis of brine (concentrated sodium chloride solution) produces three useful products.\\n(i) State the three products of the electrolysis of brine.', marks:3, ms:'Chlorine [1] / Hydrogen [1] / Sodium hydroxide [1]'},
+      {p:'b', q:'(ii) Write the half-equation for the reaction at the anode.', marks:2, ms:'2Cl⁻ → Cl₂ + 2e⁻ [1] (balanced correctly) [1]'},
+      {p:'c', q:'(iii) State one industrial use for each product.\\nChlorine:  \\nHydrogen:  \\nSodium hydroxide:', marks:3, ms:'Cl₂: making PVC/bleach/disinfectant [1] / H₂: making margarine/as fuel [1] / NaOH: making soap/paper [1]'},
+      {p:'d', q:'(iv) Explain why chlorine is produced at the anode rather than oxygen, even though OH⁻ ions are also present.', marks:2, ms:'Cl⁻ is present in high concentration [1] so is preferentially discharged over OH⁻ [1]'},
+    ]},
+    {n:3, marks:8, topic:'Equilibrium',
+     parts:[
+      {p:'a', q:'(i) State what is meant by dynamic equilibrium.', marks:2, ms:'The rate of the forward reaction equals the rate of the reverse reaction [1] and the concentrations of reactants and products remain constant [1]'},
+      {p:'b', q:'(ii) For the reaction: N₂O₄(g) ⇌ 2NO₂(g) (ΔH = +57 kJ/mol)\\nPredict the effect on the equilibrium position of: (1) increasing temperature, (2) increasing pressure.', marks:4, ms:'(1) Equilibrium shifts right [1] toward products because reaction is endothermic [1] (2) Equilibrium shifts left [1] toward fewer moles of gas (1 mole vs 2 moles) [1]'},
+      {p:'c', q:'(iii) State the effect of adding a catalyst on the equilibrium position and explain why.', marks:2, ms:'No effect on equilibrium position [1] because catalyst speeds up both forward and reverse reactions equally [1]'},
+    ]},
+  ]
+},
+
+{id:10, title:'Paper 10', subtitle:'Mixed Topics — Full Revision', marks:30, time:45, difficulty:'Extended',
+  questions:[
+    {n:1, marks:8, topic:'Mixed Calculation',
+     parts:[
+      {p:'a', q:'Calcium carbonate decomposes on heating: CaCO₃ → CaO + CO₂\\n(i) Calculate the mass of CaO produced when 50g of CaCO₃ decomposes completely. [Ca=40, C=12, O=16]', marks:3, ms:'Mᵣ CaCO₃=100, CaO=56 [1]. Moles CaCO₃ = 50/100 = 0.5 mol [1]. Mass CaO = 0.5×56 = 28g [1]'},
+      {p:'b', q:'(ii) Calculate the volume of CO₂ produced at RTP. [1 mol gas = 24 dm³ at RTP]', marks:2, ms:'Moles CO₂ = 0.5 mol [1]. Volume = 0.5×24 = 12 dm³ [1]'},
+      {p:'c', q:'(iii) In an experiment, only 11.2 dm³ of CO₂ was collected. Calculate the percentage yield.', marks:1, ms:'% yield = 11.2/12 × 100 = 93.3% [1]'},
+      {p:'d', q:'(iv) Suggest one reason the yield was not 100%.', marks:1, ms:'Some CO₂ dissolved in water / incomplete reaction / gas escaped before collection [1]'},
+      {p:'e', q:'(v) CaO reacts with water to form calcium hydroxide. Write the balanced equation.', marks:1, ms:'CaO + H₂O → Ca(OH)₂ [1]'},
+    ]},
+    {n:2, marks:8, topic:'Identifying Ions',
+     parts:[
+      {p:'a', q:'A student has four unknown solutions labelled P, Q, R and S. Using the tests described, identify the ions present.\\n\\nTest 1: Add dilute HCl to each solution.\\nP: white precipitate. Q: no reaction. R: no reaction. S: effervescence.\\n\\nTest 2: Add aqueous NaOH to each solution.\\nP: white precipitate soluble in excess NaOH. Q: blue precipitate. R: red-brown precipitate. S: no precipitate.\\n\\n(i) Identify the cation in solution Q.', marks:1, ms:'Cu²⁺ [1]'},
+      {p:'b', q:'(ii) Identify the cation in solution R.', marks:1, ms:'Fe³⁺ [1]'},
+      {p:'c', q:'(iii) Identify the cation in solution P. Explain how the NaOH test confirms this.', marks:2, ms:'Al³⁺ [1] — the white precipitate of Al(OH)₃ dissolves in excess NaOH (amphoteric) [1]'},
+      {p:'d', q:'(iv) The effervescence in solution S produces a gas that turns limewater milky. Identify the anion in S.', marks:1, ms:'CO₃²⁻ (carbonate) [1]'},
+      {p:'e', q:'(v) Write the ionic equation for the reaction of carbonate ions with dilute HCl.', marks:2, ms:'CO₃²⁻ + 2H⁺ → H₂O + CO₂ [1] (balanced with correct charges) [1]'},
+      {p:'f', q:'(vi) A solution contains Cl⁻ ions. Describe the test and result that confirms this.', marks:1, ms:'Add dilute HNO₃ then AgNO₃ solution [1] — white precipitate of AgCl forms [1] (max 1)'},
+    ]},
+    {n:3, marks:7, topic:'Environmental Chemistry',
+     parts:[
+      {p:'a', q:'(i) State the main greenhouse gas produced by burning fossil fuels.', marks:1, ms:'Carbon dioxide (CO₂) [1]'},
+      {p:'b', q:'(ii) Explain how greenhouse gases cause global warming.', marks:3, ms:'Greenhouse gases absorb infrared radiation [1] emitted by the Earth\'s surface [1] and re-emit it in all directions including back to Earth [1] preventing heat loss / warming the atmosphere [1] (max 3)'},
+      {p:'c', q:'(iii) State two other gases that contribute to the greenhouse effect.', marks:2, ms:'Methane [1] / water vapour [1] / nitrous oxide [1] (any two)'},
+      {p:'d', q:'(iv) Suggest two ways individuals can reduce their contribution to climate change.', marks:1, ms:'Use renewable energy [1] / reduce car use / eat less meat / reduce flying (any two for 1 mark)'},
+    ]},
+    {n:4, marks:7, topic:'Organic & Inorganic Synthesis',
+     parts:[
+      {p:'a', q:'Starting from ethene, describe how you would make bromoethane (CH₂BrCH₂Br).', marks:3, ms:'Add bromine water / Br₂ to ethene [1] — addition reaction [1]. CH₂=CH₂ + Br₂ → CH₂BrCH₂Br [1]'},
+      {p:'b', q:'(ii) State the type of reaction in (a).', marks:1, ms:'Addition [1]'},
+      {p:'c', q:'(iii) Ethanol (C₂H₅OH) can be oxidised to ethanoic acid. Name the reagent used for this oxidation.', marks:1, ms:'Acidified potassium dichromate(VI) [1] / K₂Cr₂O₇ + H₂SO₄ [1] (max 1)'},
+      {p:'d', q:'(iv) Ethanoic acid reacts with ethanol to form an ester. Name the type of reaction and write the structural formula of the ester produced.', marks:2, ms:'Esterification / condensation [1]. CH₃COOC₂H₅ (ethyl ethanoate) [1]'},
+    ]},
+  ]
+},
+
+];
+
+
+// ════════════════════════════════════════════════════════════
+// PAST PAPERS — RENDERING & PRINT SYSTEM
+// ════════════════════════════════════════════════════════════
+
+let currentPaper = null;
+
+function initPapersPage() {
+  const grid = document.getElementById('papers-grid');
+  if (!grid || grid.dataset.built) return;
+  grid.dataset.built = '1';
+  PAPERS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--cc', p.difficulty === 'Extended' ? 'var(--purple)' : 'var(--cyan)');
+    card.innerHTML = `
+      <div class="ctopic">${p.difficulty} Level</div>
+      <div class="cname">${p.title}</div>
+      <div style="font-size:.8rem;font-weight:500;color:var(--dim);margin-bottom:.35rem">${p.subtitle}</div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.65rem">
+        <span class="tag">⏱ ${p.time} min</span>
+        <span class="tag">📊 ${p.marks} marks</span>
+        <span class="tag">📋 ${p.questions.length} questions</span>
+      </div>
+      <div style="display:flex;gap:.4rem">
+        <button class="btn" style="flex:1" onclick="event.stopPropagation();openPaper(${p.id})">View Paper</button>
+        <button class="btn green" style="flex:1" onclick="event.stopPropagation();printPaperById(${p.id})">🖨️ Print</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function openPaper(id) {
+  currentPaper = PAPERS.find(p => p.id === id);
+  if (!currentPaper) return;
+  document.getElementById('papers-grid').parentElement.parentElement.style.display = 'none';
+  document.getElementById('paper-viewer').style.display = 'block';
+  document.getElementById('pv-title').textContent = `${currentPaper.title} — ${currentPaper.subtitle}`;
+  document.getElementById('pv-meta').textContent = `${currentPaper.difficulty} · ${currentPaper.time} minutes · ${currentPaper.marks} marks`;
+  renderPaperContent(currentPaper, 'pv-content', false);
+  window.scrollTo(0, 0);
+}
+
+function closePaperViewer() {
+  document.getElementById('paper-viewer').style.display = 'none';
+  document.getElementById('papers-grid').parentElement.parentElement.style.display = 'block';
+  currentPaper = null;
+}
+
+function renderPaperContent(paper, containerId, markSchemeMode) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  // Paper header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'text-align:center;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--border)';
+  hdr.innerHTML = `
+    <div style="font-family:var(--head);font-size:1.3rem;font-weight:800;margin-bottom:.25rem">ATOM EDGE — IGCSE Chemistry</div>
+    <div style="font-size:1rem;font-weight:600;margin-bottom:.15rem">${paper.title}: ${paper.subtitle}</div>
+    <div style="font-size:.82rem;color:var(--dim)">${paper.difficulty} Level &nbsp;|&nbsp; Time Allowed: ${paper.time} minutes &nbsp;|&nbsp; Total Marks: ${paper.marks}</div>
+    <div style="font-size:.75rem;color:var(--dim);margin-top:.35rem">Write your answers in the spaces provided. Show all working for calculations.</div>`;
+  wrap.appendChild(hdr);
+
+  paper.questions.forEach(q => {
+    const qDiv = document.createElement('div');
+    qDiv.style.cssText = 'margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)';
+
+    // Question header
+    let qHtml = `<div style="display:flex;align-items:baseline;gap:.75rem;margin-bottom:.75rem">
+      <div style="font-family:var(--head);font-size:1rem;font-weight:700;min-width:100px">Question ${q.n}</div>
+      <div style="font-size:.75rem;color:var(--dim)">[${q.marks} marks] · ${q.topic}</div>
+    </div>`;
+
+    // Diagram
+    if (q.diagram) qHtml += renderDiagramSVG(q.diagram);
+
+    // Parts
+    q.parts.forEach(part => {
+      qHtml += `<div style="margin-bottom:.85rem;padding-left:.75rem">
+        <div style="font-size:.88rem;line-height:1.7;margin-bottom:.4rem">
+          <strong>(${part.p})</strong> ${part.q.replace(/\n/g,'<br>')}
+          <span style="float:right;font-family:var(--mono);font-size:.72rem;color:var(--dim)">[${part.marks}]</span>
+        </div>`;
+
+      if (markSchemeMode) {
+        qHtml += `<div style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);border-radius:7px;padding:.6rem .85rem;font-size:.8rem;color:var(--dim);line-height:1.65">
+          <strong style="color:var(--green)">Mark Scheme:</strong> ${part.ms}</div>`;
+      } else {
+        // Answer lines
+        const lines = Math.max(2, part.marks * 2);
+        for (let i = 0; i < lines; i++) {
+          qHtml += `<div style="border-bottom:1px solid var(--border2);height:24px;margin-bottom:2px"></div>`;
+        }
+      }
+      qHtml += `</div>`;
+    });
+
+    qDiv.innerHTML = qHtml;
+    wrap.appendChild(qDiv);
+  });
+}
+
+function renderDiagramSVG(diag) {
+  // Generate clean SVG diagrams for each type
+  const W = 500, H = 160;
+  let svg = `<div style="margin:.75rem 0;background:var(--s2);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+    <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;max-height:180px">`;
+
+  if (diag.type === 'atom') {
+    // Bohr model atom diagram
+    const shells = diag.shells || [2,8,1];
+    const cx = 120, cy = H/2;
+    svg += `<circle cx="${cx}" cy="${cy}" r="18" fill="#ff6b35" opacity=".8"/>
+    <text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="11" fill="white" font-weight="bold">${diag.element||'?'}</text>`;
+    shells.forEach((n,si) => {
+      const r = 32 + si*28;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(0,229,255,.4)" stroke-dasharray="3,3"/>`;
+      for(let e=0;e<n;e++){
+        const ang = (e/n)*Math.PI*2 - Math.PI/2;
+        const ex = cx+Math.cos(ang)*r, ey = cy+Math.sin(ang)*r;
+        svg += `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="5" fill="#00e5ff" opacity=".85"/>`;
+      }
+    });
+    svg += `<text x="260" y="40" font-size="12" fill="#aaa">Electron shells:</text>`;
+    shells.forEach((n,si)=>{
+      svg += `<text x="260" y="${58+si*18}" font-size="11" fill="#ccc">Shell ${si+1}: ${n} electrons</text>`;
+    });
+    svg += `<text x="260" y="${58+shells.length*18+8}" font-size="11" fill="#00e5a0">Configuration: ${shells.join(',')}</text>`;
+  }
+
+  else if (diag.type === 'ph_scale') {
+    // pH scale bar
+    const gx=30,gy=50,gw=440,gh=28;
+    const grad = `<defs><linearGradient id="phg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff2200"/><stop offset="21%" stop-color="#ff8800"/>
+      <stop offset="43%" stop-color="#ffee00"/><stop offset="50%" stop-color="#00cc44"/>
+      <stop offset="64%" stop-color="#0088ff"/><stop offset="85%" stop-color="#4400cc"/>
+      <stop offset="100%" stop-color="#220066"/>
+    </linearGradient></defs>`;
+    svg = `<div style="margin:.75rem 0;background:var(--s2);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+    <svg width="100%" viewBox="0 0 500 ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;max-height:180px">${grad}`;
+    svg += `<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" rx="4" fill="url(#phg)"/>`;
+    for(let i=0;i<=14;i++){
+      const x=gx+(i/14)*gw;
+      svg += `<line x1="${x}" y1="${gy}" x2="${x}" y2="${gy+gh}" stroke="rgba(0,0,0,.2)" stroke-width="1"/>
+      <text x="${x}" y="${gy+gh+14}" text-anchor="middle" font-size="10" fill="#aaa">${i}</text>`;
+    }
+    svg += `<text x="${gx}" y="${gy-8}" font-size="10" fill="#ff4444">← ACIDIC</text>
+    <text x="${gx+gw/2}" y="${gy-8}" text-anchor="middle" font-size="10" fill="#44ff88">NEUTRAL</text>
+    <text x="${gx+gw}" y="${gy-8}" text-anchor="end" font-size="10" fill="#4488ff">ALKALINE →</text>`;
+  }
+
+  else if (diag.type === 'titration_setup') {
+    svg += `<rect x="190" y="10" width="16" height="90" rx="3" fill="none" stroke="#4488ff" stroke-width="1.5"/>
+    <rect x="192" y="12" width="12" height="60" rx="2" fill="rgba(68,136,255,.2)"/>
+    <text x="215" y="30" font-size="10" fill="#4488ff">A</text>
+    <text x="215" y="55" font-size="9" fill="#aaa">(Burette)</text>
+    <line x1="198" y1="100" x2="198" y2="115" stroke="#4488ff" stroke-width="1.5"/>
+    <ellipse cx="198" cy="138" rx="35" ry="20" fill="none" stroke="#aaa" stroke-width="1.5"/>
+    <ellipse cx="198" cy="145" rx="30" ry="12" fill="rgba(255,100,100,.15)"/>
+    <text x="198" y="158" text-anchor="middle" font-size="9" fill="#aaa">Conical flask (alkali + indicator)</text>
+    <text x="100" y="80" font-size="10" fill="#aaa">Clamp stand</text>
+    <line x1="140" y1="80" x2="188" y2="60" stroke="#666" stroke-width="1" stroke-dasharray="2"/>`;
+  }
+
+  else if (diag.type === 'energy_profile') {
+    // Energy profile diagram
+    const isExo = diag.type2 !== 'endothermic';
+    const reactY=110, prodY=isExo?135:75, peakY=45;
+    svg += `<line x1="30" y1="150" x2="30" y2="20" stroke="#555" stroke-width="1.5"/>
+    <line x1="30" y1="150" x2="480" y2="150" stroke="#555" stroke-width="1.5"/>
+    <text x="15" y="90" font-size="10" fill="#aaa" transform="rotate(-90,15,90)">Energy</text>
+    <text x="255" y="165" text-anchor="middle" font-size="10" fill="#aaa">Reaction progress →</text>
+    <line x1="50" y1="${reactY}" x2="140" y2="${reactY}" stroke="#4488ff" stroke-width="2" stroke-dasharray="4"/>
+    <line x1="360" y1="${prodY}" x2="450" y2="${prodY}" stroke="#4488ff" stroke-width="2" stroke-dasharray="4"/>
+    <path d="M50,${reactY} C100,${reactY} 130,${peakY} 180,${peakY} S260,${prodY} 300,${prodY} L450,${prodY}" fill="none" stroke="${isExo?'#ff6b35':'#00e5ff'}" stroke-width="2.5"/>
+    <text x="55" y="${reactY-6}" font-size="9" fill="#aaa">Reactants</text>
+    <text x="370" y="${prodY-6}" font-size="9" fill="#aaa">Products</text>
+    <text x="250" y="${peakY-6}" text-anchor="middle" font-size="9" fill="#ffd93d">Peak (transition state)</text>`;
+  }
+
+  else if (diag.type === 'reactivity_series') {
+    const metals = ['K','Na','Ca','Mg','Al','Zn','Fe','Sn','Pb','H','Cu','Ag','Au'];
+    svg += `<text x="20" y="25" font-size="11" fill="#00e5ff" font-weight="bold">Reactivity Series</text>
+    <text x="20" y="38" font-size="9" fill="#aaa">(Most reactive at top)</text>`;
+    metals.forEach((m,i) => {
+      const y = 52+i*7.5;
+      const col = i<4?'#ff6b35':i<8?'#ffd93d':i<10?'#00e5a0':'#4488ff';
+      svg += `<text x="20" y="${y}" font-size="8.5" fill="${col}">${i+1}. ${m}</text>`;
+      if(i===9) svg += `<line x1="15" y1="${y+2}" x2="85" y2="${y+2}" stroke="#555" stroke-dasharray="2"/>`;
+    });
+    svg += `<text x="120" y="55" font-size="9" fill="#aaa">↑ React with cold water</text>
+    <text x="120" y="75" font-size="9" fill="#aaa">↑ React with steam</text>
+    <text x="120" y="105" font-size="9" fill="#aaa">↑ React with dilute acid</text>
+    <text x="120" y="140" font-size="9" fill="#aaa">↓ Unreactive metals</text>`;
+  }
+
+  else if (diag.type === 'state_changes') {
+    const positions = [{x:80,y:80,label:'SOLID',col:'#4488ff'},{x:250,y:80,label:'LIQUID',col:'#00e5a0'},{x:420,y:80,label:'GAS',col:'#ff6b35'}];
+    positions.forEach(p => {
+      svg += `<rect x="${p.x-35}" y="${p.y-20}" width="70" height="36" rx="6" fill="${p.col}33" stroke="${p.col}" stroke-width="1.5"/>
+      <text x="${p.x}" y="${p.y+5}" text-anchor="middle" font-size="10" fill="${p.col}" font-weight="bold">${p.label}</text>`;
+    });
+    const arrows=[
+      {x1:118,y1:72,x2:212,y2:72,label:'Melting',above:true},
+      {x1:212,y1:90,x2:118,y2:90,label:'Freezing',above:false},
+      {x1:288,y1:72,x2:382,y2:72,label:'Evaporating',above:true},
+      {x1:382,y1:90,x2:288,y2:90,label:'Condensing',above:false},
+    ];
+    arrows.forEach(a => {
+      svg += `<line x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" stroke="#888" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="${(a.x1+a.x2)/2}" y="${a.above?a.y1-5:a.y1+14}" text-anchor="middle" font-size="8.5" fill="#aaa">${a.label}</text>`;
+    });
+    svg += `<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></marker></defs>`;
+    svg += `<text x="250" y="140" text-anchor="middle" font-size="9" fill="#aaa">Sublimation (solid↔gas directly) not shown</text>`;
+  }
+
+  else if (diag.type === 'rate_graph') {
+    svg += `<text x="250" y="15" text-anchor="middle" font-size="11" fill="#ccc" font-weight="bold">CO₂ Volume vs Time</text>`;
+    svg += `<line x1="50" y1="130" x2="50" y2="20" stroke="#666" stroke-width="1.5"/>
+    <line x1="50" y1="130" x2="460" y2="130" stroke="#666" stroke-width="1.5"/>
+    <text x="25" y="80" font-size="9" fill="#aaa" transform="rotate(-90,25,80)">Volume CO₂</text>
+    <text x="255" y="148" text-anchor="middle" font-size="9" fill="#aaa">Time (s)</text>`;
+    // Curve A (large chips, slow)
+    svg += `<path d="M50,130 C80,128 120,110 160,90 S240,70 300,68 L460,67" fill="none" stroke="#4488ff" stroke-width="2"/>
+    <text x="465" y="70" font-size="8" fill="#4488ff">A</text>`;
+    // Curve B (small chips, fast)
+    svg += `<path d="M50,130 C70,120 100,90 130,70 S200,50 250,48 L460,47" fill="none" stroke="#ff6b35" stroke-width="2"/>
+    <text x="465" y="50" font-size="8" fill="#ff6b35">B</text>`;
+    // Curve C (heated, fastest)
+    svg += `<path d="M50,130 C65,118 90,85 115,62 S175,42 220,40 L460,39" fill="none" stroke="#00e5a0" stroke-width="2"/>
+    <text x="465" y="42" font-size="8" fill="#00e5a0">C</text>`;
+  }
+
+  else if (diag.type === 'chromatogram') {
+    // Chromatography plate
+    svg += `<rect x="180" y="15" width="60" height="130" rx="3" fill="rgba(240,235,210,.08)" stroke="rgba(200,185,150,.4)" stroke-width="1.5"/>`;
+    // Baseline
+    svg += `<line x1="180" y1="130" x2="240" y2="130" stroke="#888" stroke-dasharray="2"/>
+    <text x="170" y="133" text-anchor="end" font-size="8" fill="#888">baseline</text>`;
+    // Solvent front
+    svg += `<line x1="180" y1="25" x2="240" y2="25" stroke="#4488ff" stroke-dasharray="3,2"/>
+    <text x="248" y="28" font-size="8" fill="#4488ff">solvent front</text>`;
+    // Spots
+    [{y:95,col:'#ff4444'},{y:65,col:'#4488ff'},{y:40,col:'#ffcc00'}].forEach((s,i)=>{
+      svg += `<circle cx="210" cy="${s.y}" r="8" fill="${s.col}" opacity=".7"/>
+      <text x="248" y="${s.y+4}" font-size="8" fill="#aaa">Spot ${i+1}</text>`;
+    });
+    // Labels
+    svg += `<text x="210" y="148" text-anchor="middle" font-size="8" fill="#aaa">Mixture</text>`;
+  }
+
+  else if (diag.type === 'distillation_apparatus') {
+    // Simple distillation
+    svg += `<rect x="60" y="80" width="80" height="60" rx="8" fill="rgba(68,136,255,.1)" stroke="#4488ff" stroke-width="1.5"/>
+    <text x="100" y="115" text-anchor="middle" font-size="9" fill="#4488ff">Flask</text>
+    <path d="M140,90 L180,60" stroke="#888" stroke-width="2" fill="none"/>
+    <rect x="180" y="30" width="100" height="30" rx="5" fill="rgba(0,229,160,.1)" stroke="#00e5a0" stroke-width="1.5"/>
+    <text x="230" y="50" text-anchor="middle" font-size="9" fill="#00e5a0">Condenser</text>
+    <path d="M280,45 L320,70 L340,90" stroke="#00e5a0" stroke-width="2" fill="none"/>
+    <rect x="340" y="90" width="40" height="50" rx="5" fill="rgba(179,136,255,.1)" stroke="#b388ff" stroke-width="1.5"/>
+    <text x="360" y="120" text-anchor="middle" font-size="8" fill="#b388ff">Beaker</text>
+    <text x="100" y="145" text-anchor="middle" font-size="8" fill="#555">⚡ Heat</text>`;
+  }
+
+  else if (diag.type === 'blast_furnace') {
+    svg += `<path d="M180,20 L210,20 L260,140 L130,140 Z" fill="rgba(255,107,53,.12)" stroke="#ff6b35" stroke-width="1.5"/>
+    <text x="195" y="35" text-anchor="middle" font-size="9" fill="#ff8844">↓ Iron ore + coke + limestone</text>
+    <text x="195" y="85" text-anchor="middle" font-size="9" fill="#ffd93d">CO gas reduces Fe₂O₃</text>
+    <text x="195" y="130" text-anchor="middle" font-size="9" fill="#ff4444">↑ Hot air blast</text>
+    <line x1="90" y1="120" x2="130" y2="120" stroke="#ff6b35" stroke-width="2" marker-end="url(#arr2)"/>
+    <line x1="290" y1="120" x2="260" y2="120" stroke="#ff6b35" stroke-width="2" marker-end="url(#arr2)"/>
+    <text x="55" y="115" font-size="8" fill="#ff6b35">Hot air</text>
+    <text x="295" y="115" font-size="8" fill="#ff6b35">Hot air</text>
+    <text x="60" y="145" font-size="8" fill="#ffd93d">← Molten iron</text>
+    <text x="250" y="145" font-size="8" fill="#aaa">← Slag</text>
+    <defs><marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#ff6b35" stroke-width="1.5" stroke-linecap="round"/></marker></defs>`;
+  }
+
+  else if (diag.type === 'haber_diagram') {
+    svg += `<rect x="160" y="40" width="100" height="80" rx="8" fill="rgba(0,229,160,.1)" stroke="#00e5a0" stroke-width="1.5"/>
+    <text x="210" y="75" text-anchor="middle" font-size="10" fill="#00e5a0" font-weight="bold">REACTOR</text>
+    <text x="210" y="90" text-anchor="middle" font-size="8.5" fill="#aaa">450°C / 200 atm</text>
+    <text x="210" y="104" text-anchor="middle" font-size="8" fill="#ffd93d">Fe catalyst</text>
+    <line x1="50" y1="80" x2="158" y2="80" stroke="#4488ff" stroke-width="2" marker-end="url(#arr3)"/>
+    <text x="35" y="72" font-size="9" fill="#4488ff">N₂</text>
+    <text x="35" y="85" font-size="9" fill="#4488ff">+3H₂</text>
+    <line x1="262" y1="80" x2="370" y2="80" stroke="#ff6b35" stroke-width="2" marker-end="url(#arr3)"/>
+    <text x="375" y="84" font-size="9" fill="#ff6b35">NH₃</text>
+    <text x="210" y="145" text-anchor="middle" font-size="8" fill="#aaa">Unreacted gases recycled ↺</text>
+    <defs><marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round"/></marker></defs>`;
+  }
+
+  else {
+    // Fallback — text description
+    svg += `<rect x="20" y="20" width="460" height="120" rx="8" fill="rgba(255,255,255,.04)" stroke="#333" stroke-width="1" stroke-dasharray="4"/>
+    <text x="250" y="70" text-anchor="middle" font-size="12" fill="#666">[Diagram: ${diag.type}]</text>
+    <text x="250" y="90" text-anchor="middle" font-size="10" fill="#555">${diag.elements ? diag.elements.join(', ') : ''}</text>`;
+  }
+
+  svg += `</svg></div>`;
+  return svg;
+}
+
+function printPaperById(id) {
+  currentPaper = PAPERS.find(p => p.id === id);
+  if (currentPaper) printPaper();
+}
+
+function printPaper() {
+  if (!currentPaper) return;
+  openPrintWindow(currentPaper, false);
+}
+
+function printMarkScheme() {
+  if (!currentPaper) return;
+  openPrintWindow(currentPaper, true);
+}
+
+function openPrintWindow(paper, isMarkScheme) {
+  const win = window.open('', '_blank');
+  // Render HTML content for print
+  const tmpDiv = document.createElement('div');
+  renderPaperContent(paper, '__tmp__', isMarkScheme);
+  // Since renderPaperContent needs a real DOM element, use a temp approach
+  const container = document.createElement('div');
+  container.id = '__tmp__';
+  container.style.display = 'none';
+  document.body.appendChild(container);
+  renderPaperContent(paper, '__tmp__', isMarkScheme);
+  const content = container.innerHTML;
+  document.body.removeChild(container);
+
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${isMarkScheme ? 'Mark Scheme' : 'Practice Paper'} — ${paper.title}</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #111; padding: 1.5cm; line-height: 1.6; }
+      h1 { font-size: 14pt; margin-bottom: 4px; }
+      .q-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+      .answer-line { border-bottom: 1px solid #999; height: 22px; margin: 3px 0; }
+      .ms-box { background: #f0fff4; border: 1px solid #4caf50; border-radius: 4px; padding: 6px 10px; font-size: 10pt; margin-top: 4px; }
+      svg { max-width: 100%; height: auto; }
+      @media print {
+        body { padding: 1cm; }
+        @page { size: A4; margin: 1.5cm; }
+      }
+    </style>
+  </head><body>
+    <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:12px">
+      <div style="font-size:16pt;font-weight:bold">ATOM EDGE — IGCSE Chemistry</div>
+      <div style="font-size:13pt;margin:4px 0">${isMarkScheme ? '✅ MARK SCHEME — ' : ''}${paper.title}: ${paper.subtitle}</div>
+      <div style="font-size:10pt;color:#555">${paper.difficulty} · Time: ${paper.time} min · Total: ${paper.marks} marks</div>
+      ${!isMarkScheme ? '<div style="margin-top:8px;font-size:10pt">Name: _________________________________ &nbsp;&nbsp; Date: _____________ &nbsp;&nbsp; Score: _____/'+paper.marks+'</div>' : ''}
+    </div>
+    ${content}
+    <div style="margin-top:30px;text-align:center;font-size:9pt;color:#888;border-top:1px solid #ddd;padding-top:8px">
+      Generated by Atom Edge — atomedge.pro · For educational use only
+    </div>
+  </body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 800);
+}
+
+// Wire into goPage
+const _prevGoPage2 = goPage;
+goPage = function(id, btn) {
+  _prevGoPage2(id, btn);
+  if (id === 'papers') {
+    requestAnimationFrame(() => { try { initPapersPage(); } catch(e) {} });
+  }
+};
 
 </script>
 </body>
