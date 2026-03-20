@@ -767,6 +767,13 @@ window.FB = {
   doc, getDoc, setDoc, updateDoc, collection, getDocs, serverTimestamp, deleteDoc
 };
 
+// Show ready status on auth screen
+const fbStatusEl = document.getElementById('fb-status');
+if (fbStatusEl) {
+  fbStatusEl.textContent = '✓ Connected — ready to sign in';
+  fbStatusEl.style.color = '#34d399';
+}
+
 onAuthStateChanged(auth, async user => {
   if (user) {
     window._fbUser = user;
@@ -859,6 +866,7 @@ onAuthStateChanged(auth, async user => {
       <button id="auth-submit" onclick="authSubmit()" style="width:100%;padding:.65rem;border:none;border-radius:9px;background:linear-gradient(120deg,var(--cyan),var(--purple));color:#000;font-family:var(--head);font-size:.92rem;font-weight:700;cursor:pointer;transition:.18s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:.5rem">Sign In</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.75rem;color:var(--dim)">Your progress syncs across all your devices 🌐</div>
+  <div id="fb-status" style="text-align:center;margin-top:.4rem;font-size:.72rem;color:var(--dim2)">Connecting to server…</div>
   </div>
 </div>
 
@@ -1401,14 +1409,19 @@ onAuthStateChanged(auth, async user => {
 // ════════════ FIREBASE AUTH ACTIONS (main script) ════════════
 
 // Waits up to 8 seconds for the Firebase module to assign window.FB
-function waitForFB(maxMs=8000) {
+function waitForFB(maxMs=10000) {
   if (window.FB) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const start = Date.now();
     const check = setInterval(() => {
-      if (window.FB) { clearInterval(check); resolve(); }
-      else if (Date.now() - start > maxMs) { clearInterval(check); reject(new Error('Firebase took too long to load. Please refresh the page.')); }
-    }, 80);
+      if (window.FB) {
+        clearInterval(check);
+        resolve();
+      } else if (Date.now() - start > maxMs) {
+        clearInterval(check);
+        reject(new Error('Could not connect to authentication service. Check your internet connection and try again.'));
+      }
+    }, 100);
   });
 }
 
@@ -1498,7 +1511,7 @@ window.doSignIn = async function() {
     await waitForFB();
     await window.FB.signInWithEmailAndPassword(window.FB.auth,email,pass);
   } catch(e){
-    errEl.textContent=friendlyError(e.code||e.message);
+    errEl.textContent = friendlyError(e.code) || e.message || 'Sign in failed. Please try again.';
     if(btn){btn.disabled=false;btn.textContent='Sign In';}
   }
 };
@@ -3973,8 +3986,18 @@ function switchTab(mode) {
   document.getElementById('auth-err').textContent = '';
 }
 function authSubmit() {
-  if (authMode === 'signin') window.doSignIn();
-  else window.doSignUp();
+  const errEl = document.getElementById('auth-err');
+  const btn   = document.getElementById('auth-submit');
+  // Visual feedback immediately
+  if (btn) { btn.disabled = true; btn.textContent = 'Please wait…'; }
+  if (errEl) errEl.textContent = '';
+  try {
+    if (authMode === 'signin') window.doSignIn();
+    else window.doSignUp();
+  } catch(e) {
+    if (errEl) errEl.textContent = 'Error: ' + (e.message || 'Please refresh and try again.');
+    if (btn) { btn.disabled = false; btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account'; }
+  }
 }
 function togglePassVis() {
   const p = document.getElementById('auth-pass');
