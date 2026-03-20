@@ -1378,10 +1378,10 @@ onAuthStateChanged(auth, async user => {
         <div id="wb-scroll-container" style="overflow-y:auto;overflow-x:hidden;border-radius:12px;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.2);background:#e8e8e8;max-height:90vh;position:relative">
           <!-- Page guides overlay -->
           <div id="wb-page-guides" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:2"></div>
-          <div style="position:relative;width:100%;padding-bottom:141.42%;background:#fff;">
-            <canvas id="wb-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:none;background:#fff"></canvas>
+          <div style="position:relative;width:100%;">
+            <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:none;background:#fff"></canvas>
             <!-- Cursor dot overlay -->
-            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;border:2px solid rgba(0,0,0,0.5);transform:translate(-50%,-50%);display:none;z-index:5;transition:width .05s,height .05s"></div>
+            <div id="wb-cursor" style="position:absolute;pointer-events:none;border-radius:50%;border:2px solid rgba(0,0,0,0.5);transform:translate(-50%,-50%);display:none;z-index:5"></div>
           </div>
           <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px;z-index:10">
         </div>
@@ -5625,14 +5625,14 @@ function openPrintWindow(paper, isMarkScheme) {
   scrollbar-width:none;
 }
 .wb-bar::-webkit-scrollbar{display:none}
-.wb-section{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.wb-section{display:flex;align-items:center;gap:.25rem;flex-wrap:nowrap;flex-shrink:0}
 .wb-sep{width:1px;height:32px;background:var(--border);margin:0 .3rem;flex-shrink:0}
 .wbt{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:3px;padding:.45rem .55rem;min-width:50px;border-radius:9px;
+  gap:3px;padding:.4rem .45rem;min-width:44px;border-radius:9px;
   border:1.5px solid transparent;background:transparent;
   color:var(--dim);cursor:pointer;transition:.15s;flex-shrink:0;
-  font-family:var(--font);font-size:.6rem;font-weight:600;letter-spacing:.02em;
+  font-family:var(--font);font-size:.58rem;font-weight:600;letter-spacing:.02em;
 }
 .wbt:hover{background:var(--s3);border-color:var(--border);color:var(--text)}
 .wbt.on{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.5);color:var(--cyan)}
@@ -5834,13 +5834,11 @@ function initWhiteboard() {
   wbCanvas.dataset.init = '1';
   wbCtx = wbCanvas.getContext('2d');
 
-  // Set canvas to A4 dimensions — displayed at 100% container width
+  // Set canvas to A4 dimensions
+  // CSS width:100% + height:auto makes it scale proportionally
   wbPages = 1;
   wbCanvas.width  = A4_W;
   wbCanvas.height = A4_H;
-  // Remove inline style overrides — CSS handles sizing
-  wbCanvas.style.width  = '';
-  wbCanvas.style.height = '';
 
   fillBackground();
   drawPageGuides();
@@ -5992,28 +5990,9 @@ function printClassboard() {
       }
     
 /* ══ WHITEBOARD CANVAS SIZING ══ */
-#page-classboard #classboard-teacher-view .sec {
-  padding-left: .75rem;
-  padding-right: .75rem;
-}
-#wb-canvas-wrap {
-  width: 100%;
-}
-#wb-scroll-container {
-  width: 100%;
-}
-#wb-canvas {
-  display: block;
-  width: 100% !important;
-  /* aspect ratio matches A4: 1/sqrt(2) = 0.7071 */
-  min-height: calc(100vw * 0.7071);
-  max-width: 100%;
-}
-@media(min-width:900px) {
-  #wb-canvas {
-    min-height: calc((100vw - 240px) * 0.7071);
-  }
-}
+#wb-canvas-wrap { width: 100%; }
+#wb-scroll-container { width: 100%; }
+#wb-canvas { display: block; width: 100% !important; height: auto !important; }
 </style>
   </head><body>`);
 
@@ -6035,12 +6014,16 @@ function printClassboard() {
 
 function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
 function wbPos(e) {
+  // canvas CSS: width:100%, height:auto
+  // So displayed width = r.width, displayed height = r.height
+  // Canvas internal = A4_W x A4_H (992 x 1403)
+  // Scale factors:
   const r  = wbCanvas.getBoundingClientRect();
-  // Canvas is uniformly scaled — same ratio in both X and Y
-  const sx = wbCanvas.width / r.width;
+  const sx = wbCanvas.width  / r.width;
+  const sy = wbCanvas.height / r.height;
   return {
-    x: (e.clientX - r.left) * sx,
-    y: (e.clientY - r.top)  * sx
+    x: Math.round((e.clientX - r.left) * sx),
+    y: Math.round((e.clientY - r.top)  * sy)
   };
 }
 function fillBackground() {
@@ -6208,6 +6191,7 @@ async function loadTodaySession() {
   wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
   drawPageGuides();
   wbHistory = [wbCanvas.toDataURL()];
+  const pc=document.getElementById('wb-page-count'); if(pc)pc.textContent=1;
   try {
     const snap=await getDoc(doc(db,'whiteboards',wbSessionKey));
     if(snap.exists()){
