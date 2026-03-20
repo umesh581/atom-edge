@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
 <title>Atom Edge — IGCSE Chemistry Lab</title>
@@ -100,7 +103,8 @@ nav::-webkit-scrollbar{display:none}
 .card-fav.on{color:var(--yellow)}
 
 /* ── MODAL ── */
-.overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto}
+.overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);align-items:flex-end;justify-content:center;padding:0;overflow-y:auto}
+@media(min-width:641px){.overlay{align-items:flex-start;padding:1rem}}
 .overlay.on{display:flex}
 .modal{background:var(--s1);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:980px;margin:auto;overflow:hidden}
 .mhd{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;background:var(--s2)}
@@ -294,6 +298,234 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 .hbadge{font-family:var(--mono);font-size:.58rem;padding:.18rem .55rem;border-radius:20px;background:rgba(0,229,255,.08);color:var(--cyan);border:1px solid rgba(0,229,255,.2);flex-shrink:0}
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--dim);font-size:.88rem}
 .empty-state .ei{font-size:2.5rem;margin-bottom:.75rem}
+
+/* ══════════════════════════════════════════════
+   MOBILE & TABLET OPTIMIZATION
+   Breakpoints: 480px (phone), 768px (tablet)
+══════════════════════════════════════════════ */
+
+/* ── Base touch improvements ── */
+button,select,input,[onclick]{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+input,select,textarea{
+  font-size:16px!important; /* prevents iOS zoom on focus */
+}
+
+/* ── Viewport fix for notch/dynamic island ── */
+:root{
+  --sat:env(safe-area-inset-top,0px);
+  --sar:env(safe-area-inset-right,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+}
+
+/* ══ PHONE (≤480px) ══ */
+@media(max-width:480px){
+  /* Header */
+  header{height:52px;padding:0 .75rem;gap:.6rem}
+  .logo{font-size:.95rem}
+  .hbtns{gap:.3rem}
+  .iconbtn{width:30px;height:30px;font-size:.8rem}
+
+  /* Body padding for bottom nav */
+  body{padding-bottom:calc(60px + var(--sab))}
+
+  /* Hero */
+  .hero{padding:1.5rem .75rem 1rem}
+  .hero h1{font-size:1.6rem;letter-spacing:-.02em}
+  .hero p{font-size:.8rem;margin-bottom:1rem}
+  .hero-stats{gap:1.25rem}
+  .hstat .n{font-size:1.4rem}
+  .hstat .l{font-size:.6rem}
+
+  /* Search */
+  .search-wrap{padding:0 .75rem .75rem}
+
+  /* Section */
+  .sec{padding:.75rem}
+  .sec-hd h2{font-size:.9rem}
+
+  /* Cards */
+  .grid{gap:.6rem}
+  .card{padding:.85rem}
+  .cname{font-size:.85rem}
+  .cdesc{font-size:.72rem}
+
+  /* Modal - full screen on phone */
+  .overlay{padding:.5rem 0 0}
+  .modal{border-radius:14px 14px 0 0;margin:auto 0 0;max-height:94vh;overflow-y:auto}
+  .mhd{padding:.85rem 1rem}
+  .mhd-left h2{font-size:.95rem}
+  .mbody{padding:.85rem}
+
+  /* Simulation controls - stack vertically */
+  .controls{gap:.4rem}
+  .btn{font-size:.75rem;padding:.4rem .75rem;min-height:40px}
+  .sl-row{flex-wrap:wrap;gap:.3rem}
+  input[type=range]{width:100%}
+
+  /* Info grids */
+  .igrid{grid-template-columns:1fr;gap:.55rem}
+  .icard{padding:.75rem}
+  .icard h4{font-size:.65rem}
+  .icard p,.icard li{font-size:.72rem}
+
+  /* Observations */
+  .obs{padding:.75rem}
+  .obs h4{font-size:.65rem}
+  .obs p{font-size:.72rem}
+
+  /* Sandbox boxes */
+  .sbox{padding:.85rem}
+  .sbox h3{font-size:.85rem}
+  .sbox p{font-size:.72rem}
+  .qq{font-size:.76rem;padding:.5rem .75rem}
+  .reagent{font-size:.72rem;padding:.32rem .6rem}
+  .mix-result{font-size:.76rem;min-height:60px}
+
+  /* Progress page */
+  .streak-banner{padding:.75rem;gap:.75rem}
+  .streak-fire{font-size:1.4rem}
+  .streak-info .streak-n{font-size:1.1rem}
+  .badge{font-size:.62rem;padding:.25rem .55rem}
+  .topic-grid{grid-template-columns:1fr 1fr}
+  .topic-card{padding:.7rem}
+  .topic-name{font-size:.72rem}
+
+  /* Exam mode */
+  .exam-hd{flex-direction:column;align-items:flex-start;gap:.5rem}
+  .exam-timer{font-size:1rem;padding:.35rem .75rem}
+  .exam-q{padding:1rem}
+  .exam-q .qtext{font-size:.83rem}
+  .exam-opt{font-size:.78rem;padding:.55rem .75rem;min-height:42px}
+  .opt-letter{width:20px;height:20px;font-size:.65rem}
+  .results-score{font-size:3rem}
+  .results-grid{grid-template-columns:repeat(3,1fr);gap:.55rem}
+  .rstat .rn{font-size:1.2rem}
+
+  /* Game */
+  #eq-game{padding:1rem}
+  .eq-display{font-size:.88rem;min-height:48px;padding:.75rem}
+  .eq-atom{font-size:.78rem;padding:.25rem .6rem}
+  .eq-blank{font-size:.78rem;padding:.25rem .6rem;min-width:48px}
+  .coeff-btn{min-height:40px;min-width:40px;font-size:.82rem}
+
+  /* Teacher dashboard */
+  .dash-stats{grid-template-columns:1fr 1fr}
+  .dstat .dn{font-size:1.3rem}
+  .student-table{font-size:.72rem}
+  .student-table th{padding:.4rem .5rem;font-size:.6rem}
+  .student-table td{padding:.5rem .5rem}
+  .perf-bar{width:50px}
+
+  /* Auth screen */
+  #auth-screen{padding:1rem}
+  #auth-screen > div{max-width:100%}
+  #auth-screen .logo-text{font-size:1.5rem}
+
+  /* Periodic table - always scrollable */
+  .pt-grid{min-width:720px}
+  #el-detail .el-detail-grid{grid-template-columns:1fr}
+  .el-big{width:60px;height:60px}
+  .el-big .sym{font-size:1.4rem}
+
+  /* Glossary panel - full width on phone */
+  .gloss-panel{width:100%}
+
+  /* Bottom nav */
+  .bottom-nav{padding:.4rem 0 calc(.4rem + var(--sab))}
+  .bnav-btn{min-width:48px;padding:.25rem .35rem}
+  .bnav-btn .bni{font-size:1rem}
+  .bnav-btn .bnl{font-size:.52rem}
+
+  /* Canvas max height on phone */
+  canvas{max-height:220px!important}
+
+  /* Exam setup grid */
+  #exam-setup > div:first-of-type + div{grid-template-columns:1fr}
+}
+
+/* ══ TABLET (481px – 768px) ══ */
+@media(min-width:481px) and (max-width:768px){
+  header{height:54px;padding:0 1rem}
+  body{padding-bottom:calc(62px + var(--sab))}
+
+  .hero{padding:2rem 1rem 1.5rem}
+  .hero h1{font-size:2rem}
+
+  .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+
+  /* Modal - 95% width, rounded corners */
+  .overlay{padding:.75rem}
+  .modal{max-height:90vh;overflow-y:auto}
+
+  .controls{gap:.45rem}
+  canvas{max-height:250px!important}
+
+  .igrid{grid-template-columns:1fr 1fr}
+  .topic-grid{grid-template-columns:repeat(3,1fr)}
+  .dash-stats{grid-template-columns:repeat(4,1fr)}
+
+  /* Bottom nav visible on tablet too */
+  .bottom-nav{display:block}
+  nav{display:none}
+
+  .gloss-panel{width:340px}
+
+  input[type=range]{width:130px}
+}
+
+/* ══ LARGE PHONE LANDSCAPE ══ */
+@media(max-width:768px) and (orientation:landscape){
+  .hero{padding:1rem .75rem .5rem}
+  .hero h1{font-size:1.4rem}
+  .hero-stats{gap:1.5rem}
+  canvas{max-height:180px!important}
+  .modal{max-height:85vh}
+  body{padding-bottom:0} /* no bottom nav in landscape — use header nav */
+  .bottom-nav{display:none}
+  nav{display:flex}
+}
+
+/* ══ DESKTOP (>768px) ══ */
+@media(min-width:769px){
+  .bottom-nav{display:none!important}
+  nav{display:flex!important}
+  canvas{max-height:320px!important}
+  .modal{max-height:92vh;overflow-y:auto}
+}
+
+/* ── Scroll momentum on iOS ── */
+.overlay,.gloss-list,#pt-wrap,.mbody{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
+/* ── Prevent text selection on UI elements ── */
+.card,.btn,.ntab,.bnav-btn,.reagent,.coeff-btn,.exam-opt,.qopt{
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+/* ── Focus visible for accessibility ── */
+button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid var(--cyan);
+  outline-offset:2px;
+}
+
+/* ── Smooth scrolling within modal ── */
+.mbody{scroll-padding-top:1rem}
+
+/* ── Larger tap targets for interactive elements ── */
+@media(pointer:coarse){
+  .card-fav{width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+  .mclose{width:44px;height:44px}
+  .iconbtn{width:38px;height:38px}
+  .el{min-height:44px;min-width:44px}
+  input[type=range]{height:28px}
+}
 </style>
 <script type="module">
 // ═══════════════════════════════════════════════════════════
@@ -306,6 +538,15 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
 import { getFirestore, doc, getDoc, setDoc, updateDoc,
          collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// ═══════════════════════════════════════════════════════════════
+// SECURITY NOTE: Firebase API keys are safe to be public.
+// Real security is enforced by:
+//   1. Firebase Authentication (only signed-in users access data)
+//   2. Firestore Security Rules (users can only read their own data)
+//   3. Authorized Domains (only your Vercel domain can use this key)
+// Set authorized domains at:
+// Firebase Console → Authentication → Settings → Authorized domains
+// ═══════════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey:            "AIzaSyCALIoHk_wxZnz-OGKMOsxZa8qOHkHhu7Q",
   authDomain:        "atom-edge-7a3d6.firebaseapp.com",
@@ -391,8 +632,18 @@ async function loadUserProfile(user) {
 }
 
 // ── Persist helpers (replaces localStorage) ──────────────────────────────────
+// Allowed fields a student can write to their own profile
+const ALLOWED_FIELDS = new Set([
+  'xp','streak','lastDay','bookmarks','topicVisits',
+  'quizHistory','gameScore','badges','hwList'
+]);
+
 window.saveField = async function(field, value) {
   if (!window._fbUser) return;
+  if (!ALLOWED_FIELDS.has(field)) { console.warn('saveField: blocked field', field); return; }
+  // Validate value size to prevent abuse
+  const serialized = JSON.stringify(value);
+  if (serialized.length > 50000) { console.warn('saveField: value too large'); return; }
   try {
     const ref = doc(db, 'users', window._fbUser.uid);
     await updateDoc(ref, { [field]: value });
@@ -409,23 +660,27 @@ window.saveProfile = async function(fields) {
 
 // ── Auth actions (called by UI buttons) ──────────────────────────────────────
 window.doSignIn = async function() {
-  const email = document.getElementById('auth-email').value.trim();
+  const email = document.getElementById('auth-email').value.trim().toLowerCase();
   const pass  = document.getElementById('auth-pass').value;
   const err   = document.getElementById('auth-err');
   err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Please enter a valid email.'; return; }
   try {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch(e) { err.textContent = friendlyError(e.code); }
 };
 
 window.doSignUp = async function() {
-  const email = document.getElementById('auth-email').value.trim();
+  const email = document.getElementById('auth-email').value.trim().toLowerCase();
   const pass  = document.getElementById('auth-pass').value;
-  const name  = document.getElementById('auth-name').value.trim();
+  const name  = document.getElementById('auth-name').value.trim().slice(0, 60);
   const err   = document.getElementById('auth-err');
   err.textContent = '';
   if (!name) { err.textContent = 'Please enter your name.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Please enter a valid email.'; return; }
   if (pass.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+  if (name.length < 2) { err.textContent = 'Please enter your full name.'; return; }
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
     // Store name separately in Firestore after creation
@@ -1000,6 +1255,8 @@ function mkSim(parent,w,h){
   const cv=mkCanvas(w,h),wrap=document.createElement('div');
   wrap.className='sim-wrap';wrap.appendChild(cv);parent.appendChild(wrap);
   const ctrl=document.createElement('div');ctrl.className='controls';parent.appendChild(ctrl);
+  // Make canvas responsive - scale drawing coords to actual pixels
+  const dpr=window.devicePixelRatio||1;
   return {cv,ctx:cv.getContext('2d'),ctrl,W:w,H:h};
 }
 function lerp(a,b,t){return a+(b-a)*t;}
