@@ -1269,94 +1269,87 @@ onAuthStateChanged(auth, async user => {
 
       <!-- Toolbar -->
       <div id="wb-toolbar" style="display:none">
-        <!-- Row 1: Tools -->
-        <div class="wb-toolbar-row">
-          <div class="wb-group">
-            <div class="wb-group-label">Draw</div>
-            <div class="wb-group-btns">
-              <button class="wb-tool on" id="tool-pen" onclick="setTool('pen')" title="Pen">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                <span>Pen</span>
-              </button>
-              <button class="wb-tool" id="tool-marker" onclick="setTool('marker')" title="Marker">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-                <span>Marker</span>
-              </button>
-              <button class="wb-tool" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
-                <span>Eraser</span>
-              </button>
-            </div>
+        <div class="wb-bar">
+
+          <!-- TOOLS GROUP -->
+          <div class="wb-section">
+            <button class="wbt on" id="tool-pen" onclick="setTool('pen')" title="Pen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              Pen
+            </button>
+            <button class="wbt" id="tool-marker" onclick="setTool('marker')" title="Marker">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
+              Marker
+            </button>
+            <button class="wbt" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/></svg>
+              Eraser
+            </button>
+            <button class="wbt" id="tool-line" onclick="setTool('line')" title="Line">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+              Line
+            </button>
+            <button class="wbt" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              Rect
+            </button>
+            <button class="wbt" id="tool-circle" onclick="setTool('circle')" title="Circle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/></svg>
+              Circle
+            </button>
+            <button class="wbt" id="tool-text" onclick="setTool('text')" title="Text">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              Text
+            </button>
           </div>
-          <div class="wb-divider"></div>
-          <div class="wb-group">
-            <div class="wb-group-label">Shapes</div>
-            <div class="wb-group-btns">
-              <button class="wb-tool" id="tool-line" onclick="setTool('line')" title="Line">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
-                <span>Line</span>
-              </button>
-              <button class="wb-tool" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                <span>Rect</span>
-              </button>
-              <button class="wb-tool" id="tool-circle" onclick="setTool('circle')" title="Circle">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
-                <span>Circle</span>
-              </button>
-              <button class="wb-tool" id="tool-text" onclick="setTool('text')" title="Text">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
-                <span>Text</span>
-              </button>
-            </div>
+
+          <div class="wb-sep"></div>
+
+          <!-- COLOURS -->
+          <div class="wb-section">
+            <div class="wbc on" style="--cc:#1a1a1a;background:#1a1a1a" data-color="#1a1a1a" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#e74c3c;background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#2980b9;background:#2980b9" data-color="#2980b9" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#27ae60;background:#27ae60" data-color="#27ae60" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#f39c12;background:#f39c12" data-color="#f39c12" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#8e44ad;background:#8e44ad" data-color="#8e44ad" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#e91e63;background:#e91e63" data-color="#e91e63" onclick="setColor(this)"></div>
+            <div class="wbc" style="--cc:#ffffff;background:#ffffff;box-shadow:inset 0 0 0 1.5px #bbb" data-color="#ffffff" onclick="setColor(this)"></div>
+            <label class="wbc-custom" title="Custom colour">
+              <input type="color" id="custom-color" value="#1a1a1a" onchange="setCustomColor(this.value)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </label>
           </div>
-          <div class="wb-divider"></div>
-          <div class="wb-group">
-            <div class="wb-group-label">Actions</div>
-            <div class="wb-group-btns">
-              <button class="wb-tool" onclick="wbUndo()" title="Undo">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5 7.6 10 4 16 4c3.3 0 6 1 8 2.7"/></svg>
-                <span>Undo</span>
-              </button>
-              <button class="wb-tool" onclick="wbRedo()" title="Redo">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C19 7.6 14 4 8 4 4.7 4 2 5 0 6.7"/></svg>
-                <span>Redo</span>
-              </button>
-              <button class="wb-tool" id="tool-bg" onclick="toggleBg()" title="Toggle background">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                <span>BG</span>
-              </button>
+
+          <div class="wb-sep"></div>
+
+          <!-- BRUSH SIZE -->
+          <div class="wb-section" style="gap:.5rem">
+            <div id="wb-dot-preview" style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <div id="wb-dot" style="width:6px;height:6px;border-radius:50%;background:#1a1a1a"></div>
             </div>
+            <input type="range" id="wb-size" min="1" max="40" value="3" class="wb-slider" oninput="setBrushSize(this.value)">
+            <span class="wb-size-num" id="wb-size-val">3</span>
           </div>
-        </div>
-        <!-- Row 2: Colours + Size -->
-        <div class="wb-toolbar-row wb-toolbar-row2">
-          <div class="wb-group">
-            <div class="wb-group-label">Colour</div>
-            <div class="wb-group-btns" style="gap:.45rem;align-items:center">
-              <div class="wb-color on" style="background:#1a1a2e" data-color="#1a1a2e" onclick="setColor(this)" title="Black"></div>
-              <div class="wb-color" style="background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)" title="Red"></div>
-              <div class="wb-color" style="background:#3498db" data-color="#3498db" onclick="setColor(this)" title="Blue"></div>
-              <div class="wb-color" style="background:#2ecc71" data-color="#2ecc71" onclick="setColor(this)" title="Green"></div>
-              <div class="wb-color" style="background:#f39c12" data-color="#f39c12" onclick="setColor(this)" title="Orange"></div>
-              <div class="wb-color" style="background:#9b59b6" data-color="#9b59b6" onclick="setColor(this)" title="Purple"></div>
-              <div class="wb-color" style="background:#e91e63" data-color="#e91e63" onclick="setColor(this)" title="Pink"></div>
-              <div class="wb-color" style="background:#ffffff;border:2px solid #ddd" data-color="#ffffff" onclick="setColor(this)" title="White"></div>
-              <div class="wb-color-custom" title="Custom colour">
-                <input type="color" id="custom-color" value="#1a1a2e" onchange="setCustomColor(this.value)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-              </div>
-            </div>
+
+          <div class="wb-sep"></div>
+
+          <!-- UNDO / REDO / BG -->
+          <div class="wb-section">
+            <button class="wbt" onclick="wbUndo()" title="Undo (Ctrl+Z)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5.5 6.5 13 4 18 6"/></svg>
+              Undo
+            </button>
+            <button class="wbt" onclick="wbRedo()" title="Redo (Ctrl+Y)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C18.5 6.5 11 4 6 6"/></svg>
+              Redo
+            </button>
+            <button class="wbt" id="tool-bg" onclick="toggleBg()" title="Toggle dark/light background">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              BG
+            </button>
           </div>
-          <div class="wb-divider"></div>
-          <div class="wb-group">
-            <div class="wb-group-label">Brush Size</div>
-            <div style="display:flex;align-items:center;gap:.65rem">
-              <div class="wb-size-preview" id="wb-size-preview"></div>
-              <input type="range" id="wb-size" min="1" max="40" value="3" class="wb-range" oninput="setBrushSize(this.value)">
-              <span class="wb-size-label" id="wb-size-val">3</span>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -1382,10 +1375,12 @@ onAuthStateChanged(auth, async user => {
         </div>
 
         <!-- Scrollable canvas container -->
-        <div id="wb-scroll-container" style="overflow-y:auto;overflow-x:hidden;border-radius:12px;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.2);background:#e8e8e8;max-height:75vh;position:relative">
+        <div id="wb-scroll-container" style="overflow-y:auto;overflow-x:hidden;border-radius:12px;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.2);background:#e8e8e8;max-height:90vh;position:relative">
           <!-- Page guides overlay -->
           <div id="wb-page-guides" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:2"></div>
-          <canvas id="wb-canvas" style="display:block;touch-action:pan-x pan-y;cursor:crosshair;background:#fff;margin:0 auto"></canvas>
+          <div style="position:relative;width:100%;padding-bottom:141.42%;background:#fff;">
+            <canvas id="wb-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:crosshair;background:#fff"></canvas>
+          </div>
           <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px;z-index:10">
         </div>
 
@@ -5619,55 +5614,52 @@ function openPrintWindow(paper, isMarkScheme) {
     
 @keyframes hb{from{transform:scale(1)}to{transform:scale(1.12)}}
 
-/* ══ WHITEBOARD / CLASSBOARD — MODERN ══ */
-#wb-toolbar{background:var(--s1);border:1px solid var(--border);border-radius:14px;
-  padding:.75rem 1rem;margin-bottom:.85rem;display:flex;flex-direction:column;gap:.65rem}
-.wb-toolbar-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.wb-toolbar-row2{padding-top:.55rem;border-top:1px solid var(--border)}
-.wb-group{display:flex;flex-direction:column;gap:.3rem}
-.wb-group-label{font-size:.6rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:var(--dim2);padding-left:.1rem}
-.wb-group-btns{display:flex;gap:.3rem;align-items:center}
-.wb-divider{width:1px;height:52px;background:var(--border);margin:0 .25rem;align-self:center}
-.wb-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:.2rem;padding:.4rem .55rem;min-width:52px;border-radius:10px;
-  border:1px solid transparent;background:transparent;color:var(--dim);
-  cursor:pointer;transition:.15s;flex-shrink:0}
-.wb-tool span{font-size:.6rem;font-weight:600;letter-spacing:.02em;line-height:1}
-.wb-tool svg{flex-shrink:0}
-.wb-tool:hover{background:var(--s2);border-color:var(--border);color:var(--text)}
-.wb-tool.on{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);
-  color:var(--cyan)}
-.wb-color{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:.2s;
-  border:3px solid transparent;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.wb-color:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.wb-color.on{border-color:var(--cyan);transform:scale(1.2);
-  box-shadow:0 0 0 3px rgba(56,189,248,.25),0 2px 8px rgba(0,0,0,.3)}
-.wb-color-custom{width:28px;height:28px;border-radius:50%;border:2px dashed var(--border2);
-  cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;
-  color:var(--dim);transition:.15s;flex-shrink:0}
-.wb-color-custom:hover{border-color:var(--cyan);color:var(--cyan)}
-.wb-color-custom input[type=color]{position:absolute;width:100%;height:100%;
-  opacity:0;cursor:pointer;border:none;padding:0}
-.wb-range{-webkit-appearance:none;appearance:none;width:100px;height:4px;
-  border-radius:4px;background:var(--s3);outline:none;cursor:pointer}
-.wb-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
-  border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}
-.wb-size-preview{width:20px;height:20px;display:flex;align-items:center;justify-content:center}
-.wb-size-label{font-family:var(--mono);font-size:.75rem;color:var(--cyan);
-  min-width:20px;text-align:center}
-.cb-session-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;
-  padding:1rem 1.25rem;margin-bottom:.65rem;display:flex;align-items:center;
-  justify-content:space-between;gap:1rem;cursor:pointer;transition:.2s}
-.cb-session-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.cb-session-date{font-family:var(--head);font-size:.95rem;font-weight:700}
-.cb-session-time{font-size:.75rem;color:var(--dim);margin-top:.15rem}
-.cb-session-preview{width:80px;height:50px;border-radius:7px;object-fit:cover;
-  border:1px solid var(--border);flex-shrink:0;background:#fff}
-.cb-empty{text-align:center;padding:3rem 1rem;color:var(--dim)}
-.cb-empty-icon{font-size:2.5rem;margin-bottom:.75rem}
-.cb-empty-text{font-size:.9rem;margin-bottom:.35rem}
-.cb-empty-sub{font-size:.78rem;color:var(--dim2)}
+/* ══ WHITEBOARD TOOLBAR — CLEAN ══ */
+.wb-bar{
+  display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:12px;padding:.5rem .75rem;margin-bottom:.75rem;
+}
+.wb-section{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.wb-sep{width:1px;height:32px;background:var(--border);margin:0 .3rem;flex-shrink:0}
+.wbt{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:.45rem .55rem;min-width:50px;border-radius:9px;
+  border:1.5px solid transparent;background:transparent;
+  color:var(--dim);cursor:pointer;transition:.15s;flex-shrink:0;
+  font-family:var(--font);font-size:.6rem;font-weight:600;letter-spacing:.02em;
+}
+.wbt:hover{background:var(--s3);border-color:var(--border);color:var(--text)}
+.wbt.on{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.5);color:var(--cyan)}
+.wbc{
+  width:26px;height:26px;border-radius:50%;cursor:pointer;
+  transition:.18s;border:3px solid transparent;flex-shrink:0;
+}
+.wbc:hover{transform:scale(1.2)}
+.wbc.on{border-color:var(--cyan);transform:scale(1.15);
+  box-shadow:0 0 0 2px rgba(56,189,248,.3)}
+.wbc-custom{
+  width:26px;height:26px;border-radius:50%;
+  border:2px dashed var(--border2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--dim);position:relative;transition:.15s;flex-shrink:0;
+}
+.wbc-custom:hover{border-color:var(--cyan);color:var(--cyan)}
+.wbc-custom input{position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%}
+.wb-slider{
+  -webkit-appearance:none;appearance:none;
+  width:90px;height:4px;border-radius:4px;
+  background:var(--s3);outline:none;cursor:pointer;
+}
+.wb-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--cyan);cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+.wb-size-num{
+  font-family:var(--mono);font-size:.75rem;
+  color:var(--cyan);min-width:18px;text-align:center;
+}
 
 /* ══ WHITEBOARD INFINITE SCROLL ══ */
 #wb-scroll-container::-webkit-scrollbar{width:8px}
@@ -5827,8 +5819,8 @@ function changeStudent() {
 }
 
 // A4 dimensions at 96dpi: 794 x 1123 px
-const A4_W = 794;
-const A4_H = 1123;
+const A4_W = 992;   // A4 at 120dpi — sharper drawing, prints cleanly
+const A4_H = 1403;  // A4 height at 120dpi (√2 ratio)
 let wbPages = 1;
 
 function initWhiteboard() {
@@ -5837,12 +5829,13 @@ function initWhiteboard() {
   wbCanvas.dataset.init = '1';
   wbCtx = wbCanvas.getContext('2d');
 
-  // Set canvas to A4 width, start with 2 pages height
-  wbPages = 2;
+  // Set canvas to A4 dimensions — displayed at 100% container width
+  wbPages = 1;
   wbCanvas.width  = A4_W;
-  wbCanvas.height = A4_H * wbPages;
-  wbCanvas.style.width  = '100%';
-  wbCanvas.style.height = 'auto';
+  wbCanvas.height = A4_H;
+  // Remove inline style overrides — CSS handles sizing
+  wbCanvas.style.width  = '';
+  wbCanvas.style.height = '';
 
   fillBackground();
   drawPageGuides();
@@ -5877,6 +5870,14 @@ function initWhiteboard() {
   loadTodaySession();
   if (wbAutoSaveTimer) clearInterval(wbAutoSaveTimer);
   wbAutoSaveTimer = setInterval(saveWhiteboardNow, 10000);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (!wbCurrentStudent) return;
+    if ((e.ctrlKey||e.metaKey) && e.key==='z') { e.preventDefault(); wbUndo(); }
+    if ((e.ctrlKey||e.metaKey) && e.key==='y') { e.preventDefault(); wbRedo(); }
+    if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); saveWhiteboardNow(); }
+  });
 }
 
 function drawPageGuides() {
@@ -5908,8 +5909,8 @@ function drawPageGuides() {
 function checkAutoExpand(e) {
   if (!wbDrawing) return;
   const pos = wbPos(e);
-  // If drawing within 100px of bottom, add a new page
-  if (pos.y > wbCanvas.height - 100) addWbPage();
+  // If drawing within 150px of bottom, add a new page
+  if (pos.y > wbCanvas.height - 150) addWbPage();
 }
 
 function addWbPage() {
@@ -5980,7 +5981,31 @@ function printClassboard() {
         @page { size: A4; margin: 0; }
         body { width:210mm; }
       }
-    </style>
+    
+/* ══ WHITEBOARD CANVAS SIZING ══ */
+#page-classboard #classboard-teacher-view .sec {
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+#wb-canvas-wrap {
+  width: 100%;
+}
+#wb-scroll-container {
+  width: 100%;
+}
+#wb-canvas {
+  display: block;
+  width: 100% !important;
+  /* aspect ratio matches A4: 1/sqrt(2) = 0.7071 */
+  min-height: calc(100vw * 0.7071);
+  max-width: 100%;
+}
+@media(min-width:900px) {
+  #wb-canvas {
+    min-height: calc((100vw - 240px) * 0.7071);
+  }
+}
+</style>
   </head><body>`);
 
   pageImgs.forEach((src, i) => {
@@ -6001,14 +6026,18 @@ function printClassboard() {
 
 function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
 function wbPos(e) {
+  // getBoundingClientRect gives position relative to viewport
+  // For a scrollable canvas, we need position relative to canvas top-left
+  // canvas.getBoundingClientRect().top is ALREADY scroll-adjusted by the browser
+  // So we just need to scale from display pixels to canvas pixels
   const r  = wbCanvas.getBoundingClientRect();
   const sx = wbCanvas.width  / r.width;
-  const sy = wbCanvas.height / r.height;
-  const sc = document.getElementById('wb-scroll-container');
-  const scrollY = sc ? sc.scrollTop : 0;
+  // sy must account for the full canvas height vs displayed height
+  // since canvas overflows the scroll container, r.height = actual rendered height
+  // which equals r.width * (canvasHeight/canvasWidth) — same scale as sx
   return {
-    x: (e.clientX - r.left)  * sx,
-    y: (e.clientY - r.top + scrollY) * sy
+    x: (e.clientX - r.left) * sx,
+    y: (e.clientY - r.top)  * sx   // use sx for both — canvas is uniformly scaled
   };
 }
 function fillBackground() {
@@ -6059,7 +6088,12 @@ function applyTool(x,y,end) {
 function placeTextInput(x,y) {
   const ti=document.getElementById('wb-text-input'); if(!ti)return;
   const r=wbCanvas.getBoundingClientRect();
-  ti.style.display='block'; ti.style.left=(r.left+x*(r.width/wbCanvas.width))+'px'; ti.style.top=(r.top+y*(r.height/wbCanvas.height))+'px';
+  const scale=r.width/wbCanvas.width;
+  // Position input at screen coordinates (not canvas coordinates)
+  ti.style.display='block';
+  ti.style.left=(r.left + x * scale)+'px';
+  ti.style.top =(r.top  + x * scale * (y/x||0))+'px'; // approximate screen y
+  ti.style.top =(r.top  + y * scale)+'px';
   ti.style.fontSize=(wbSize*4+12)+'px'; ti.dataset.x=x; ti.dataset.y=y; ti.value=''; ti.focus();
 }
 function commitText() {
@@ -6071,25 +6105,31 @@ function commitText() {
 
 function setTool(tool) {
   wbTool=tool;
-  document.querySelectorAll('.wb-tool').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.wbt').forEach(b=>b.classList.remove('on'));
   const btn=document.getElementById('tool-'+tool); if(btn)btn.classList.add('on');
   if(wbCanvas)wbCanvas.style.cursor=tool==='eraser'?'cell':tool==='text'?'text':'crosshair';
 }
 function setColor(el) {
   wbColor=el.dataset.color;
-  document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.wbc').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
   const cc=document.getElementById('custom-color'); if(cc)cc.value=wbColor;
-  setBrushSize(wbSize); // refresh preview dot color
+  const dot=document.getElementById('wb-dot');
+  if(dot){dot.style.background=wbColor;}
 }
-function setCustomColor(val) { wbColor=val; document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on')); }
+function setCustomColor(val) {
+  wbColor=val;
+  document.querySelectorAll('.wbc').forEach(b=>b.classList.remove('on'));
+  const dot=document.getElementById('wb-dot');
+  if(dot){dot.style.background=val;}
+}
 function setBrushSize(val) {
   wbSize=+val;
   const el=document.getElementById('wb-size-val'); if(el)el.textContent=val;
-  const prev=document.getElementById('wb-size-preview');
-  if(prev){const sz=Math.min(20,Math.max(4,+val));prev.innerHTML=`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${wbColor};margin:auto"></div>`;}
+  const dot=document.getElementById('wb-dot');
+  if(dot){const sz=Math.min(18,Math.max(3,+val));dot.style.width=sz+'px';dot.style.height=sz+'px';dot.style.background=wbColor;}
 }
-function toggleBg() { wbBgWhite=!wbBgWhite; const btn=document.getElementById('tool-bg'); if(btn)btn.classList.toggle('on',!wbBgWhite); fillBackground(); }
+function toggleBg() { wbBgWhite=!wbBgWhite; const btn=document.getElementById('tool-bg'); if(btn)btn.classList.toggle('on',!wbBgWhite); fillBackground(); drawPageGuides(); }
 function wbUndo() {
   if(wbHistory.length<=1)return; wbUndoRedo.push(wbHistory.pop());
   const img=new Image(); img.onload=()=>{wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);}; img.src=wbHistory[wbHistory.length-1];
