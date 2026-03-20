@@ -1232,13 +1232,35 @@ onAuthStateChanged(auth, async user => {
   <!-- Teacher view: Whiteboard -->
   <div id="classboard-teacher-view" style="display:none">
     <div class="sec">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.65rem;margin-bottom:1rem">
+      <!-- Student selector -->
+      <div id="wb-student-selector" style="background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem">
+        <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.35rem">🖊️ Start a Whiteboard Session</div>
+        <div style="font-size:.82rem;color:var(--dim);margin-bottom:1rem">Select the student you are teaching, then start drawing.</div>
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:.7rem;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">Student</div>
+            <select id="wb-student-select" style="width:100%;font-size:.88rem;padding:.55rem .75rem;border-radius:9px">
+              <option value="">— Select student —</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:.7rem;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.35rem">Topic (optional)</div>
+            <input id="wb-topic-input" type="text" placeholder="e.g. Acids & Bases" style="width:100%;font-size:.88rem;padding:.55rem .75rem;border-radius:9px;background:var(--s3);border:1px solid var(--border);color:var(--text);outline:none">
+          </div>
+          <button class="btn green" style="padding:.6rem 1.5rem;font-size:.88rem" onclick="startStudentSession()">Start Session →</button>
+        </div>
+        <div id="wb-selector-err" style="color:var(--red);font-size:.78rem;margin-top:.5rem;display:none">Please select a student first.</div>
+      </div>
+
+      <!-- Active session header (hidden until session started) -->
+      <div id="wb-active-header" style="display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.65rem;margin-bottom:1rem">
         <div>
           <div style="font-family:var(--head);font-size:1.05rem;font-weight:700">🖊️ Whiteboard</div>
-          <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="cb-session-meta">Auto-saves every 10 seconds</div>
+          <div style="font-size:.78rem;color:var(--dim);margin-top:.2rem" id="cb-session-meta">Select a student to begin</div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
           <div id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">✓ Saved</div>
+          <button class="btn" onclick="changeStudent()">👤 Change Student</button>
           <button class="btn" onclick="clearWhiteboard()">🗑 Clear</button>
           <button class="btn green" onclick="saveWhiteboardNow()">💾 Save Now</button>
           <button class="btn" onclick="showSessionHistory()">📅 Sessions</button>
@@ -1246,50 +1268,132 @@ onAuthStateChanged(auth, async user => {
       </div>
 
       <!-- Toolbar -->
-      <div id="wb-toolbar" style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.6rem .75rem;margin-bottom:.75rem">
-        <!-- Tools -->
-        <div style="display:flex;gap:.3rem">
-          <button class="wb-tool on" id="tool-pen" onclick="setTool('pen')" title="Pen">✏️</button>
-          <button class="wb-tool" id="tool-marker" onclick="setTool('marker')" title="Marker">🖊</button>
-          <button class="wb-tool" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">🧹</button>
-          <button class="wb-tool" id="tool-line" onclick="setTool('line')" title="Line">╱</button>
-          <button class="wb-tool" id="tool-rect" onclick="setTool('rect')" title="Rectangle">▭</button>
-          <button class="wb-tool" id="tool-circle" onclick="setTool('circle')" title="Circle">○</button>
-          <button class="wb-tool" id="tool-text" onclick="setTool('text')" title="Text">T</button>
+      <div id="wb-toolbar" style="display:none">
+        <!-- Row 1: Tools -->
+        <div class="wb-toolbar-row">
+          <div class="wb-group">
+            <div class="wb-group-label">Draw</div>
+            <div class="wb-group-btns">
+              <button class="wb-tool on" id="tool-pen" onclick="setTool('pen')" title="Pen">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                <span>Pen</span>
+              </button>
+              <button class="wb-tool" id="tool-marker" onclick="setTool('marker')" title="Marker">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                <span>Marker</span>
+              </button>
+              <button class="wb-tool" id="tool-eraser" onclick="setTool('eraser')" title="Eraser">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+                <span>Eraser</span>
+              </button>
+            </div>
+          </div>
+          <div class="wb-divider"></div>
+          <div class="wb-group">
+            <div class="wb-group-label">Shapes</div>
+            <div class="wb-group-btns">
+              <button class="wb-tool" id="tool-line" onclick="setTool('line')" title="Line">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+                <span>Line</span>
+              </button>
+              <button class="wb-tool" id="tool-rect" onclick="setTool('rect')" title="Rectangle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                <span>Rect</span>
+              </button>
+              <button class="wb-tool" id="tool-circle" onclick="setTool('circle')" title="Circle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+                <span>Circle</span>
+              </button>
+              <button class="wb-tool" id="tool-text" onclick="setTool('text')" title="Text">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                <span>Text</span>
+              </button>
+            </div>
+          </div>
+          <div class="wb-divider"></div>
+          <div class="wb-group">
+            <div class="wb-group-label">Actions</div>
+            <div class="wb-group-btns">
+              <button class="wb-tool" onclick="wbUndo()" title="Undo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7v6h6"/><path d="M3 13C5 7.6 10 4 16 4c3.3 0 6 1 8 2.7"/></svg>
+                <span>Undo</span>
+              </button>
+              <button class="wb-tool" onclick="wbRedo()" title="Redo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 7v6h-6"/><path d="M21 13C19 7.6 14 4 8 4 4.7 4 2 5 0 6.7"/></svg>
+                <span>Redo</span>
+              </button>
+              <button class="wb-tool" id="tool-bg" onclick="toggleBg()" title="Toggle background">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                <span>BG</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
-        <!-- Colours -->
-        <div style="display:flex;gap:.3rem;align-items:center">
-          <div class="wb-color on" style="background:#1a1a2e" data-color="#1a1a2e" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#3498db" data-color="#3498db" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#2ecc71" data-color="#2ecc71" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#f39c12" data-color="#f39c12" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#9b59b6" data-color="#9b59b6" onclick="setColor(this)"></div>
-          <div class="wb-color" style="background:#ffffff;border:1px solid #ccc" data-color="#ffffff" onclick="setColor(this)"></div>
-          <input type="color" id="custom-color" value="#1a1a2e" onchange="setCustomColor(this.value)" style="width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:0;background:none">
+        <!-- Row 2: Colours + Size -->
+        <div class="wb-toolbar-row wb-toolbar-row2">
+          <div class="wb-group">
+            <div class="wb-group-label">Colour</div>
+            <div class="wb-group-btns" style="gap:.45rem;align-items:center">
+              <div class="wb-color on" style="background:#1a1a2e" data-color="#1a1a2e" onclick="setColor(this)" title="Black"></div>
+              <div class="wb-color" style="background:#e74c3c" data-color="#e74c3c" onclick="setColor(this)" title="Red"></div>
+              <div class="wb-color" style="background:#3498db" data-color="#3498db" onclick="setColor(this)" title="Blue"></div>
+              <div class="wb-color" style="background:#2ecc71" data-color="#2ecc71" onclick="setColor(this)" title="Green"></div>
+              <div class="wb-color" style="background:#f39c12" data-color="#f39c12" onclick="setColor(this)" title="Orange"></div>
+              <div class="wb-color" style="background:#9b59b6" data-color="#9b59b6" onclick="setColor(this)" title="Purple"></div>
+              <div class="wb-color" style="background:#e91e63" data-color="#e91e63" onclick="setColor(this)" title="Pink"></div>
+              <div class="wb-color" style="background:#ffffff;border:2px solid #ddd" data-color="#ffffff" onclick="setColor(this)" title="White"></div>
+              <div class="wb-color-custom" title="Custom colour">
+                <input type="color" id="custom-color" value="#1a1a2e" onchange="setCustomColor(this.value)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="wb-divider"></div>
+          <div class="wb-group">
+            <div class="wb-group-label">Brush Size</div>
+            <div style="display:flex;align-items:center;gap:.65rem">
+              <div class="wb-size-preview" id="wb-size-preview"></div>
+              <input type="range" id="wb-size" min="1" max="40" value="3" class="wb-range" oninput="setBrushSize(this.value)">
+              <span class="wb-size-label" id="wb-size-val">3</span>
+            </div>
+          </div>
         </div>
-        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
-        <!-- Brush size -->
-        <div style="display:flex;align-items:center;gap:.4rem">
-          <span style="font-size:.7rem;color:var(--dim)">Size</span>
-          <input type="range" id="wb-size" min="1" max="30" value="3" style="width:70px" oninput="setBrushSize(this.value)">
-          <span style="font-size:.7rem;color:var(--cyan);min-width:16px" id="wb-size-val">3</span>
-        </div>
-        <div style="width:1px;height:28px;background:var(--border);margin:0 .2rem"></div>
-        <!-- Undo/Redo -->
-        <button class="wb-tool" onclick="wbUndo()" title="Undo">↩</button>
-        <button class="wb-tool" onclick="wbRedo()" title="Redo">↪</button>
-        <!-- Background toggle -->
-        <button class="wb-tool" id="tool-bg" onclick="toggleBg()" title="Background">📄</button>
       </div>
 
-      <!-- Canvas -->
-      <div style="position:relative;border-radius:12px;overflow:hidden;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.3)">
-        <canvas id="wb-canvas" style="display:block;width:100%;touch-action:none;cursor:crosshair;background:#fff"></canvas>
-        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px">
+      <!-- Canvas (hidden until student selected) -->
+      <div id="wb-canvas-wrap" style="display:none">
+        <!-- Page indicator -->
+        <div id="wb-page-bar" style="display:flex;align-items:center;justify-content:space-between;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.5rem 1rem;margin-bottom:.6rem;font-size:.78rem;color:var(--dim)">
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <span>📄 <strong id="wb-page-count" style="color:var(--text)">1</strong> page</span>
+            <span style="color:var(--border2)">|</span>
+            <span>A4 width · unlimited vertical scroll</span>
+          </div>
+          <div style="display:flex;gap:.4rem">
+            <button class="wb-tool" style="min-width:auto;padding:.3rem .7rem;flex-direction:row;gap:.3rem;font-size:.72rem" onclick="addWbPage()" title="Add page below">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Page
+            </button>
+            <button class="wb-tool" style="min-width:auto;padding:.3rem .7rem;flex-direction:row;gap:.3rem;font-size:.72rem" onclick="printClassboard()" title="Print as A4">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print A4
+            </button>
+          </div>
+        </div>
+
+        <!-- Scrollable canvas container -->
+        <div id="wb-scroll-container" style="overflow-y:auto;overflow-x:hidden;border-radius:12px;border:2px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.2);background:#e8e8e8;max-height:75vh;position:relative">
+          <!-- Page guides overlay -->
+          <div id="wb-page-guides" style="position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:2"></div>
+          <canvas id="wb-canvas" style="display:block;touch-action:pan-x pan-y;cursor:crosshair;background:#fff;margin:0 auto"></canvas>
+          <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:4px;padding:4px 8px;font-size:16px;outline:none;background:rgba(255,255,255,.95);color:#111;font-family:var(--font);min-width:150px;z-index:10">
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
+          <div style="font-size:.7rem;color:var(--dim2)">Scroll down to draw more · Each A4 section prints on one page</div>
+          <div style="font-size:.72rem;color:var(--dim);display:none" id="cb-last-saved"></div>
+        </div>
       </div>
-      <div style="font-size:.72rem;color:var(--dim);margin-top:.5rem;text-align:right" id="cb-last-saved"></div>
     </div>
 
     <!-- Session history panel -->
@@ -5515,16 +5619,43 @@ function openPrintWindow(paper, isMarkScheme) {
     
 @keyframes hb{from{transform:scale(1)}to{transform:scale(1.12)}}
 
-/* ══ WHITEBOARD / CLASSBOARD ══ */
-.wb-tool{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
-  background:var(--s3);color:var(--text);font-size:.85rem;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
-.wb-tool:hover{border-color:var(--border2);background:var(--s2)}
-.wb-tool.on{background:rgba(56,189,248,.15);border-color:var(--cyan);color:var(--cyan)}
-.wb-color{width:26px;height:26px;border-radius:50%;cursor:pointer;transition:.15s;
-  border:2px solid transparent;flex-shrink:0}
-.wb-color:hover{transform:scale(1.15)}
-.wb-color.on{border-color:var(--cyan);transform:scale(1.2);box-shadow:0 0 0 2px rgba(56,189,248,.3)}
+/* ══ WHITEBOARD / CLASSBOARD — MODERN ══ */
+#wb-toolbar{background:var(--s1);border:1px solid var(--border);border-radius:14px;
+  padding:.75rem 1rem;margin-bottom:.85rem;display:flex;flex-direction:column;gap:.65rem}
+.wb-toolbar-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.wb-toolbar-row2{padding-top:.55rem;border-top:1px solid var(--border)}
+.wb-group{display:flex;flex-direction:column;gap:.3rem}
+.wb-group-label{font-size:.6rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim2);padding-left:.1rem}
+.wb-group-btns{display:flex;gap:.3rem;align-items:center}
+.wb-divider{width:1px;height:52px;background:var(--border);margin:0 .25rem;align-self:center}
+.wb-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.2rem;padding:.4rem .55rem;min-width:52px;border-radius:10px;
+  border:1px solid transparent;background:transparent;color:var(--dim);
+  cursor:pointer;transition:.15s;flex-shrink:0}
+.wb-tool span{font-size:.6rem;font-weight:600;letter-spacing:.02em;line-height:1}
+.wb-tool svg{flex-shrink:0}
+.wb-tool:hover{background:var(--s2);border-color:var(--border);color:var(--text)}
+.wb-tool.on{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);
+  color:var(--cyan)}
+.wb-color{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:.2s;
+  border:3px solid transparent;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.wb-color:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.wb-color.on{border-color:var(--cyan);transform:scale(1.2);
+  box-shadow:0 0 0 3px rgba(56,189,248,.25),0 2px 8px rgba(0,0,0,.3)}
+.wb-color-custom{width:28px;height:28px;border-radius:50%;border:2px dashed var(--border2);
+  cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;
+  color:var(--dim);transition:.15s;flex-shrink:0}
+.wb-color-custom:hover{border-color:var(--cyan);color:var(--cyan)}
+.wb-color-custom input[type=color]{position:absolute;width:100%;height:100%;
+  opacity:0;cursor:pointer;border:none;padding:0}
+.wb-range{-webkit-appearance:none;appearance:none;width:100px;height:4px;
+  border-radius:4px;background:var(--s3);outline:none;cursor:pointer}
+.wb-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.wb-size-preview{width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.wb-size-label{font-family:var(--mono);font-size:.75rem;color:var(--cyan);
+  min-width:20px;text-align:center}
 .cb-session-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;
   padding:1rem 1.25rem;margin-bottom:.65rem;display:flex;align-items:center;
   justify-content:space-between;gap:1rem;cursor:pointer;transition:.2s}
@@ -5537,6 +5668,36 @@ function openPrintWindow(paper, isMarkScheme) {
 .cb-empty-icon{font-size:2.5rem;margin-bottom:.75rem}
 .cb-empty-text{font-size:.9rem;margin-bottom:.35rem}
 .cb-empty-sub{font-size:.78rem;color:var(--dim2)}
+
+/* ══ WHITEBOARD INFINITE SCROLL ══ */
+#wb-scroll-container::-webkit-scrollbar{width:8px}
+#wb-scroll-container::-webkit-scrollbar-track{background:var(--s3);border-radius:4px}
+#wb-scroll-container::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+#wb-scroll-container::-webkit-scrollbar-thumb:hover{background:var(--dim2)}
+
+/* A4 page break lines */
+.wb-page-line{position:absolute;left:0;width:100%;height:2px;
+  background:repeating-linear-gradient(90deg,rgba(56,189,248,.4) 0,rgba(56,189,248,.4) 8px,transparent 8px,transparent 16px);
+  pointer-events:none}
+.wb-page-label{position:absolute;right:8px;font-size:.65rem;color:rgba(56,189,248,.6);
+  font-family:var(--mono);background:rgba(15,17,23,.8);padding:1px 5px;border-radius:3px}
+
+/* Print styles */
+@media print {
+  body * { visibility: hidden; }
+  #wb-print-area, #wb-print-area * { visibility: visible; }
+  #wb-print-area {
+    position: fixed; top: 0; left: 0;
+    width: 210mm;
+  }
+  #wb-print-area img {
+    width: 210mm;
+    height: 297mm;
+    object-fit: contain;
+    page-break-after: always;
+    display: block;
+  }
+}
 </style>
   </head><body>
     <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:12px">
@@ -5592,6 +5753,7 @@ goPage = function(id, btn) {
 // ════════════════════════════════════════════════════════════
 
 let wbCanvas, wbCtx, wbDrawing=false, wbTool='pen', wbColor='#1a1a2e', wbSize=3;
+let wbCurrentStudent=null, wbCurrentTopic='';
 let wbHistory=[], wbUndoRedo=[], wbSnapshot=null;
 let wbAutoSaveTimer=null, wbBgWhite=true, wbSessionKey=null;
 let wbStartX=0, wbStartY=0;
@@ -5600,40 +5762,111 @@ function initClassboard() {
   const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
   document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
   document.getElementById('classboard-student-view').style.display = isAdmin ? 'none' : 'block';
-  if (isAdmin) { initWhiteboard(); loadSessionHistory(); }
+  if (isAdmin) { loadStudentsIntoDropdown(); }
   else { loadStudentSessions(); }
 }
+
+async function loadStudentsIntoDropdown() {
+  const sel = document.getElementById('wb-student-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Loading students… —</option>';
+  try {
+    const students = await window.loadAllStudents();
+    sel.innerHTML = '<option value="">— Select student —</option>';
+    students.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.uid;
+      opt.textContent = s.name || s.email;
+      sel.appendChild(opt);
+    });
+  } catch(e) {
+    sel.innerHTML = '<option value="">— Could not load students —</option>';
+  }
+}
+
+function startStudentSession() {
+  const sel    = document.getElementById('wb-student-select');
+  const errEl  = document.getElementById('wb-selector-err');
+  const topic  = document.getElementById('wb-topic-input').value.trim();
+  if (!sel || !sel.value) {
+    if (errEl) { errEl.style.display='block'; setTimeout(()=>errEl.style.display='none',2500); }
+    return;
+  }
+  const studentName = sel.options[sel.selectedIndex].text;
+  wbCurrentStudent = { uid: sel.value, name: studentName };
+  wbCurrentTopic   = topic || 'General';
+
+  // Hide selector, show canvas
+  document.getElementById('wb-student-selector').style.display = 'none';
+  document.getElementById('wb-active-header').style.display    = 'flex';
+  document.getElementById('wb-toolbar').style.display          = 'flex';
+  document.getElementById('wb-canvas-wrap').style.display      = 'block';
+  document.getElementById('cb-last-saved').style.display       = 'block';
+
+  // Update meta
+  const today = new Date().toISOString().split('T')[0];
+  wbSessionKey  = studentName.replace(/\s+/g,'-') + '_' + today;
+  const meta    = document.getElementById('cb-session-meta');
+  if (meta) meta.textContent = '👤 ' + studentName + (wbCurrentTopic ? ' · ' + wbCurrentTopic : '') + ' · Auto-saves every 10s';
+
+  initWhiteboard();
+  loadTodaySession();
+}
+
+function changeStudent() {
+  // Save current board first then go back to selector
+  saveWhiteboardNow().then(() => {
+    document.getElementById('wb-student-selector').style.display = 'block';
+    document.getElementById('wb-active-header').style.display    = 'none';
+    document.getElementById('wb-toolbar').style.display          = 'none';
+    document.getElementById('wb-canvas-wrap').style.display      = 'none';
+    document.getElementById('cb-last-saved').style.display       = 'none';
+    wbCurrentStudent = null; wbCurrentTopic = '';
+    if (wbAutoSaveTimer) { clearInterval(wbAutoSaveTimer); wbAutoSaveTimer = null; }
+  });
+}
+
+// A4 dimensions at 96dpi: 794 x 1123 px
+const A4_W = 794;
+const A4_H = 1123;
+let wbPages = 1;
 
 function initWhiteboard() {
   wbCanvas = document.getElementById('wb-canvas');
   if (!wbCanvas || wbCanvas.dataset.init) return;
   wbCanvas.dataset.init = '1';
   wbCtx = wbCanvas.getContext('2d');
-  const resize = () => {
-    const rect = wbCanvas.parentElement.getBoundingClientRect();
-    const W = Math.max(400, Math.floor(rect.width) - 4);
-    const H = Math.max(400, Math.floor(W * 0.6));
-    const img = wbCanvas.toDataURL();
-    wbCanvas.width = W; wbCanvas.height = H;
-    fillBackground();
-    const i = new Image(); i.onload = () => wbCtx.drawImage(i,0,0); i.src = img;
-  };
-  resize();
-  try { new ResizeObserver(resize).observe(wbCanvas.parentElement); } catch(e) {}
+
+  // Set canvas to A4 width, start with 2 pages height
+  wbPages = 2;
+  wbCanvas.width  = A4_W;
+  wbCanvas.height = A4_H * wbPages;
+  wbCanvas.style.width  = '100%';
+  wbCanvas.style.height = 'auto';
 
   fillBackground();
+  drawPageGuides();
   wbHistory = [wbCanvas.toDataURL()];
-  wbSessionKey = new Date().toISOString().split('T')[0];
-  const meta = document.getElementById('cb-session-meta');
-  if (meta) meta.textContent = formatDate(wbSessionKey) + ' · Auto-saves every 10s';
 
+  // Mouse events
   wbCanvas.addEventListener('mousedown',  wbDown);
   wbCanvas.addEventListener('mousemove',  wbMove);
   wbCanvas.addEventListener('mouseup',    wbUp);
   wbCanvas.addEventListener('mouseleave', wbUp);
-  wbCanvas.addEventListener('touchstart', e => { e.preventDefault(); wbDown(wbT(e)); }, {passive:false});
-  wbCanvas.addEventListener('touchmove',  e => { e.preventDefault(); wbMove(wbT(e)); }, {passive:false});
-  wbCanvas.addEventListener('touchend',   e => { e.preventDefault(); wbUp(wbT(e)); },  {passive:false});
+
+  // Touch events — allow vertical scroll on canvas but capture draw gestures
+  wbCanvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) { e.preventDefault(); wbDown(wbT(e)); }
+  }, {passive:false});
+  wbCanvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1 && wbDrawing) { e.preventDefault(); wbMove(wbT(e)); }
+  }, {passive:false});
+  wbCanvas.addEventListener('touchend', e => {
+    if (wbDrawing) { e.preventDefault(); wbUp(wbT(e)); }
+  }, {passive:false});
+
+  // Auto-expand canvas when drawing near bottom
+  wbCanvas.addEventListener('mousemove', checkAutoExpand);
 
   const ti = document.getElementById('wb-text-input');
   if (ti) ti.addEventListener('keydown', e => {
@@ -5646,9 +5879,144 @@ function initWhiteboard() {
   wbAutoSaveTimer = setInterval(saveWhiteboardNow, 10000);
 }
 
+function drawPageGuides() {
+  if (!wbCtx) return;
+  // Draw subtle dashed lines at each A4 page break
+  wbCtx.save();
+  wbCtx.setLineDash([8, 6]);
+  wbCtx.strokeStyle = 'rgba(56,189,248,0.25)';
+  wbCtx.lineWidth = 1.5;
+  for (let p = 1; p < wbPages; p++) {
+    const y = A4_H * p;
+    wbCtx.beginPath();
+    wbCtx.moveTo(0, y);
+    wbCtx.lineTo(wbCanvas.width, y);
+    wbCtx.stroke();
+    // Page number label
+    wbCtx.setLineDash([]);
+    wbCtx.font = '11px monospace';
+    wbCtx.fillStyle = 'rgba(56,189,248,0.4)';
+    wbCtx.fillText('Page ' + (p+1), wbCanvas.width - 60, y + 14);
+    wbCtx.setLineDash([8, 6]);
+  }
+  wbCtx.restore();
+  // Update page count display
+  const pc = document.getElementById('wb-page-count');
+  if (pc) pc.textContent = wbPages;
+}
+
+function checkAutoExpand(e) {
+  if (!wbDrawing) return;
+  const pos = wbPos(e);
+  // If drawing within 100px of bottom, add a new page
+  if (pos.y > wbCanvas.height - 100) addWbPage();
+}
+
+function addWbPage() {
+  if (!wbCanvas || !wbCtx) return;
+  // Save current content
+  const img = new Image();
+  const data = wbCanvas.toDataURL();
+  wbPages++;
+  const oldH = wbCanvas.height;
+  wbCanvas.height = A4_H * wbPages;
+  // Restore content
+  img.onload = () => {
+    wbCtx.drawImage(img, 0, 0);
+    // Fill new page with white
+    wbCtx.fillStyle = '#ffffff';
+    wbCtx.fillRect(0, oldH, wbCanvas.width, A4_H);
+    drawPageGuides();
+    wbHistory.push(wbCanvas.toDataURL());
+    // Scroll to new page
+    const sc = document.getElementById('wb-scroll-container');
+    if (sc) sc.scrollTop = oldH * (sc.clientWidth / A4_W);
+  };
+  img.src = data;
+  const pc = document.getElementById('wb-page-count');
+  if (pc) pc.textContent = wbPages;
+  toast('📄 Page ' + wbPages + ' added');
+}
+
+function printClassboard() {
+  if (!wbCanvas) return;
+  const win = window.open('', '_blank');
+  const printDiv = document.createElement('div');
+  printDiv.id = 'wb-print-area';
+
+  // Split canvas into A4 pages and create one image per page
+  const totalPages = Math.ceil(wbCanvas.height / A4_H);
+  const pageImgs = [];
+
+  for (let p = 0; p < totalPages; p++) {
+    const pc = document.createElement('canvas');
+    pc.width  = A4_W;
+    pc.height = A4_H;
+    const pCtx = pc.getContext('2d');
+    pCtx.fillStyle = '#ffffff';
+    pCtx.fillRect(0, 0, A4_W, A4_H);
+    pCtx.drawImage(wbCanvas, 0, p * A4_H, A4_W, A4_H, 0, 0, A4_W, A4_H);
+    pageImgs.push(pc.toDataURL('image/jpeg', 0.95));
+  }
+
+  const studentName = wbCurrentStudent ? wbCurrentStudent.name : 'Student';
+  const topic = wbCurrentTopic || 'Class Notes';
+  const date  = formatDate(new Date().toISOString().split('T')[0]);
+
+  win.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>Classboard — ${studentName}</title>
+    <style>
+      * { margin:0; padding:0; box-sizing:border-box; }
+      body { background:#fff; font-family:Arial,sans-serif; }
+      .page { width:210mm; height:297mm; position:relative; page-break-after:always; overflow:hidden; }
+      .page:last-child { page-break-after:auto; }
+      .page-header { display:flex; justify-content:space-between; align-items:center;
+        padding:6px 12px; border-bottom:1.5px solid #ddd; margin-bottom:4px; }
+      .page-header-left { font-size:9pt; font-weight:bold; color:#333; }
+      .page-header-right { font-size:8pt; color:#888; }
+      .page-img { width:100%; height:calc(297mm - 32px); object-fit:contain; object-position:top; }
+      @media print {
+        @page { size: A4; margin: 0; }
+        body { width:210mm; }
+      }
+    </style>
+  </head><body>`);
+
+  pageImgs.forEach((src, i) => {
+    win.document.write(`
+      <div class="page">
+        <div class="page-header">
+          <div class="page-header-left">⚗️ Atom Edge Classboard &nbsp;·&nbsp; ${studentName} &nbsp;·&nbsp; ${topic}</div>
+          <div class="page-header-right">${date} &nbsp;·&nbsp; Page ${i+1} of ${pageImgs.length}</div>
+        </div>
+        <img class="page-img" src="${src}">
+      </div>`);
+  });
+
+  win.document.write('</body></html>');
+  win.document.close();
+  setTimeout(() => win.print(), 800);
+}
+
 function wbT(e) { const t=e.touches[0]||e.changedTouches[0]; return {clientX:t.clientX,clientY:t.clientY}; }
-function wbPos(e) { const r=wbCanvas.getBoundingClientRect(),sx=wbCanvas.width/r.width,sy=wbCanvas.height/r.height; return {x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy}; }
-function fillBackground() { if(!wbCtx)return; wbCtx.fillStyle=wbBgWhite?'#ffffff':'#1a1a2e'; wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height); }
+function wbPos(e) {
+  const r  = wbCanvas.getBoundingClientRect();
+  const sx = wbCanvas.width  / r.width;
+  const sy = wbCanvas.height / r.height;
+  const sc = document.getElementById('wb-scroll-container');
+  const scrollY = sc ? sc.scrollTop : 0;
+  return {
+    x: (e.clientX - r.left)  * sx,
+    y: (e.clientY - r.top + scrollY) * sy
+  };
+}
+function fillBackground() {
+  if(!wbCtx)return;
+  wbCtx.fillStyle = wbBgWhite ? '#ffffff' : '#1a1a2e';
+  wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+  drawPageGuides();
+}
 
 function wbDown(e) {
   const p=wbPos(e); wbStartX=p.x; wbStartY=p.y;
@@ -5712,9 +6080,15 @@ function setColor(el) {
   document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
   const cc=document.getElementById('custom-color'); if(cc)cc.value=wbColor;
+  setBrushSize(wbSize); // refresh preview dot color
 }
 function setCustomColor(val) { wbColor=val; document.querySelectorAll('.wb-color').forEach(b=>b.classList.remove('on')); }
-function setBrushSize(val) { wbSize=+val; const el=document.getElementById('wb-size-val'); if(el)el.textContent=val; }
+function setBrushSize(val) {
+  wbSize=+val;
+  const el=document.getElementById('wb-size-val'); if(el)el.textContent=val;
+  const prev=document.getElementById('wb-size-preview');
+  if(prev){const sz=Math.min(20,Math.max(4,+val));prev.innerHTML=`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${wbColor};margin:auto"></div>`;}
+}
 function toggleBg() { wbBgWhite=!wbBgWhite; const btn=document.getElementById('tool-bg'); if(btn)btn.classList.toggle('on',!wbBgWhite); fillBackground(); }
 function wbUndo() {
   if(wbHistory.length<=1)return; wbUndoRedo.push(wbHistory.pop());
@@ -5726,50 +6100,96 @@ function wbRedo() {
 }
 function clearWhiteboard() {
   if(!confirm('Clear the whiteboard? This cannot be undone.'))return;
-  fillBackground(); wbHistory=[wbCanvas.toDataURL()]; wbUndoRedo=[];
+  wbCtx.fillStyle = wbBgWhite ? '#ffffff' : '#1a1a2e';
+  wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+  drawPageGuides();
+  wbHistory=[wbCanvas.toDataURL()]; wbUndoRedo=[];
+  const sc = document.getElementById('wb-scroll-container');
+  if (sc) sc.scrollTop = 0;
 }
 
 async function saveWhiteboardNow() {
-  if(!wbCanvas||!window.FB||!window._fbUser)return;
+  if(!wbCanvas||!window.FB||!window._fbUser||!wbCurrentStudent)return;
   const{db,doc,setDoc,serverTimestamp}=window.FB;
   const dataURL=wbCanvas.toDataURL('image/jpeg',0.65);
   const key=wbSessionKey||new Date().toISOString().split('T')[0];
+  const today=new Date().toISOString().split('T')[0];
   try {
-    await setDoc(doc(db,'whiteboards',key),{date:key,dataURL,savedBy:window._fbUser.email,updatedAt:serverTimestamp(),label:formatDate(key)});
+    await setDoc(doc(db,'whiteboards',key),{
+      date:today, key,
+      dataURL,
+      savedBy:window._fbUser.email,
+      studentUid:wbCurrentStudent.uid,
+      studentName:wbCurrentStudent.name,
+      topic:wbCurrentTopic||'General',
+      updatedAt:serverTimestamp(),
+      label:formatDate(today) + (wbCurrentTopic ? ' · '+wbCurrentTopic : '')
+    });
     const ind=document.getElementById('cb-save-indicator'); if(ind){ind.style.display='inline';setTimeout(()=>ind.style.display='none',2000);}
     const ls=document.getElementById('cb-last-saved'); if(ls)ls.textContent='Last saved: '+new Date().toLocaleTimeString();
   } catch(e){console.warn('WB save:',e);}
 }
 
 async function loadTodaySession() {
-  if(!window.FB||!window._fbUser)return;
+  if(!window.FB||!window._fbUser||!wbSessionKey)return;
   const{db,doc,getDoc}=window.FB;
-  const key=new Date().toISOString().split('T')[0]; wbSessionKey=key;
   try {
-    const snap=await getDoc(doc(db,'whiteboards',key));
-    if(snap.exists()){const img=new Image();img.onload=()=>{if(wbCanvas&&wbCtx){wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0,wbCanvas.width,wbCanvas.height);wbHistory=[wbCanvas.toDataURL()];}};img.src=snap.data().dataURL;}
+    const snap=await getDoc(doc(db,'whiteboards',wbSessionKey));
+    if(snap.exists()){
+      const data = snap.data();
+      const img  = new Image();
+      img.onload = () => {
+        if(!wbCanvas||!wbCtx) return;
+        // Resize canvas to match saved image proportions
+        const savedH = img.naturalHeight;
+        wbPages = Math.max(2, Math.ceil(savedH / A4_H));
+        wbCanvas.height = A4_H * wbPages;
+        wbCtx.fillStyle = '#ffffff';
+        wbCtx.fillRect(0,0,wbCanvas.width,wbCanvas.height);
+        wbCtx.drawImage(img, 0, 0, wbCanvas.width, wbCanvas.height);
+        drawPageGuides();
+        wbHistory=[wbCanvas.toDataURL()];
+        const pc=document.getElementById('wb-page-count'); if(pc)pc.textContent=wbPages;
+        const ls=document.getElementById('cb-last-saved');
+        if(ls){ls.style.display='block';ls.textContent='Loaded: '+formatDate(data.date);}
+      };
+      img.src = data.dataURL;
+    }
   } catch(e){console.warn('WB load:',e);}
 }
 
 async function loadSessionHistory() {
   if(!window.FB)return;
   const{db,collection,getDocs}=window.FB;
+  const wrap=document.getElementById('session-history-list');
+  if(wrap)wrap.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading sessions…</div>';
   try {
     const snap=await getDocs(collection(db,'whiteboards'));
-    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>b.date.localeCompare(a.date));
+    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>{
+      if(b.date!==a.date)return b.date.localeCompare(a.date);
+      return (b.studentName||'').localeCompare(a.studentName||'');
+    });
+    if(!sessions.length&&wrap){wrap.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions saved yet</div></div>';return;}
     renderSessionHistory(sessions,'session-history-list',true);
   } catch(e){console.warn('WB history:',e);}
 }
 
 async function loadStudentSessions() {
   const list=document.getElementById('classboard-sessions-list'); if(!list)return;
-  if(!window.FB){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">🔌</div><div class="cb-empty-text">Not connected</div></div>';return;}
-  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading sessions…</div>';
-  const{db,collection,getDocs}=window.FB;
+  if(!window.FB||!window._fbUser){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">🔌</div><div class="cb-empty-text">Not connected</div></div>';return;}
+  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading your sessions…</div>';
+  const{db,collection,getDocs,query,where}=window.FB;
   try {
     const snap=await getDocs(collection(db,'whiteboards'));
-    const sessions=snap.docs.map(d=>d.data()).sort((a,b)=>b.date.localeCompare(a.date));
-    if(!sessions.length){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions yet</div><div class="cb-empty-sub">Your teacher\'s whiteboard sessions will appear here after each class.</div></div>';return;}
+    // Filter to only this student's sessions
+    const myUid=window._fbUser.uid;
+    const sessions=snap.docs.map(d=>d.data())
+      .filter(s=>s.studentUid===myUid)
+      .sort((a,b)=>b.date.localeCompare(a.date));
+    if(!sessions.length){
+      list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">📋</div><div class="cb-empty-text">No sessions yet</div><div class="cb-empty-sub">Your whiteboard sessions from class will appear here. Each session is saved by date.</div></div>';
+      return;
+    }
     renderSessionHistory(sessions,'classboard-sessions-list',false);
   } catch(e){list.innerHTML='<div class="cb-empty"><div class="cb-empty-icon">⚠️</div><div class="cb-empty-text">Could not load sessions</div></div>';}
 }
