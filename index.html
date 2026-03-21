@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1404,7 +1404,7 @@ onAuthStateChanged(auth, async user => {
 //  10. Glossary               ~line 1600
 //  11. Teacher Dashboard      ~line 1660
 // ════════════════════════════════════════════════════════
-'use strict';
+'use strict'; // v202603210149
 
 // ════════════ FIREBASE AUTH ACTIONS (main script) ════════════
 
@@ -1718,7 +1718,7 @@ function closeModal(){
   document.body.style.overflow='';
   document.getElementById('m-body').innerHTML='';
 }
-document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))closeModal();});
+try{const _ov=document.getElementById('overlay');if(_ov)_ov.addEventListener('click',e=>{if(e.target===_ov)closeModal();});}catch(e){}
 
 // ════════════ BOOKMARKS ════════════
 function toggleBookmark(id,btn){
@@ -3964,8 +3964,8 @@ function copyAssignLink(){navigator.clipboard?.writeText(window.location.href+'?
 function printWorksheet(){window.print();toast('Opening print dialog… 🖨️');}
 
 // ════════════ INIT ════════════
-updateXPBar();
-document.getElementById('home-xp-disp').textContent=xp;
+try{updateXPBar();}catch(e){}
+try{const _hxp=document.getElementById('home-xp-disp');if(_hxp)_hxp.textContent=xp;}catch(e){}
 
 
 // ════════════ AUTH UI HELPERS ════════════
