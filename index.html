@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0317 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0321 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1421,6 +1421,25 @@ function switchTab(mode) {
   </div>
 </div>
 </main>
+
+<!-- FOOTER -->
+<footer style="background:var(--s1);border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;margin-top:2rem">
+  <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.4rem">
+    ⚗️ Atom Edge
+  </div>
+  <div style="font-size:.8rem;color:var(--dim);margin-bottom:.3rem">
+    Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> · IGCSE Chemistry Educator
+  </div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.5rem">
+    © 2026 Aishwarya Priya. All rights reserved. · atomedge.pro
+  </div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">
+    All content, question papers and simulations are original works created for educational purposes.
+  </div>
+  <div style="font-size:.8rem;color:var(--dim)">
+    Made with <span style="display:inline-block;animation:hb .6s infinite alternate">💓</span> for every curious student
+  </div>
+</footer>
 </div>
 
 <!-- MODAL -->
@@ -3983,10 +4002,19 @@ const MOCK_STUDENTS=[
 let hwList=[];
 async function renderDashboard() {
   console.log('renderDashboard called, FB:', !!window.FB, 'user:', window._fbUser ? window._fbUser.email : 'none');
-  // Load real student data from Firebase
-  const ds = document.getElementById('dash-stats');
-  const tbody = document.getElementById('student-tbody');
-  if (!ds) return;
+  // Ensure teacher page is visible
+  var teacherPage = document.getElementById('page-teacher');
+  if (teacherPage) {
+    teacherPage.style.display = 'block';
+    console.log('page-teacher forced display:block');
+  }
+  var ds = document.getElementById('dash-stats');
+  var tbody = document.getElementById('student-tbody');
+  console.log('dash-stats found:', !!ds, 'tbody found:', !!tbody);
+  if (!ds) {
+    console.error('dash-stats NOT FOUND - cannot render dashboard');
+    return;
+  }
 
   ds.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading students…</div>';
   if (tbody) tbody.innerHTML = '';
@@ -5482,7 +5510,9 @@ function openPrintWindow(paper, isMarkScheme) {
       @page{size:A4;margin:1.5cm}
       .question{page-break-inside:avoid}
     }
-  </style>
+  
+@keyframes hb{from{transform:scale(1)}to{transform:scale(1.18)}}
+</style>
 </head>
 <body>
   ${content}
@@ -5564,45 +5594,35 @@ function changeStudent() {
 function initWhiteboard() {
   wbCanvas = document.getElementById('wb-canvas');
   if (!wbCanvas) return;
+  wbCtx = wbCanvas.getContext('2d');
 
-  // Use setTimeout to ensure layout is complete before measuring
-  var doInit = function() {
+  function sizeCanvas() {
     var sc = document.getElementById('wb-scroll-container');
-    var W  = sc ? sc.offsetWidth - 4 : 800;
-    if (W < 100) W = 800; // fallback if still 0
-    var H  = Math.round(W * 1.4142);  // A4 ratio
-
+    var W  = sc ? sc.offsetWidth - 2 : 900;
+    if (W < 200) W = 900;
+    var H  = Math.round(W * 1.4142);
+    // Preserve existing drawing
+    var imgData = (wbCanvas.width > 10 && wbHistory.length > 0) ? wbHistory[wbHistory.length-1] : null;
     wbCanvas.width  = W;
     wbCanvas.height = H;
-    wbCanvas.style.width  = '100%';
+    wbCanvas.style.width  = W + 'px';
     wbCanvas.style.height = H + 'px';
-
-    wbCtx = wbCanvas.getContext('2d');
     wbCtx.fillStyle = '#ffffff';
     wbCtx.fillRect(0, 0, W, H);
-
-    wbHistory  = [wbCanvas.toDataURL()];
-    wbUndoStack = [];
-  };
-  setTimeout(doInit, 50);
-  // Also run immediately in case layout is ready
-  var sc0 = document.getElementById('wb-scroll-container');
-  var W0  = sc0 ? sc0.offsetWidth - 4 : 0;
-  if (W0 > 100) {
-    wbCanvas.width  = W0;
-    wbCanvas.height = Math.round(W0 * 1.4142);
-    wbCanvas.style.width  = '100%';
-    wbCanvas.style.height = Math.round(W0 * 1.4142) + 'px';
-    wbCtx = wbCanvas.getContext('2d');
-    wbCtx.fillStyle = '#ffffff';
-    wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
-    wbHistory  = [wbCanvas.toDataURL()];
-    wbUndoStack = [];
-  } else {
-    wbCtx = wbCanvas.getContext('2d');
-    wbHistory  = [];
-    wbUndoStack = [];
+    if (imgData) {
+      var img = new Image();
+      img.onload = function() { wbCtx.drawImage(img, 0, 0, W, H); };
+      img.src = imgData;
+    } else {
+      wbHistory  = [wbCanvas.toDataURL()];
+      wbUndoStack = [];
+    }
   }
+
+  // Size after layout — try multiple times to get correct dimensions
+  sizeCanvas();
+  setTimeout(sizeCanvas, 100);
+  setTimeout(sizeCanvas, 500);
 
   // Event listeners
   wbCanvas.addEventListener('mousedown',  wbDown);
