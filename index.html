@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0256 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0310 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1606,7 +1606,7 @@ window.loadAllStudents = async function() {
   if(!window.FB)return[];
   const{db,collection,getDocs}=window.FB;
   const snap=await getDocs(collection(db,'users'));
-  return snap.docs.map(d=>({uid:d.id,...d.data()})).filter(u=>u.email!==ADMIN_EMAIL);
+  return snap.docs.map(function(d){var o=d.data();o.uid=d.id;return o;}).filter(function(u){return u.email!==ADMIN_EMAIL;});
 };
 
 window.createStudentAccount = async function(name,email,password) {
@@ -3982,7 +3982,7 @@ const MOCK_STUDENTS=[
 ];
 let hwList=[];
 async function renderDashboard() {
-  console.log('renderDashboard called, FB:', !!window.FB, 'user:', window._fbUser?.email);
+  console.log('renderDashboard called, FB:', !!window.FB, 'user:', window._fbUser ? window._fbUser.email : 'none');
   // Load real student data from Firebase
   const ds = document.getElementById('dash-stats');
   const tbody = document.getElementById('student-tbody');
@@ -3999,8 +3999,7 @@ async function renderDashboard() {
   try {
     const { db, collection, getDocs } = window.FB;
     const snap = await getDocs(collection(db, 'users'));
-    const students = snap.docs.map(d => ({ uid: d.id, ...d.data() }))
-      .filter(s => s.email !== ADMIN_EMAIL);
+    const students = snap.docs.map(function(d){ var o=d.data(); o.uid=d.id; return o; }).filter(function(s){ return s.email !== ADMIN_EMAIL; });
 
     if (!students.length) {
       ds.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">No students registered yet.</div>';
@@ -4058,7 +4057,7 @@ function exportReport(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='atom-edge-report.csv';a.click();
   toast('Report downloaded! 📊');
 }
-function copyAssignLink(){navigator.clipboard?.writeText(window.location.href+'?assigned=true').catch(()=>{});toast('Assignment link copied! 🔗');}
+function copyAssignLink(){if(navigator.clipboard)navigator.clipboard.writeText(window.location.href+'?assigned=true').catch(()=>{});toast('Assignment link copied! 🔗');}
 function printWorksheet(){window.print();toast('Opening print dialog… 🖨️');}
 
 // ════════════ INIT ════════════
@@ -4294,7 +4293,7 @@ Requirements:
 
     if (!response.ok) {
       const err = await response.json();
-      throw new Error(err.error?.message || 'API error ' + response.status);
+      throw new Error((err.error && err.error.message) || 'API error ' + response.status);
     }
 
     const data = await response.json();
@@ -5494,8 +5493,19 @@ function openPrintWindow(paper, isMarkScheme) {
 }
 
 
+
+// WB STATE VARS
+let wbCanvas = null, wbCtx = null;
+let wbDrawing = false;
+let wbTool = 'pen', wbColor = '#1a1a1a', wbSize = 3;
+let wbHistory = [], wbUndoStack = [];
+let wbSnapshot = null, wbStartX = 0, wbStartY = 0;
+let wbBgWhite = true, wbAutoSaveTimer = null;
+let wbCurrentStudent = null, wbCurrentTopic = '';
+let wbSessionKey = null;
+
 function initClassboard() {
-  console.log('initClassboard called, user:', window._fbUser?.email, 'isAdmin:', window._fbUser?.email === ADMIN_EMAIL);
+  console.log('initClassboard called, user:', window._fbUser ? window._fbUser.email : 'none');
   const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
   document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
   document.getElementById('classboard-student-view').style.display = isAdmin ? 'none' : 'block';
@@ -5890,6 +5900,35 @@ function formatDate(dateStr){
   catch(e){return dateStr;}
 }
 
+const TOPIC_CATEGORIES = [
+  {name:'Acids & Bases',      icon:'🧪', color:'#00e5ff', topics:['Acids & Bases','Salts']},
+  {name:'Electrochemistry',   icon:'⚡', color:'#fb923c', topics:['Electrochemistry']},
+  {name:'Atomic Structure',   icon:'⚛️', color:'#a78bfa', topics:['Atomic Structure']},
+  {name:'States of Matter',   icon:'💨', color:'#38bdf8', topics:['States of Matter','Gas Laws']},
+  {name:'Metals & Reactivity',icon:'🔩', color:'#f87171', topics:['Metals & Reactivity','Reactivity']},
+  {name:'Separation',         icon:'🔬', color:'#34d399', topics:['Separation']},
+  {name:'Chemical Bonding',   icon:'🔗', color:'#818cf8', topics:['Chemical Bonding','Covalent','Ionic']},
+  {name:'Reversible Reactions',icon:'⇌', color:'#fbbf24', topics:['Reversible Reactions','Equilibrium']},
+  {name:'Rates of Reaction',  icon:'⏱️', color:'#f472b6', topics:['Rates of Reaction']},
+  {name:'Organic Chemistry',  icon:'🧬', color:'#4ade80', topics:['Organic Chemistry']},
+  {name:'Quantitative',       icon:'📊', color:'#60a5fa', topics:['Quantitative Chemistry','Moles']},
+  {name:'Industrial',         icon:'🏭', color:'#fb923c', topics:['Industrial Chemistry']},
+];
+
+function buildHomePage() {
+  try {
+    // Update XP display
+    var xpEl = document.getElementById('home-xp-disp');
+    if (xpEl) xpEl.textContent = xp;
+    updateXPBar();
+    // Render badges
+    try { renderBadges(); } catch(e) {}
+    // Render topic grid
+    try { renderTopicGrid(); } catch(e) {}
+    // Build sim grid
+    try { buildGrid('home-grid'); } catch(e) {}
+  } catch(e) { console.warn('buildHomePage error:', e); }
+}
 </script>
 </body>
 </html>
