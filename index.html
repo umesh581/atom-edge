@@ -886,7 +886,8 @@ function authSubmit() {
     } else if (attempts < 100) {
       setTimeout(trySignIn, 100);
     } else {
-      if (errEl) errEl.textContent = 'App failed to load. Please refresh.';
+      if (errEl) errEl.textContent = 'App failed to load. Check console for details.';
+      console.error('doSignIn never became available. Check for JS errors above.');
       if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
     }
   };
@@ -1451,6 +1452,15 @@ function switchTab(mode) {
 //  11. Teacher Dashboard      ~line 1660
 // ════════════════════════════════════════════════════════
 'use strict'; // v202603210149
+window.onerror = function(msg, src, line, col, err) {
+  var errEl = document.getElementById('auth-err');
+  if (errEl) errEl.textContent = 'JS Error: ' + msg + ' (line ' + line + ')';
+  console.error('SCRIPT ERROR:', msg, 'line:', line, 'col:', col);
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('UNHANDLED PROMISE:', e.reason);
+});
 
 // ════════════ FIREBASE AUTH ACTIONS (main script) ════════════
 
