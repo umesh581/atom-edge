@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0314 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0317 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1394,7 +1394,7 @@ function switchTab(mode) {
   <div class="sec" id="dash-wrap">
     <div class="sec-hd"><h2>👩‍🏫 Teacher Dashboard</h2><div class="sec-line"></div></div>
     <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Track student progress, identify weak topics, and export reports. Share the assignment link to assign specific experiments.</p>
-    <div class="dash-stats" id="dash-stats"></div>
+    <div class="dash-stats" id="dash-stats"><div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading dashboard…</div></div>
     <div class="sec-hd"><h2>Student Performance</h2><div class="sec-line"></div></div>
     <div style="overflow-x:auto">
       <table class="student-table" id="student-table">
@@ -4036,8 +4036,8 @@ async function renderDashboard() {
         }).join('');
     }
   } catch(e) {
-    console.warn('renderDashboard error:', e);
-    if (ds) ds.innerHTML = '<div style="color:var(--red);font-size:.85rem">Error loading students: ' + e.message + '</div>';
+    console.error('renderDashboard ERROR:', e);
+    if (ds) ds.innerHTML = '<div style="color:red;font-size:1rem;padding:1rem">Error: ' + (e.message||e) + '</div>';
   }
 }function assignHW(){
   const expId=document.getElementById('hw-exp').value;
