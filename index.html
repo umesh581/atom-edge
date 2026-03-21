@@ -579,6 +579,9 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     if (user) {
       if (authScreen) authScreen.style.display = 'none';
       if (appRoot)    appRoot.style.display     = 'block';
+      // Rebuild content grids after auth (in case buildGrid ran before DOM was ready)
+      try { buildGrid('home-grid'); } catch(e) {}
+      try { buildGrid('sims-grid'); } catch(e) {}
       const uEl = document.getElementById('nav-user');
       if (uEl) uEl.textContent = user.email.split('@')[0];
       // Load profile
@@ -3827,6 +3830,12 @@ function cb_loadStudentSessions(){ cb_loadSessions(false); }
   var _orig = goPage;
   goPage = function(id, btn) {
     _orig(id, btn);
+    if (id==='sims') {
+      requestAnimationFrame(function(){ try{buildGrid('sims-grid');}catch(e){} });
+    }
+    if (id==='home') {
+      requestAnimationFrame(function(){ try{buildGrid('home-grid');}catch(e){} });
+    }
     if (id==='papers') {
       requestAnimationFrame(function(){ try{pp_init();}catch(e){console.error('pp_init:',e);} });
     }
