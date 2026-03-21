@@ -863,6 +863,52 @@ onAuthStateChanged(auth, async user => {
         </div>
       </div>
       <div id="auth-err" style="color:var(--red);font-size:.78rem;margin-bottom:.65rem;min-height:1rem;text-align:center"></div>
+<script>
+// Auth functions defined early — before main script loads
+var authMode = 'signin';
+function authSubmit() {
+  var errEl = document.getElementById('auth-err');
+  var btn   = document.getElementById('auth-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+  if (errEl) errEl.textContent = '';
+  // Wait for main script to load doSignIn/doSignUp
+  var attempts = 0;
+  var trySignIn = function() {
+    attempts++;
+    if (typeof window.doSignIn === 'function' && typeof window.doSignUp === 'function') {
+      try {
+        if (authMode === 'signin') window.doSignIn();
+        else window.doSignUp();
+      } catch(e) {
+        if (errEl) errEl.textContent = e.message || 'Error. Please refresh.';
+        if (btn) { btn.disabled = false; btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account'; }
+      }
+    } else if (attempts < 100) {
+      setTimeout(trySignIn, 100);
+    } else {
+      if (errEl) errEl.textContent = 'App failed to load. Please refresh.';
+      if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+    }
+  };
+  trySignIn();
+}
+function switchTab(mode) {
+  authMode = mode;
+  var isSignup = mode === 'signup';
+  var btn = document.getElementById('auth-submit');
+  if (btn) { btn.disabled = false; btn.textContent = isSignup ? 'Create Account' : 'Sign In'; }
+  var nf = document.getElementById('name-field');
+  if (nf) nf.style.display = isSignup ? 'block' : 'none';
+  var ts = document.getElementById('tab-signin');
+  var tu = document.getElementById('tab-signup');
+  var ae = document.getElementById('auth-err');
+  var activeStyle  = 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;background:rgba(56,189,248,.15);color:#38bdf8;border:1px solid rgba(56,189,248,.3)';
+  var inactiveStyle = 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;background:transparent;color:#8892b0;border:1px solid transparent';
+  if (ts) ts.style.cssText = isSignup ? inactiveStyle : activeStyle;
+  if (tu) tu.style.cssText = isSignup ? activeStyle : inactiveStyle;
+  if (ae) ae.textContent = '';
+}
+</script>
       <button id="auth-submit" onclick="authSubmit()" style="width:100%;padding:.65rem;border:none;border-radius:9px;background:linear-gradient(120deg,var(--cyan),var(--purple));color:#000;font-family:var(--head);font-size:.92rem;font-weight:700;cursor:pointer;transition:.18s;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:.5rem">Sign In</button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:.75rem;color:var(--dim)">Your progress syncs across all your devices 🌐</div>
@@ -3969,36 +4015,8 @@ try{const _hxp=document.getElementById('home-xp-disp');if(_hxp)_hxp.textContent=
 
 
 // ════════════ AUTH UI HELPERS ════════════
-let authMode = 'signin';
-function switchTab(mode) {
-  authMode = mode;
-  const isSignup = mode === 'signup';
-  const btn = document.getElementById('auth-submit');
-  if (btn) { btn.disabled = false; btn.textContent = isSignup ? 'Create Account' : 'Sign In'; }
-  document.getElementById('name-field').style.display = isSignup ? 'block' : 'none';
-  document.getElementById('auth-submit').textContent  = isSignup ? 'Create Account' : 'Sign In';
-  document.getElementById('tab-signin').style.cssText = isSignup
-    ? 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:var(--font);font-size:.82rem;font-weight:500;cursor:pointer;background:transparent;color:var(--dim);transition:.18s'
-    : 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;background:var(--s1);color:var(--text);transition:.18s';
-  document.getElementById('tab-signup').style.cssText = isSignup
-    ? 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;background:var(--s1);color:var(--text);transition:.18s'
-    : 'flex:1;padding:.45rem;border:none;border-radius:7px;font-family:var(--font);font-size:.82rem;font-weight:500;cursor:pointer;background:transparent;color:var(--dim);transition:.18s';
-  document.getElementById('auth-err').textContent = '';
-}
-function authSubmit() {
-  const errEl = document.getElementById('auth-err');
-  const btn   = document.getElementById('auth-submit');
-  // Visual feedback immediately
-  if (btn) { btn.disabled = true; btn.textContent = 'Please wait…'; }
-  if (errEl) errEl.textContent = '';
-  try {
-    if (authMode === 'signin') window.doSignIn();
-    else window.doSignUp();
-  } catch(e) {
-    if (errEl) errEl.textContent = 'Error: ' + (e.message || 'Please refresh and try again.');
-    if (btn) { btn.disabled = false; btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account'; }
-  }
-}
+// authMode defined in early script
+// switchTab defined in early script// authSubmit defined in early script
 function togglePassVis() {
   const p = document.getElementById('auth-pass');
   p.type = p.type === 'password' ? 'text' : 'password';
