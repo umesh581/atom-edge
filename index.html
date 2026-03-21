@@ -1746,7 +1746,7 @@ function goPage(id,btn){
   if(id==='sandbox')initSandbox();
   if(id==='progress'){updateXPBar();renderBadges();renderTopicGrid();renderQuizHistory();}
   if(id==='game')initGame();
-  if(id==='teacher')renderDashboard();
+  if(id==='teacher') setTimeout(()=>{try{renderDashboard();}catch(e){}},100);
   window.scrollTo(0,0);
 }
 function syncBnav(id,btn){
@@ -3981,24 +3981,65 @@ const MOCK_STUDENTS=[
   {name:'Dev N.',score:91,streak:7,visits:17,weak:'Organic Chemistry',active:false},
 ];
 let hwList=[];
-function renderDashboard(){
-  const avg=Math.round(MOCK_STUDENTS.reduce((a,s)=>a+s.score,0)/MOCK_STUDENTS.length);
-  const activeN=MOCK_STUDENTS.filter(s=>s.active).length;
-  const ds=document.getElementById('dash-stats');
-  if(!ds)return;
-  ds.innerHTML=[{n:MOCK_STUDENTS.length,l:'Students'},{n:avg+'%',l:'Avg Score'},{n:activeN,l:'Online Now'},{n:Math.max(...MOCK_STUDENTS.map(s=>s.streak)),l:'Top Streak'}].map(s=>`<div class="dstat"><div class="dn">${s.n}</div><div class="dl">${s.l}</div></div>`).join('');
-  const tbody=document.getElementById('student-tbody');if(!tbody)return;tbody.innerHTML='';
-  MOCK_STUDENTS.forEach(s=>{
-    const tr=document.createElement('tr');
-    const col=s.score>=80?'var(--green)':s.score>=60?'var(--yellow)':'var(--red)';
-    tr.innerHTML=`<td>${s.name}</td><td style="font-family:var(--mono);color:${col}">${s.score}%</td><td><div class="perf-bar"><div class="perf-fill" style="width:${s.score}%;background:${col}"></div></div></td><td>🔥${s.streak}</td><td><span class="weak-topic">${s.weak}</span></td><td><span class="status-dot" style="background:${s.active?'var(--green)':'var(--dim)'}"></span></td>`;
-    tbody.appendChild(tr);
-  });
-  // Homework assignment select
-  const hwSel=document.getElementById('hw-exp');if(!hwSel)return;hwSel.innerHTML=EXPS.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
-  renderHWList();
-}
-function assignHW(){
+async function renderDashboard() {
+  // Load real student data from Firebase
+  const ds = document.getElementById('dash-stats');
+  const tbody = document.getElementById('student-tbody');
+  if (!ds) return;
+
+  ds.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading students…</div>';
+  if (tbody) tbody.innerHTML = '';
+
+  if (!window.FB) {
+    ds.innerHTML = '<div style="color:var(--red);font-size:.85rem">Firebase not connected</div>';
+    return;
+  }
+
+  try {
+    const { db, collection, getDocs } = window.FB;
+    const snap = await getDocs(collection(db, 'users'));
+    const students = snap.docs.map(d => ({ uid: d.id, ...d.data() }))
+      .filter(s => s.email !== ADMIN_EMAIL);
+
+    if (!students.length) {
+      ds.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">No students registered yet.</div>';
+      return;
+    }
+
+    const avg = students.length
+      ? Math.round(students.reduce((a,s) => a + (s.xp||0), 0) / students.length)
+      : 0;
+    const topStreak = Math.max(...students.map(s => s.streak||0), 0);
+
+    ds.innerHTML = [
+      { n: students.length,  l: 'Students' },
+      { n: avg,              l: 'Avg XP' },
+      { n: topStreak,        l: 'Top Streak' },
+      { n: students.filter(s=>(s.quizHistory||[]).length>0).length, l: 'Took Exams' }
+    ].map(s => `<div class="dstat"><div class="dn">${s.n}</div><div class="dl">${s.l}</div></div>`).join('');
+
+    if (tbody) {
+      tbody.innerHTML = students
+        .sort((a,b) => (b.xp||0) - (a.xp||0))
+        .map(s => {
+          const xp = s.xp || 0;
+          const streak = s.streak || 0;
+          const exams = (s.quizHistory||[]).length;
+          const col = xp > 500 ? 'var(--green)' : xp > 200 ? 'var(--cyan)' : 'var(--dim)';
+          return `<tr>
+            <td>${s.name||s.email||'—'}</td>
+            <td style="font-family:var(--mono);color:${col}">${xp}</td>
+            <td>${streak} 🔥</td>
+            <td>${exams}</td>
+            <td style="font-size:.75rem;color:var(--dim)">${s.email||'—'}</td>
+          </tr>`;
+        }).join('');
+    }
+  } catch(e) {
+    console.warn('renderDashboard error:', e);
+    if (ds) ds.innerHTML = '<div style="color:var(--red);font-size:.85rem">Error loading students: ' + e.message + '</div>';
+  }
+}function assignHW(){
   const expId=document.getElementById('hw-exp').value;
   const exp=EXPS.find(e=>e.id===expId);
   hwList.unshift({name:exp.name,date:new Date().toLocaleDateString(),id:expId});
@@ -5563,219 +5604,60 @@ function printMarkScheme() {
 }
 
 function openPrintWindow(paper, isMarkScheme) {
-  const win = window.open('', '_blank');
-  // Render HTML content for print
-  const tmpDiv = document.createElement('div');
-  renderPaperContent(paper, '__tmp__', isMarkScheme);
-  // Since renderPaperContent needs a real DOM element, use a temp approach
+  // Build content in a hidden div first
   const container = document.createElement('div');
-  container.id = '__tmp__';
-  container.style.display = 'none';
+  container.id = '__print_tmp__';
+  container.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px';
   document.body.appendChild(container);
-  renderPaperContent(paper, '__tmp__', isMarkScheme);
+  renderPaperContent(paper, '__print_tmp__', isMarkScheme);
   const content = container.innerHTML;
   document.body.removeChild(container);
 
-  win.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8">
-    <title>${isMarkScheme ? 'Mark Scheme' : 'Practice Paper'} — ${paper.title}</title>
-    <style>
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #111; padding: 1.5cm; line-height: 1.6; }
-      h1 { font-size: 14pt; margin-bottom: 4px; }
-      .q-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-      .answer-line { border-bottom: 1px solid #999; height: 22px; margin: 3px 0; }
-      .ms-box { background: #f0fff4; border: 1px solid #4caf50; border-radius: 4px; padding: 6px 10px; font-size: 10pt; margin-top: 4px; }
-      svg { max-width: 100%; height: auto; }
-      @media print {
-        body { padding: 1cm; }
-        @page { size: A4; margin: 1.5cm; }
-      }
-    
-@keyframes hb{from{transform:scale(1)}to{transform:scale(1.12)}}
+  const win = window.open('', '_blank');
+  if (!win) { toast('Pop-up blocked — please allow pop-ups for this site'); return; }
 
-/* ══ WHITEBOARD — MODERN UI ══ */
+  const title = (isMarkScheme ? 'Mark Scheme' : 'Practice Paper') + ' — ' + paper.title;
 
-/* Top bar */
-.wb-topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:.75rem;flex-wrap:wrap;margin-bottom:.85rem;
-}
-.wb-topbar-left{display:flex;flex-direction:column;gap:.2rem}
-.wb-topbar-title{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.wb-topbar-right{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-.wb-action-btn{
-  display:inline-flex;align-items:center;gap:.35rem;
-  padding:.4rem .85rem;border-radius:8px;border:1px solid var(--border);
-  background:var(--s2);color:var(--text);font-family:var(--font);
-  font-size:.78rem;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap;
-}
-.wb-action-btn:hover{border-color:var(--border2);background:var(--s3)}
-.wb-action-btn.green{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4);color:var(--green)}
-.wb-action-btn.green:hover{background:rgba(52,211,153,.18)}
-
-/* Toolbar pill */
-.wb-toolbar-pill{
-  display:flex;align-items:center;gap:.15rem;
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:14px;padding:.4rem .6rem;
-  margin-bottom:.85rem;
-  overflow-x:auto;overflow-y:visible;
-  scrollbar-width:none;white-space:nowrap;
-}
-.wb-toolbar-pill::-webkit-scrollbar{display:none}
-.wb-pill-sep{width:1px;height:26px;background:var(--border);margin:0 .3rem;flex-shrink:0}
-
-/* Tool buttons */
-.wbt{
-  display:inline-flex;flex-direction:column;align-items:center;
-  gap:2px;padding:.35rem .45rem;min-width:42px;border-radius:8px;
-  border:1.5px solid transparent;background:transparent;
-  color:var(--dim);cursor:pointer;transition:.15s;flex-shrink:0;
-  font-family:var(--font);font-size:.55rem;font-weight:700;
-  letter-spacing:.03em;text-transform:uppercase;
-}
-.wbt:hover{background:var(--s2);color:var(--text)}
-.wbt.on{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.4);color:var(--cyan)}
-
-/* Colour swatches */
-.wb-swatches{display:flex;align-items:center;gap:.3rem;flex-shrink:0}
-.wbc{
-  width:22px;height:22px;border-radius:50%;cursor:pointer;
-  transition:.18s;border:2.5px solid transparent;flex-shrink:0;
-}
-.wbc:hover{transform:scale(1.2)}
-.wbc.on{border-color:var(--cyan);transform:scale(1.15);
-  box-shadow:0 0 0 2px rgba(56,189,248,.3)}
-.wbc-picker{
-  width:22px;height:22px;border-radius:50%;
-  border:2px dashed var(--border2);cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;
-  color:var(--dim);position:relative;transition:.15s;flex-shrink:0;
-}
-.wbc-picker:hover{border-color:var(--cyan);color:var(--cyan)}
-.wbc-picker input{position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%;width:100%;height:100%}
-
-/* Brush size */
-.wb-size-row{display:inline-flex;align-items:center;gap:.4rem;flex-shrink:0}
-.wb-slider{
-  -webkit-appearance:none;appearance:none;
-  width:80px;height:3px;border-radius:3px;
-  background:var(--s3);outline:none;cursor:pointer;
-}
-.wb-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;
-  border-radius:50%;background:var(--cyan);cursor:pointer;
-  box-shadow:0 1px 4px rgba(0,0,0,.3);
-}
-.wb-size-num{
-  font-family:var(--mono);font-size:.72rem;
-  color:var(--cyan);min-width:16px;text-align:right;
-}
-
-/* Cursor dot */
-#wb-cursor{
-  border-radius:50%;
-  border:1.5px solid rgba(0,0,0,.35);
-  background:rgba(0,0,0,.08);
-  pointer-events:none;
-  transition:width .05s,height .05s;
-}
-
-/* ══ WHITEBOARD INFINITE SCROLL ══ */
-#wb-scroll-container::-webkit-scrollbar{width:8px}
-#wb-scroll-container::-webkit-scrollbar-track{background:var(--s3);border-radius:4px}
-#wb-scroll-container::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-#wb-scroll-container::-webkit-scrollbar-thumb:hover{background:var(--dim2)}
-
-/* A4 page break lines */
-.wb-page-line{position:absolute;left:0;width:100%;height:2px;
-  background:repeating-linear-gradient(90deg,rgba(56,189,248,.4) 0,rgba(56,189,248,.4) 8px,transparent 8px,transparent 16px);
-  pointer-events:none}
-.wb-page-label{position:absolute;right:8px;font-size:.65rem;color:rgba(56,189,248,.6);
-  font-family:var(--mono);background:rgba(15,17,23,.8);padding:1px 5px;border-radius:3px}
-
-/* Print styles */
-@media print {
-  body * { visibility: hidden; }
-  #wb-print-area, #wb-print-area * { visibility: visible; }
-  #wb-print-area {
-    position: fixed; top: 0; left: 0;
-    width: 210mm;
-  }
-  #wb-print-area img {
-    width: 210mm;
-    height: 297mm;
-    object-fit: contain;
-    page-break-after: always;
-    display: block;
-  }
-}
-</style>
-  </head><body>
-    <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:12px">
-      <div style="font-size:16pt;font-weight:bold">ATOM EDGE — IGCSE Chemistry</div>
-      <div style="font-size:13pt;margin:4px 0">${isMarkScheme ? '✅ MARK SCHEME — ' : ''}${paper.title}: ${paper.subtitle}</div>
-      <div style="font-size:10pt;color:#555">${paper.difficulty} · Time: ${paper.time} min · Total: ${paper.marks} marks</div>
-      ${!isMarkScheme ? '<div style="margin-top:8px;font-size:10pt">Name: _________________________________ &nbsp;&nbsp; Date: _____________ &nbsp;&nbsp; Score: _____/'+paper.marks+'</div>' : ''}
-    </div>
-    ${content}
-    <div style="margin-top:30px;text-align:center;font-size:9pt;color:#888;border-top:1px solid #ddd;padding-top:8px">
-      Generated by Atom Edge — atomedge.pro · For educational use only
-    </div>
-  
-<!-- ════════ FOOTER ════════ -->
-<footer style="border-top:1px solid var(--border);padding:1.5rem 1.25rem;text-align:center;background:var(--s1);margin-top:2rem">
-  <div style="max-width:900px;margin:0 auto">
-    <div style="font-family:var(--head);font-size:.95rem;font-weight:700;margin-bottom:.3rem">
-      ⚗️ Atom Edge
-    </div>
-    <div style="font-size:.8rem;color:var(--dim);margin-bottom:.5rem;line-height:1.7">
-      Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> · IGCSE Chemistry Educator
-    </div>
-    <div style="font-size:.75rem;color:var(--dim2)">
-      © 2026 Aishwarya Priya. All rights reserved. &nbsp;·&nbsp; atomedge.pro
-    </div>
-    <div style="font-size:.7rem;color:var(--dim2);margin-top:.35rem">
-      All content, question papers and simulations are original works created for educational purposes.
-    </div>
-    <div style="font-size:.9rem;margin-top:.6rem;animation:hb .8s ease-in-out infinite alternate">
-      Made with 💓 for every curious student
-    </div>
-  </div>
-</footer>
-
-
-</body></html>`);
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;font-size:11pt;color:#111;padding:2cm;line-height:1.65}
+    h1{font-size:15pt;font-weight:700;margin-bottom:6px}
+    h2{font-size:12pt;font-weight:600;margin:18px 0 6px}
+    .paper-header{border-bottom:2px solid #111;padding-bottom:10px;margin-bottom:20px}
+    .paper-meta{font-size:9pt;color:#555;margin-top:4px;display:flex;gap:16px;flex-wrap:wrap}
+    .paper-meta span{background:#f0f0f0;padding:2px 8px;border-radius:3px}
+    .question{margin-bottom:18px;page-break-inside:avoid}
+    .q-header{display:flex;align-items:baseline;gap:10px;font-weight:600;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #ddd}
+    .q-num{font-size:11pt;color:#222}
+    .q-marks{font-size:9pt;color:#666;margin-left:auto}
+    .q-text{font-size:10.5pt;margin-bottom:8px;line-height:1.65}
+    .answer-line{border-bottom:1px solid #aaa;height:22px;margin:4px 0}
+    .sub-question{margin:8px 0 8px 16px}
+    .ms-box{background:#f0fff4;border:1.5px solid #4caf50;border-radius:4px;padding:6px 10px;font-size:10pt;margin-top:4px;color:#1b5e20}
+    .ms-label{font-weight:700;color:#2e7d32;font-size:9pt;margin-bottom:2px}
+    svg{max-width:100%;height:auto;margin:8px 0}
+    .diagram-wrap{text-align:center;margin:10px 0;padding:8px;border:1px solid #eee;border-radius:4px;background:#fafafa}
+    @media print{
+      body{padding:1cm}
+      @page{size:A4;margin:1.5cm}
+      .question{page-break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  ${content}
+</body>
+</html>`);
   win.document.close();
-  setTimeout(() => win.print(), 800);
+  setTimeout(() => win.print(), 600);
 }
 
-// Wire into goPage
-const _prevGoPage2 = goPage;
-goPage = function(id, btn) {
-  _prevGoPage2(id, btn);
-  if (id === 'papers') {
-    requestAnimationFrame(() => { try { initPapersPage(); } catch(e) {} });
-  }
-};
 
-
-// ════════════════════════════════════════════════════════════
-// WHITEBOARD — CLEAN REBUILD
-// Simple canvas, getBoundingClientRect for coords, no infinite scroll
-// ════════════════════════════════════════════════════════════
-
-let wbCanvas, wbCtx;
-let wbDrawing = false;
-let wbTool = 'pen', wbColor = '#1a1a1a', wbSize = 3;
-let wbHistory = [], wbUndoStack = [];
-let wbSnapshot = null, wbStartX = 0, wbStartY = 0;
-let wbBgWhite = true, wbAutoSaveTimer = null;
-let wbCurrentStudent = null, wbCurrentTopic = '';
-let wbSessionKey = null;
-
-// ── Init classboard page ──────────────────────────────────────
 function initClassboard() {
   const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
   document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
