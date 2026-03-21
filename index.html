@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0310 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0314 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1364,7 +1364,7 @@ function switchTab(mode) {
 
         <!-- Canvas container — FIXED height, internal scroll -->
         <div id="wb-canvas-wrap" style="display:none">
-          <div id="wb-scroll-container" style="width:100%;height:80vh;overflow-y:auto;overflow-x:hidden;background:#e8ecf0;border-radius:10px;border:2px solid #252d45">
+          <div id="wb-scroll-container" style="width:100%;overflow-y:auto;overflow-x:hidden;background:#f0f0f0;border-radius:10px;border:2px solid #252d45;max-height:85vh">
             <canvas id="wb-canvas" style="display:block;background:#fff;cursor:crosshair"></canvas>
           </div>
           <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:.7rem;color:#566080">
@@ -5565,22 +5565,44 @@ function initWhiteboard() {
   wbCanvas = document.getElementById('wb-canvas');
   if (!wbCanvas) return;
 
-  // Size canvas to match container width, A4 ratio height
-  const sc = document.getElementById('wb-scroll-container');
-  const W  = sc ? sc.clientWidth - 4 : 800;
-  const H  = Math.round(W * 1.4142);  // A4 ratio
+  // Use setTimeout to ensure layout is complete before measuring
+  var doInit = function() {
+    var sc = document.getElementById('wb-scroll-container');
+    var W  = sc ? sc.offsetWidth - 4 : 800;
+    if (W < 100) W = 800; // fallback if still 0
+    var H  = Math.round(W * 1.4142);  // A4 ratio
 
-  wbCanvas.width  = W;
-  wbCanvas.height = H;
-  wbCanvas.style.width  = W + 'px';
-  wbCanvas.style.height = H + 'px';
+    wbCanvas.width  = W;
+    wbCanvas.height = H;
+    wbCanvas.style.width  = '100%';
+    wbCanvas.style.height = H + 'px';
 
-  wbCtx = wbCanvas.getContext('2d');
-  wbCtx.fillStyle = '#ffffff';
-  wbCtx.fillRect(0, 0, W, H);
+    wbCtx = wbCanvas.getContext('2d');
+    wbCtx.fillStyle = '#ffffff';
+    wbCtx.fillRect(0, 0, W, H);
 
-  wbHistory  = [wbCanvas.toDataURL()];
-  wbUndoStack = [];
+    wbHistory  = [wbCanvas.toDataURL()];
+    wbUndoStack = [];
+  };
+  setTimeout(doInit, 50);
+  // Also run immediately in case layout is ready
+  var sc0 = document.getElementById('wb-scroll-container');
+  var W0  = sc0 ? sc0.offsetWidth - 4 : 0;
+  if (W0 > 100) {
+    wbCanvas.width  = W0;
+    wbCanvas.height = Math.round(W0 * 1.4142);
+    wbCanvas.style.width  = '100%';
+    wbCanvas.style.height = Math.round(W0 * 1.4142) + 'px';
+    wbCtx = wbCanvas.getContext('2d');
+    wbCtx.fillStyle = '#ffffff';
+    wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+    wbHistory  = [wbCanvas.toDataURL()];
+    wbUndoStack = [];
+  } else {
+    wbCtx = wbCanvas.getContext('2d');
+    wbHistory  = [];
+    wbUndoStack = [];
+  }
 
   // Event listeners
   wbCanvas.addEventListener('mousedown',  wbDown);
@@ -5612,9 +5634,13 @@ function initWhiteboard() {
 // Canvas is pixel-perfect: width/height set to exact pixel values
 // offsetX/offsetY give coords directly in canvas pixels — no scaling needed
 function wbPos(e) {
+  // Scale from CSS pixels to canvas pixels
+  // Canvas may be styled at 100% width but have different internal resolution
+  var scaleX = wbCanvas.width  / wbCanvas.offsetWidth;
+  var scaleY = wbCanvas.height / wbCanvas.offsetHeight;
   return {
-    x: Math.round(e.offsetX),
-    y: Math.round(e.offsetY)
+    x: Math.round(e.offsetX * scaleX),
+    y: Math.round(e.offsetY * scaleY)
   };
 }
 
