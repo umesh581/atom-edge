@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0253 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -3982,6 +3982,7 @@ const MOCK_STUDENTS=[
 ];
 let hwList=[];
 async function renderDashboard() {
+  console.log('renderDashboard called, FB:', !!window.FB, 'user:', window._fbUser?.email);
   // Load real student data from Firebase
   const ds = document.getElementById('dash-stats');
   const tbody = document.getElementById('student-tbody');
@@ -4155,11 +4156,11 @@ const _origGoPage = goPage;
 goPage = function(id, btn) {
   _origGoPage(id, btn);
   requestAnimationFrame(() => {
-    if (id === 'home')       { try { buildHomePage(); } catch(e) {} }
-    if (id === 'sims')       { try { buildCatPills(); buildSimsPage(); } catch(e) {} }
-    if (id === 'papers')     { try { initPapersPage(); } catch(e) { console.warn('papers:', e); } }
-    if (id === 'classboard') { try { initClassboard(); } catch(e) { console.warn('classboard:', e); } }
-    if (id === 'teacher')    { try { renderDashboard(); } catch(e) { console.warn('teacher:', e); } }
+    if (id === 'home')       { try { buildHomePage(); } catch(e) { console.error('home error:',e); } }
+    if (id === 'sims')       { try { buildCatPills(); buildSimsPage(); } catch(e) { console.error('sims error:',e); } }
+    if (id === 'papers')     { try { initPapersPage(); } catch(e) { console.error('papers error:',e); } }
+    if (id === 'classboard') { try { initClassboard(); } catch(e) { console.error('classboard error:',e); } }
+    if (id === 'teacher')    { try { renderDashboard(); } catch(e) { console.error('teacher error:',e); } }
   });
 };
 
@@ -4916,8 +4917,10 @@ const PAPERS = [
 let currentPaper = null;
 
 function initPapersPage() {
+  console.log('initPapersPage called, PAPERS count:', typeof PAPERS !== 'undefined' ? PAPERS.length : 'UNDEFINED');
   const grid = document.getElementById('papers-grid');
-  if (!grid || grid.dataset.built) return;
+  if (!grid) { console.error('papers-grid NOT FOUND'); return; }
+  if (grid.dataset.built) { console.warn('papers-grid already built'); return; }
   grid.dataset.built = '1';
 
   // Build filter pills
@@ -5493,6 +5496,7 @@ function openPrintWindow(paper, isMarkScheme) {
 
 
 function initClassboard() {
+  console.log('initClassboard called, user:', window._fbUser?.email, 'isAdmin:', window._fbUser?.email === ADMIN_EMAIL);
   const isAdmin = window._fbUser && window._fbUser.email === ADMIN_EMAIL;
   document.getElementById('classboard-teacher-view').style.display = isAdmin ? 'block' : 'none';
   document.getElementById('classboard-student-view').style.display = isAdmin ? 'none' : 'block';
