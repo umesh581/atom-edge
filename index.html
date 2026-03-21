@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0253 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0256 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -4075,8 +4075,7 @@ function togglePassVis() {
 }
 
 // ════════════ TEACHER ADMIN DASHBOARD (Firebase-powered) ════════════
-async 
-function exportStudentReport(students) {
+async function exportStudentReport(students) {
   const lines = ['Name,XP,Streak,Labs Done,Exams Taken'];
   students.forEach(s => lines.push(`${s.name},${s.xp},${s.streak},${s.labs},${s.exams}`));
   const blob = new Blob([lines.join('\n')], {type:'text/csv'});
