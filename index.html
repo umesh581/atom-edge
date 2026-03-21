@@ -612,6 +612,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
     <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
     <button class="ntab" onclick="goPage('classboard',this)">My Classboard</button>
+    <button class="ntab" id="nav-teacher" onclick="goPage('teacher',this)" style="display:none">Teacher</button>
     <button class="ntab" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
   <div class="hbtns">
@@ -3581,7 +3582,7 @@ function pp_print(showMarkScheme) {
     + '<div style="font-size:11pt;margin-top:.25rem">' + paper.title + ' - ' + paper.subtitle + '</div>'
     + '<div style="font-size:9pt;color:#666;margin-top:.25rem">' + paper.difficulty + ' - ' + paper.marks + ' marks - ' + paper.time + ' min' + (isMS ? ' - MARK SCHEME' : '') + '</div>'
     + '</div>';
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + titleStr + '</title><style>' + cssStr + '</style></head><body>' + headerStr + content + '</body></html>')
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + titleStr + '</title><style>' + cssStr + '</style></head><body>' + headerStr + content + '</body>')
 
   win.document.close();
   setTimeout(function() { win.print(); }, 700);
@@ -3904,18 +3905,8 @@ function cb_deleteSession(key){
     .catch(function(){toast('Could not delete.');});
 }
 function cb_loadStudentSessions(){ cb_loadSessions(false); }
-</script>
 
-<footer style="background:var(--s1);border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;margin-top:2rem">
-  <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
-  <div style="font-size:.8rem;color:var(--dim);margin-bottom:.3rem">Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> &middot; IGCSE Chemistry Educator</div>
-  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">&copy; 2026 Aishwarya Priya. All rights reserved. &middot; atomedge.pro</div>
-  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">All content, question papers and simulations are original works created for educational purposes.</div>
-  <div style="font-size:.8rem;color:var(--dim)">Made with <span style="display:inline-block;animation:hb .6s infinite alternate">&#128147;</span> for every curious student</div>
-</footer>
-</div>
-</body>
-</html>function pp_print(showMS) {
+function pp_print(showMS) {
   if (!pp_currentPaper) return;
   if (showMS && (!window._fbUser || window._fbUser.email !== ADMIN_EMAIL)) {
     toast('Mark schemes are for teachers only.'); return;
@@ -3957,10 +3948,21 @@ function cb_loadStudentSessions(){ cb_loadSessions(false); }
     + '</div>';
 
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>'
-    + '<style>' + css + '</style></head><body>' + header + content + '</body></html>';
+    + '<style>' + css + '</style></head><body>' + header + content + '</body>';
 
   win.document.write(html);
   win.document.close();
   setTimeout(function() { win.print(); }, 700);
 }
+</script>
+
+<footer style="background:var(--s1);border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;margin-top:2rem">
+  <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
+  <div style="font-size:.8rem;color:var(--dim);margin-bottom:.3rem">Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> &middot; IGCSE Chemistry Educator</div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">&copy; 2026 Aishwarya Priya. All rights reserved. &middot; atomedge.pro</div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">All content, question papers and simulations are original works created for educational purposes.</div>
+  <div style="font-size:.8rem;color:var(--dim)">Made with <span style="display:inline-block;animation:hb .6s infinite alternate">&#128147;</span> for every curious student</div>
+</footer>
+</div>
+</body>
 </html>
