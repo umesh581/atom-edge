@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
-<title>Atom Edge v0321-0321 — IGCSE Chemistry Lab</title>
+<title>Atom Edge v0321-0329 — IGCSE Chemistry Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -1372,7 +1372,7 @@ function switchTab(mode) {
           </div>
         </div>
 
-        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:fixed;border:2px solid #38bdf8;border-radius:6px;padding:6px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:inherit;min-width:180px;z-index:100">
+        <input type="text" id="wb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid #38bdf8;border-radius:6px;padding:6px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:inherit;min-width:180px;z-index:100">
       </div>
 
     <!-- Session history panel -->
@@ -1390,7 +1390,7 @@ function switchTab(mode) {
 </div>
 
 <!-- TEACHER DASHBOARD -->
-<div id="page-teacher" class="page">
+<div id="page-teacher" class="page" style="display:none">
   <div class="sec" id="dash-wrap">
     <div class="sec-hd"><h2>👩‍🏫 Teacher Dashboard</h2><div class="sec-line"></div></div>
     <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Track student progress, identify weak topics, and export reports. Share the assignment link to assign specific experiments.</p>
@@ -1757,9 +1757,13 @@ function renderQuizHistory(){
 let _raf=null;
 function goPage(id,btn){
   if(_raf){cancelAnimationFrame(_raf);_raf=null;}
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
-  document.getElementById('page-'+id).classList.add('on');
+  document.querySelectorAll('.page').forEach(function(p){
+    p.classList.remove('on');
+    p.style.display='none';
+  });
+  document.querySelectorAll('.ntab').forEach(function(t){t.classList.remove('on');});
+  var pg = document.getElementById('page-'+id);
+  if(pg){ pg.classList.add('on'); pg.style.display='block'; }
   if(btn)btn.classList.add('on');
   if(id==='periodic')buildPT();
   if(id==='sandbox')initSandbox();
@@ -4002,19 +4006,9 @@ const MOCK_STUDENTS=[
 let hwList=[];
 async function renderDashboard() {
   console.log('renderDashboard called, FB:', !!window.FB, 'user:', window._fbUser ? window._fbUser.email : 'none');
-  // Ensure teacher page is visible
-  var teacherPage = document.getElementById('page-teacher');
-  if (teacherPage) {
-    teacherPage.style.display = 'block';
-    console.log('page-teacher forced display:block');
-  }
   var ds = document.getElementById('dash-stats');
   var tbody = document.getElementById('student-tbody');
-  console.log('dash-stats found:', !!ds, 'tbody found:', !!tbody);
-  if (!ds) {
-    console.error('dash-stats NOT FOUND - cannot render dashboard');
-    return;
-  }
+  if (!ds) { console.error('dash-stats NOT FOUND'); return; }
 
   ds.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading students…</div>';
   if (tbody) tbody.innerHTML = '';
@@ -5671,6 +5665,32 @@ function wbTouch(e) {
 }
 
 // ── Drawing ───────────────────────────────────────────────────
+function expandCanvas() {
+  if (!wbCanvas || !wbCtx) return;
+  var extraH = Math.round(wbCanvas.width * 1.4142); // add one A4 page
+  var oldH   = wbCanvas.height;
+  // Save current drawing
+  var imgData = wbCtx.getImageData(0, 0, wbCanvas.width, oldH);
+  wbCanvas.height = oldH + extraH;
+  wbCanvas.style.height = wbCanvas.height + 'px';
+  // Restore drawing + fill new area white
+  wbCtx.fillStyle = '#ffffff';
+  wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+  wbCtx.putImageData(imgData, 0, 0);
+  // Draw a faint page-break line
+  wbCtx.save();
+  wbCtx.setLineDash([8, 6]);
+  wbCtx.strokeStyle = 'rgba(56,189,248,0.2)';
+  wbCtx.lineWidth = 1;
+  wbCtx.beginPath();
+  wbCtx.moveTo(0, oldH);
+  wbCtx.lineTo(wbCanvas.width, oldH);
+  wbCtx.stroke();
+  wbCtx.restore();
+  // Update snapshot to include new area
+  wbSnapshot = wbCtx.getImageData(0, 0, wbCanvas.width, wbCanvas.height);
+}
+
 function wbDown(e) {
   const p = wbPos(e);
   wbStartX = p.x; wbStartY = p.y;
