@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1597,7 +1598,7 @@ function toggleTheme(){
   document.body.classList.toggle('light',!darkMode);
   document.getElementById('theme-btn').textContent=darkMode?'🌙':'☀️';
 }
-document.getElementById('theme-btn').textContent=darkMode?'🌙':'☀️';
+const _themeBtn=document.getElementById('theme-btn');if(_themeBtn)_themeBtn.textContent=darkMode?'🌙':'☀️';
 
 // ════════════ XP ════════════
 const XP_LEVEL=[0,100,250,500,900,1400,2000,2800,3800,5000];
@@ -1780,7 +1781,7 @@ function makeCard(e){
   c.addEventListener('click',()=>openModal(e));return c;
 }
 function buildGrid(id){const g=document.getElementById(id);if(!g)return;g.innerHTML='';EXPS.forEach(e=>g.appendChild(makeCard(e)));}
-buildGrid('home-grid'); // sims-grid built by buildSimsPage()
+try{buildGrid('home-grid');}catch(e){} // sims-grid built by buildSimsPage()
 
 // ════════════ HELPERS ════════════
 function mkCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;c.style.cssText=`width:100%;max-height:${Math.min(h,280)}px`;return c;}
@@ -4000,14 +4001,8 @@ function authSubmit() {
 }
 function togglePassVis() {
   const p = document.getElementById('auth-pass');
-  if (!p) return;
   p.type = p.type === 'password' ? 'text' : 'password';
 }
-
-// Expose auth helpers for inline onclick handlers
-window.switchTab = switchTab;
-window.authSubmit = authSubmit;
-window.togglePassVis = togglePassVis;
 
 // ════════════ TEACHER ADMIN DASHBOARD (Firebase-powered) ════════════
 async function renderDashboard() {
