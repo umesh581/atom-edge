@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Atom Edge — IGCSE Chemistry Lab</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#04080d">
+<title>Atom Edge — IGCSE Chemistry Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -470,175 +470,136 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 #td-table tr:hover td{background:var(--s1)}
 #cb-toolbar::-webkit-scrollbar{display:none}
 </style>
-<style>
-/* ══ AUTH SCREEN ══ */
-#auth-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; background:var(--bg); padding:1.5rem; }
-.auth-box { width:100%; max-width:400px; }
-.auth-logo { text-align:center; margin-bottom:2rem; }
-.auth-logo-title { font-family:var(--head); font-size:2rem; font-weight:800; color:var(--cyan); margin-bottom:.4rem; }
-.auth-logo-sub { font-size:.85rem; color:var(--dim); }
-.auth-card { background:var(--s1); border:1px solid var(--border); border-radius:16px; padding:1.75rem; }
-.auth-tabs { display:flex; gap:.35rem; margin-bottom:1.5rem; background:var(--s2); border-radius:10px; padding:.25rem; }
-.auth-tab { flex:1; padding:.5rem; border-radius:8px; border:none; font-family:var(--font); font-size:.85rem; font-weight:600; cursor:pointer; transition:.2s; }
-.auth-tab.on { background:var(--cyan); color:#000; }
-.auth-tab:not(.on) { background:transparent; color:var(--dim); }
-.auth-field { margin-bottom:.85rem; }
-.auth-label { font-size:.7rem; color:var(--dim); font-weight:700; text-transform:uppercase; letter-spacing:.08em; display:block; margin-bottom:.35rem; }
-.auth-input { width:100%; background:var(--s2); border:1px solid var(--border); color:var(--text); padding:.6rem .85rem; border-radius:9px; font-family:var(--font); font-size:.9rem; outline:none; box-sizing:border-box; transition:.2s; }
-.auth-input:focus { border-color:var(--cyan); }
-.auth-err { color:var(--red); font-size:.78rem; display:none; padding:.4rem .6rem; background:rgba(255,71,87,.08); border-radius:7px; border:1px solid rgba(255,71,87,.2); margin-bottom:.75rem; }
-.auth-btn { width:100%; padding:.7rem; background:var(--cyan); color:#000; border:none; border-radius:9px; font-family:var(--font); font-size:.9rem; font-weight:700; cursor:pointer; transition:.2s; }
-.auth-btn:hover { background:#00ccee; }
-.auth-status { text-align:center; margin-top:1rem; font-size:.72rem; color:var(--dim); }
 
-/* ══ PAST PAPERS ══ */
-.pp-card { background:var(--s1); border:1px solid var(--border); border-radius:14px; padding:1.1rem 1.25rem; display:flex; flex-direction:column; gap:.4rem; cursor:pointer; transition:border-color .2s, transform .15s; }
-.pp-card:hover { border-color:var(--cyan); transform:translateY(-2px); }
-.pp-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:.2rem; }
-.pp-badge { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; padding:.18rem .6rem; border-radius:20px; }
-.pp-badge.core { background:rgba(0,229,255,.1); color:var(--cyan); border:1px solid rgba(0,229,255,.2); }
-.pp-badge.extended { background:rgba(179,136,255,.1); color:var(--purple); border:1px solid rgba(179,136,255,.2); }
-.pp-title { font-family:var(--head); font-size:1rem; font-weight:700; color:var(--text); }
-.pp-subtitle { font-size:.8rem; color:var(--dim); }
-.pp-tags { display:flex; gap:.4rem; flex-wrap:wrap; margin-top:.3rem; }
-.pp-tag { font-size:.68rem; padding:.15rem .5rem; background:var(--s2); border:1px solid var(--border); border-radius:6px; color:var(--dim); }
-.pp-actions { display:flex; gap:.4rem; margin-top:.5rem; }
-.pp-q-wrap { margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
-.pp-q-wrap:last-child { border-bottom:none; }
-.pp-q-head { display:flex; align-items:baseline; gap:.75rem; padding:.5rem .75rem; background:var(--s2); border-left:3px solid var(--cyan); border-radius:0 8px 8px 0; margin-bottom:.75rem; }
-.pp-q-num { font-family:var(--head); font-size:.95rem; font-weight:700; color:var(--cyan); }
-.pp-q-marks { font-size:.72rem; font-weight:700; color:var(--orange); margin-left:auto; }
-.pp-part { margin:.75rem 0 .75rem 1.25rem; }
-.pp-part-label { font-weight:600; color:var(--text); margin-bottom:.35rem; font-size:.9rem; }
-.pp-part-q { color:var(--text); font-size:.88rem; line-height:1.7; margin-bottom:.5rem; }
-.pp-ans-line { border-bottom:1px solid var(--border2); height:28px; margin:3px 0; }
-.pp-ms-box { background:rgba(0,229,160,.06); border:1px solid rgba(0,229,160,.25); border-radius:8px; padding:.6rem .85rem; font-size:.82rem; color:var(--green); margin-top:.4rem; }
-.pp-diagram { margin:.75rem 0; padding:.75rem; background:var(--s2); border:1px solid var(--border); border-radius:10px; display:flex; justify-content:center; }
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged,
+             createUserWithEmailAndPassword,
+             signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import { getFirestore, doc, getDoc, setDoc,
+             updateDoc, collection, getDocs,
+             deleteDoc, serverTimestamp }           from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-/* ══ TEACHER DASHBOARD ══ */
-.td-stat { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:.85rem 1rem; text-align:center; }
-.td-stat-n { font-family:var(--head); font-size:1.75rem; font-weight:700; line-height:1; margin-bottom:.25rem; }
-.td-stat-l { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--dim); }
-#td-table th { text-align:left; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--dim); padding:.5rem .75rem; border-bottom:1px solid var(--border); }
-#td-table td { padding:.6rem .75rem; font-size:.85rem; border-bottom:1px solid var(--border); }
-#td-table tr:hover td { background:var(--s1); }
+    const app = initializeApp({
+      apiKey:            "AIzaSyCALIoHk_wxZnz-OGKMOsxZa8qOHkHhu7Q",
+      authDomain:        "atom-edge-7a3d6.firebaseapp.com",
+      projectId:         "atom-edge-7a3d6",
+      storageBucket:     "atom-edge-7a3d6.firebasestorage.app",
+      messagingSenderId: "340163743152",
+      appId:             "1:340163743152:web:3beb91f5e7bd567238da75"
+    });
 
-/* ══ WHITEBOARD ══ */
-.cb-tool { display:inline-flex; flex-direction:column; align-items:center; gap:2px; padding:5px 7px; min-width:36px; border-radius:7px; border:1.5px solid transparent; background:transparent; color:#8892b0; cursor:pointer; font-size:8px; font-weight:700; flex-shrink:0; font-family:var(--font); letter-spacing:.03em; transition:.15s; }
-.cb-tool:hover { background:var(--s2); color:var(--text); }
-.cb-tool.on { background:rgba(0,229,255,.1); border-color:rgba(0,229,255,.35); color:var(--cyan); }
-.cb-swatch { width:22px; height:22px; border-radius:50%; cursor:pointer; border:2.5px solid transparent; flex-shrink:0; transition:.15s; }
-.cb-swatch:hover { transform:scale(1.2); }
-.cb-swatch.on { border-color:var(--cyan); transform:scale(1.15); box-shadow:0 0 0 2px rgba(0,229,255,.25); }
-.cb-session-card { background:var(--s1); border:1px solid var(--border); border-radius:12px; padding:.85rem 1.1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:.6rem; transition:.2s; }
-.cb-session-card:hover { border-color:var(--border2); }
-.cb-session-date { font-family:var(--head); font-size:.92rem; font-weight:700; }
-.cb-session-topic { font-size:.75rem; color:var(--dim); margin-top:.15rem; }
-.cb-session-preview { width:72px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--border); background:#fff; flex-shrink:0; }
-#cb-toolbar::-webkit-scrollbar { display:none; }
-</style>
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-<script type="module">
-  import { initializeApp }                                   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getAuth, onAuthStateChanged,
-           createUserWithEmailAndPassword,
-           signInWithEmailAndPassword, signOut }             from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, getDoc, setDoc, updateDoc,
-           collection, getDocs, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    // Expose to main script
+    window.FB = { auth, db, doc, getDoc, setDoc, updateDoc,
+                  collection, getDocs, deleteDoc, serverTimestamp,
+                  createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
 
-  const app  = initializeApp({
-    apiKey:            "AIzaSyCALIoHk_wxZnz-OGKMOsxZa8qOHkHhu7Q",
-    authDomain:        "atom-edge-7a3d6.firebaseapp.com",
-    projectId:         "atom-edge-7a3d6",
-    storageBucket:     "atom-edge-7a3d6.firebasestorage.app",
-    messagingSenderId: "340163743152",
-    appId:             "1:340163743152:web:3beb91f5e7bd567238da75",
-    measurementId:     "G-0XKYXP98P6"
-  });
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+    window.loadAllStudents = async function() {
+      if (!window.FB) return [];
+      const snap = await getDocs(collection(db, 'users'));
+      return snap.docs.map(d => { const o = d.data(); o.uid = d.id; return o; })
+                      .filter(u => u.email !== window.ADMIN_EMAIL);
+    };
 
-  window.FB = { auth, db, doc, getDoc, setDoc, updateDoc,
-                collection, getDocs, deleteDoc, serverTimestamp,
-                createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
-
-  window.loadAllStudents = async function() {
-    const snap = await getDocs(collection(db, 'users'));
-    return snap.docs
-      .map(d => { const o = d.data(); o.uid = d.id; return o; })
-      .filter(u => u.email !== window.ADMIN_EMAIL);
-  };
-
-  const statusEl = () => document.getElementById('auth-status');
-
-  onAuthStateChanged(auth, user => {
-    window._fbUser = user;
-    const authScreen = document.getElementById('auth-screen');
-    const appRoot    = document.getElementById('app-root');
-    if (statusEl()) statusEl().textContent = user ? '' : 'Connected — ready to sign in';
-    if (user) {
-      if (authScreen) authScreen.style.display = 'none';
-      if (appRoot)    appRoot.style.display     = 'block';
-      // Rebuild content grids after auth (in case buildGrid ran before DOM was ready)
-      try { buildGrid('home-grid'); } catch(e) {}
-      try { buildGrid('sims-grid'); } catch(e) {}
-      const uEl = document.getElementById('nav-user');
-      if (uEl) uEl.textContent = user.email.split('@')[0];
-      // Load profile
-      getDoc(doc(db, 'users', user.uid)).then(snap => {
-        if (!snap.exists()) {
-          setDoc(doc(db, 'users', user.uid), {
-            email: user.email, name: user.email.split('@')[0],
-            xp: 0, streak: 0, badges: [], quizHistory: [],
-            topicVisits: {}, createdAt: serverTimestamp()
-          });
-        }
-      });
-      // Show/hide admin tabs
-      const teacherTab = document.getElementById('nav-teacher');
-      if (teacherTab) teacherTab.style.display = user.email === window.ADMIN_EMAIL ? '' : 'none';
-    } else {
-      if (authScreen) { authScreen.style.display = 'flex'; }
-      if (appRoot)    appRoot.style.display       = 'none';
-    }
-  });
-</script>
+    onAuthStateChanged(auth, function(user) {
+      window._fbUser = user;
+      const authScreen = document.getElementById('auth-screen');
+      const appRoot    = document.getElementById('app-root');
+      const fbStatus   = document.getElementById('fb-status');
+      if (fbStatus) fbStatus.textContent = '✓ Connected — ready to sign in';
+      if (user) {
+        // Signed in
+        if (authScreen) authScreen.style.display = 'none';
+        if (appRoot)    appRoot.style.display     = 'block';
+        // Populate user display
+        const uEl = document.getElementById('user-display');
+        if (uEl) uEl.textContent = user.email.split('@')[0];
+        // Load user profile from Firestore
+        getDoc(doc(db, 'users', user.uid)).then(function(snap) {
+          if (snap.exists()) {
+            const data = snap.data();
+            if (data.xp     !== undefined) { window._userXP     = data.xp;     }
+            if (data.streak !== undefined) { window._userStreak = data.streak; }
+          } else {
+            // New user - create profile
+            setDoc(doc(db, 'users', user.uid), {
+              email: user.email,
+              name:  user.email.split('@')[0],
+              xp:    0, streak: 0, badges: [], quizHistory: [],
+              topicVisits: {}, createdAt: serverTimestamp()
+            });
+          }
+        });
+        // Show/hide teacher tab
+        const teacherTab = document.querySelector('[onclick*="teacher"]');
+        if (teacherTab) teacherTab.style.display = (user.email === window.ADMIN_EMAIL) ? '' : 'none';
+        const cbTab = document.querySelector('[onclick*="classboard"]');
+        if (cbTab) cbTab.style.display = '';
+      } else {
+        // Signed out
+        if (authScreen) authScreen.style.display = 'flex';
+        if (appRoot)    appRoot.style.display     = 'none';
+      }
+    });
+  </script>
 </head>
-
 <body>
 
-<div id="auth-screen" style="display:flex">
-  <div class="auth-box">
-    <div class="auth-logo">
-      <div class="auth-logo-title">&#9883;&#65039; Atom Edge</div>
-      <div class="auth-logo-sub">IGCSE Chemistry Platform</div>
+<!-- AUTH SCREEN -->
+<div id="auth-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:1.5rem">
+  <div style="width:100%;max-width:400px">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-family:var(--head);font-size:2rem;font-weight:800;color:var(--cyan);margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
+      <div style="font-size:.85rem;color:var(--dim)">IGCSE Chemistry Platform</div>
     </div>
-    <div class="auth-card">
-      <div class="auth-tabs">
-        <button class="auth-tab on" id="auth-tab-signin" onclick="authSwitchTab('signin')">Sign In</button>
-        <button class="auth-tab"    id="auth-tab-signup" onclick="authSwitchTab('signup')">Sign Up</button>
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:1.75rem">
+      <!-- Tabs -->
+      <div style="display:flex;gap:.35rem;margin-bottom:1.5rem;background:var(--s2);border-radius:10px;padding:.25rem">
+        <button id="tab-signin" onclick="authSwitchTab('signin')"
+          style="flex:1;padding:.5rem;border-radius:8px;border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;background:var(--cyan);color:#000;transition:.2s">
+          Sign In
+        </button>
+        <button id="tab-signup" onclick="authSwitchTab('signup')"
+          style="flex:1;padding:.5rem;border-radius:8px;border:none;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;background:transparent;color:var(--dim);transition:.2s">
+          Sign Up
+        </button>
       </div>
-      <div id="auth-name-field" class="auth-field" style="display:none">
-        <label class="auth-label">Full Name</label>
-        <input id="auth-name" type="text" class="auth-input" placeholder="Your name">
+      <!-- Form -->
+      <div style="display:flex;flex-direction:column;gap:.85rem">
+        <div id="auth-name-wrap" style="display:none">
+          <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.35rem">Full Name</label>
+          <input id="auth-name" type="text" placeholder="Your name"
+            style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.6rem .85rem;border-radius:9px;font-family:var(--font);font-size:.9rem;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.35rem">Email</label>
+          <input id="auth-email" type="email" placeholder="you@example.com"
+            style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.6rem .85rem;border-radius:9px;font-family:var(--font);font-size:.9rem;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.35rem">Password</label>
+          <input id="auth-pass" type="password" placeholder="Your password"
+            style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.6rem .85rem;border-radius:9px;font-family:var(--font);font-size:.9rem;outline:none;box-sizing:border-box">
+        </div>
+        <div id="auth-err" style="color:var(--red);font-size:.78rem;display:none;padding:.4rem .6rem;background:rgba(255,71,87,.08);border-radius:7px;border:1px solid rgba(255,71,87,.2)"></div>
+        <button onclick="authSubmit()"
+          style="width:100%;padding:.7rem;background:var(--cyan);color:#000;border:none;border-radius:9px;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:.2s">
+          Sign In
+        </button>
       </div>
-      <div class="auth-field">
-        <label class="auth-label">Email</label>
-        <input id="auth-email" type="email" class="auth-input" placeholder="you@example.com">
-      </div>
-      <div class="auth-field">
-        <label class="auth-label">Password</label>
-        <input id="auth-pass" type="password" class="auth-input" placeholder="Your password"
-               onkeydown="if(event.key==='Enter')authSubmit()">
-      </div>
-      <div id="auth-err" class="auth-err"></div>
-      <button class="auth-btn" id="auth-submit-btn" onclick="authSubmit()">Sign In</button>
-      <div class="auth-status" id="auth-status">Connecting to Firebase...</div>
+      <div style="text-align:center;margin-top:1rem;font-size:.72rem;color:var(--dim)" id="fb-status">Connecting to Firebase...</div>
     </div>
   </div>
 </div>
 
+<!-- APP (hidden until authenticated) -->
 <div id="app-root" style="display:none">
+
+
 <header>
   <a class="logo" href="#" onclick="goPage('home',document.querySelector('.ntab'));return false">⚗️ Atom Edge</a>
   <nav>
@@ -651,7 +612,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
     <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
     <button class="ntab" onclick="goPage('classboard',this)">My Classboard</button>
-    <button class="ntab" onclick="goPage('teacher',this)" id="nav-teacher" style="display:none">Teacher</button>
+    <button class="ntab" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
   <div class="hbtns">
     <span class="hbadge">IGCSE · Gr 9–10</span>
@@ -661,7 +622,30 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     <span id="user-display" style="font-size:.72rem;color:var(--dim);padding:.2rem .6rem;background:var(--s2);border:1px solid var(--border);border-radius:20px"></span>
     <button class="ntab" onclick="doSignOut()" style="background:rgba(255,71,87,.1);border-color:rgba(255,71,87,.3);color:var(--red);font-size:.72rem">Sign Out</button></div>
 </header>
+
+<!-- BOTTOM NAV (mobile) -->
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn on" onclick="goPage('home',document.querySelector('.ntab'));syncBnav('home',this)" data-page="home"><span class="bni">🏠</span><span class="bnl">Home</span></button>
+    <button class="bnav-btn" onclick="goPage('progress',document.querySelectorAll('.ntab')[1]);syncBnav('progress',this)" data-page="progress"><span class="bni">📊</span><span class="bnl">Progress</span></button>
+    <button class="bnav-btn" onclick="goPage('sims',document.querySelectorAll('.ntab')[2]);syncBnav('sims',this)" data-page="sims"><span class="bni">🔬</span><span class="bnl">Labs</span></button>
+    <button class="bnav-btn" onclick="goPage('exam',document.querySelectorAll('.ntab')[4]);syncBnav('exam',this)" data-page="exam"><span class="bni">📝</span><span class="bnl">Exam</span></button>
+    <button class="bnav-btn" onclick="goPage('game',document.querySelectorAll('.ntab')[5]);syncBnav('game',this)" data-page="game"><span class="bni">🎮</span><span class="bnl">Game</span></button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- GLOSSARY PANEL -->
+<div class="gloss-panel" id="gloss-panel">
+  <div class="gloss-hd"><h3>📖 Glossary</h3><button class="iconbtn" onclick="toggleGlossary()">✕</button></div>
+  <div class="gloss-search"><input type="search" placeholder="Search terms…" id="gloss-search-inp" oninput="filterGloss(this.value)"></div>
+  <div class="gloss-list" id="gloss-list"></div>
+</div>
+
 <main>
+<!-- HOME -->
 <div id="page-home" class="page on">
   <div class="hero">
     <h1>Chemistry <em>Comes Alive</em><br>in Your Browser</h1>
@@ -679,7 +663,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- PROGRESS -->
-<div id="page-progress" class="page" style="display:none">
+<div id="page-progress" class="page">
   <div class="sec">
     <div class="sec-hd"><h2>My Progress</h2><div class="sec-line"></div></div>
     <div class="streak-banner">
@@ -700,12 +684,12 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- SIMULATIONS -->
-<div id="page-sims" class="page" style="display:none">
+<div id="page-sims" class="page">
   <div class="sec"><div class="sec-hd"><h2>Guided Simulations</h2><div class="sec-line"></div></div><div class="grid" id="sims-grid"></div></div>
 </div>
 
 <!-- SANDBOX -->
-<div id="page-sandbox" class="page" style="display:none">
+<div id="page-sandbox" class="page">
   <div class="sec">
     <div class="sec-hd"><h2>🧪 Free Sandbox</h2><div class="sec-line"></div></div>
     <p style="color:var(--dim);font-size:.83rem;margin-bottom:1rem;line-height:1.7">No instructions. Mix reagents, observe what happens, discover the chemistry yourself.</p>
@@ -732,7 +716,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- EXAM MODE -->
-<div id="page-exam" class="page" style="display:none">
+<div id="page-exam" class="page">
   <div class="sec">
     <div id="exam-setup">
       <div class="sec-hd"><h2>📝 Exam Mode</h2><div class="sec-line"></div></div>
@@ -786,7 +770,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- GAME -->
-<div id="page-game" class="page" style="display:none">
+<div id="page-game" class="page">
   <div class="sec">
     <div class="sec-hd"><h2>🎮 Equation Builder</h2><div class="sec-line"></div></div>
     <p style="color:var(--dim);font-size:.83rem;margin-bottom:1rem;line-height:1.7">Balance chemical equations by selecting the correct coefficients. Earn XP for each correct answer!</p>
@@ -813,7 +797,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- PERIODIC TABLE -->
-<div id="page-periodic" class="page" style="display:none">
+<div id="page-periodic" class="page">
   <div class="sec">
     <div class="sec-hd"><h2>Interactive Periodic Table</h2><div class="sec-line"></div></div>
     <div class="pt-legend" id="pt-legend"></div>
@@ -823,16 +807,25 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <!-- PAST PAPERS -->
-
 <div id="page-papers" class="page" style="display:none">
+
+  <!-- List view -->
   <div id="pp-list-view">
     <div class="sec">
-      <div class="sec-hd"><h2>&#128196; IGCSE Practice Papers</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">10 Cambridge-style practice papers — fully printable, with diagrams and mark schemes.</p>
-      <div id="pp-filters" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem"></div>
+      <div class="sec-hd"><h2>📄 IGCSE Practice Papers</h2><div class="sec-line"></div></div>
+      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">
+        10 Cambridge-style practice papers with diagrams — fully printable. Each paper has 30 marks and covers the full IGCSE Chemistry syllabus.
+      </p>
+
+      <!-- Filter pills -->
+      <div id="pp-filter-row" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem"></div>
+
+      <!-- Paper cards grid -->
       <div id="pp-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem"></div>
     </div>
   </div>
+
+  <!-- Paper viewer -->
   <div id="pp-viewer" style="display:none">
     <div class="sec">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1.25rem">
@@ -841,68 +834,64 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
           <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="pp-viewer-meta"></div>
         </div>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn" onclick="pp_closeViewer()">&#8592; Back</button>
-          <button class="btn green" onclick="pp_print(false)">&#128424;&#65039; Print Paper</button>
-          <button class="btn" id="pp-ms-btn" onclick="pp_print(true)" style="display:none">&#128203; Mark Scheme</button>
+          <button class="btn" onclick="pp_closeViewer()">← Back</button>
+          <button class="btn green" onclick="pp_print(false)">🖨️ Print Paper</button>
+          <button class="btn" id="pp-ms-btn" onclick="pp_print(true)" style="display:none">📋 Mark Scheme</button>
         </div>
       </div>
+      <!-- Paper content renders here -->
       <div id="pp-content" style="line-height:1.8"></div>
     </div>
   </div>
+
 </div>
 
 
+<!-- TEACHER DASHBOARD -->
 <div id="page-classboard" class="page" style="display:none">
-
-  <!-- Teacher view -->
   <div id="cb-teacher-view" style="display:none">
-    <!-- Student selector -->
     <div id="cb-selector" class="sec">
-      <div class="sec-hd"><h2>&#9998; Start a Whiteboard Session</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Select a student and optional topic, then click Start Session.</p>
+      <div class="sec-hd"><h2>&#128394; Start a Whiteboard Session</h2><div class="sec-line"></div></div>
+      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Select the student you are teaching, then click Start Session.</p>
       <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
         <div style="flex:1;min-width:200px">
           <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.4rem">Student</label>
           <select id="cb-student-sel" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.55rem .75rem;border-radius:9px;font-family:var(--font);font-size:.88rem">
-            <option value="">&#8212; Select student &#8212;</option>
+            <option value="">-- Select student --</option>
           </select>
         </div>
         <div style="flex:1;min-width:180px">
           <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.4rem">Topic (optional)</label>
-          <input id="cb-topic-input" type="text" placeholder="e.g. Acids and Bases"
-            style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.55rem .75rem;border-radius:9px;font-family:var(--font);font-size:.88rem;outline:none">
+          <input id="cb-topic-input" type="text" placeholder="e.g. Acids and Bases" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.55rem .75rem;border-radius:9px;font-family:var(--font);font-size:.88rem;outline:none">
         </div>
         <button class="btn green" onclick="cb_startSession()" style="padding:.6rem 1.5rem;white-space:nowrap">Start Session</button>
       </div>
       <div id="cb-sel-err" style="color:var(--red);font-size:.78rem;margin-top:.5rem;display:none">Please select a student first.</div>
     </div>
-    <!-- Active whiteboard -->
     <div id="cb-whiteboard" style="display:none">
-      <!-- Top bar -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.75rem 1rem;background:var(--s1);border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
           <span id="cb-student-badge" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--cyan);border-radius:20px;padding:.2rem .75rem;font-size:.78rem;font-weight:600"></span>
           <span id="cb-topic-badge" style="background:var(--s2);border:1px solid var(--border);color:var(--dim);border-radius:20px;padding:.2rem .75rem;font-size:.75rem"></span>
-          <span id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">&#10003; Saved</span>
+          <span id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">Saved</span>
         </div>
         <div style="display:flex;gap:.4rem;flex-wrap:wrap">
-          <span id="cb-meta" style="font-size:.72rem;color:var(--dim2);line-height:2.2"></span>
+          <span id="cb-meta" style="font-size:.72rem;color:var(--dim2);line-height:2"></span>
           <button class="btn" onclick="cb_changeStudent()">Change</button>
           <button class="btn green" onclick="cb_saveNow()">Save</button>
           <button class="btn" onclick="cb_showSessions()">Sessions</button>
           <button class="btn" style="color:var(--red)" onclick="cb_clearCanvas()">Clear</button>
         </div>
       </div>
-      <!-- Toolbar -->
       <div id="cb-toolbar" style="display:flex;align-items:center;gap:3px;background:var(--s1);border-bottom:1px solid var(--border);padding:6px 12px;overflow-x:auto;white-space:nowrap">
-        <button class="cb-tool on" id="cb-tool-pen"    onclick="cb_setTool('pen')">PEN</button>
+        <button class="cb-tool on" id="cb-tool-pen"    onclick="cb_setTool('pen')"   >PEN</button>
         <button class="cb-tool"    id="cb-tool-marker" onclick="cb_setTool('marker')">MARK</button>
         <button class="cb-tool"    id="cb-tool-eraser" onclick="cb_setTool('eraser')">ERASE</button>
         <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-        <button class="cb-tool"    id="cb-tool-line"   onclick="cb_setTool('line')">LINE</button>
-        <button class="cb-tool"    id="cb-tool-rect"   onclick="cb_setTool('rect')">RECT</button>
+        <button class="cb-tool"    id="cb-tool-line"   onclick="cb_setTool('line')"  >LINE</button>
+        <button class="cb-tool"    id="cb-tool-rect"   onclick="cb_setTool('rect')"  >RECT</button>
         <button class="cb-tool"    id="cb-tool-circle" onclick="cb_setTool('circle')">OVAL</button>
-        <button class="cb-tool"    id="cb-tool-text"   onclick="cb_setTool('text')">TEXT</button>
+        <button class="cb-tool"    id="cb-tool-text"   onclick="cb_setTool('text')"  >TEXT</button>
         <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
         <div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
           <div class="cb-swatch on" data-color="#1a1a1a" onclick="cb_setColor(this)" style="background:#1a1a1a"></div>
@@ -912,16 +901,14 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
           <div class="cb-swatch"    data-color="#f39c12" onclick="cb_setColor(this)" style="background:#f39c12"></div>
           <div class="cb-swatch"    data-color="#8e44ad" onclick="cb_setColor(this)" style="background:#8e44ad"></div>
           <div class="cb-swatch"    data-color="#ffffff" onclick="cb_setColor(this)" style="background:#fff;box-shadow:inset 0 0 0 1.5px #aaa"></div>
-          <label style="width:22px;height:22px;border-radius:50%;border:2px dashed var(--border2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
-            <input type="color" id="cb-custom-color" value="#1a1a1a" oninput="cb_setCustomColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">
-            <span style="font-size:14px;color:var(--dim);pointer-events:none">+</span>
+          <label style="width:22px;height:22px;border-radius:50%;border:2px dashed var(--border2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--dim);position:relative;flex-shrink:0">
+            <input type="color" id="cb-custom-color" value="#1a1a1a" oninput="cb_setCustomColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">+
           </label>
         </div>
         <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
         <div style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0">
-          <div id="cb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;pointer-events:none;flex-shrink:0"></div>
-          <input type="range" id="cb-size" min="1" max="40" value="3" oninput="cb_setSize(this.value)"
-            style="-webkit-appearance:none;width:70px;height:3px;border-radius:3px;background:var(--border2);outline:none;cursor:pointer">
+          <div id="cb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;pointer-events:none"></div>
+          <input type="range" id="cb-size" min="1" max="40" value="3" oninput="cb_setSize(this.value)" style="-webkit-appearance:none;width:70px;height:3px;border-radius:3px;background:var(--border2);outline:none;cursor:pointer">
           <span id="cb-size-val" style="font-family:var(--mono);font-size:11px;color:var(--cyan);min-width:14px">3</span>
         </div>
         <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
@@ -929,36 +916,31 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
         <button class="cb-tool" onclick="cb_redo()">REDO</button>
         <button class="cb-tool" id="cb-tool-bg" onclick="cb_toggleBg()">BG</button>
       </div>
-      <!-- Canvas -->
       <div id="cb-scroll" style="width:100%;overflow-y:auto;overflow-x:hidden;background:#e8ecf0;max-height:82vh;position:relative">
         <div style="position:relative;width:100%">
           <canvas id="cb-canvas" style="display:block;background:#fff;cursor:crosshair;touch-action:none"></canvas>
-          <input type="text" id="cb-text-input" placeholder="Type and press Enter"
-            style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:6px;padding:5px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:var(--font);min-width:160px;z-index:10">
+          <input type="text" id="cb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:6px;padding:5px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:var(--font);min-width:160px;z-index:10">
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;padding:.4rem 1rem;font-size:.7rem;color:var(--dim2);background:var(--s1);border-top:1px solid var(--border)">
-        <span>Canvas auto-expands as you write down</span>
+        <span>Canvas auto-expands as you write</span>
         <span id="cb-last-saved"></span>
       </div>
     </div>
-    <!-- Sessions panel -->
     <div id="cb-sessions-panel" style="display:none">
       <div class="sec">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-          <div style="font-family:var(--head);font-size:1rem;font-weight:700">&#128197; Saved Sessions</div>
-          <button class="btn" onclick="cb_hideSessions()">&#8592; Back to Board</button>
+          <div style="font-family:var(--head);font-size:1rem;font-weight:700">Saved Sessions</div>
+          <button class="btn" onclick="cb_hideSessions()">Back to Board</button>
         </div>
         <div id="cb-sessions-list"></div>
       </div>
     </div>
   </div>
-
-  <!-- Student view -->
   <div id="cb-student-view" style="display:none">
     <div class="sec">
-      <div class="sec-hd"><h2>&#9998; My Classboard</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.85rem;margin-bottom:1.25rem;line-height:1.7">Your teacher&#39;s whiteboard sessions, saved automatically after each class.</p>
+      <div class="sec-hd"><h2>&#128394; My Classboard</h2><div class="sec-line"></div></div>
+      <p style="color:var(--dim);font-size:.85rem;margin-bottom:1.25rem;line-height:1.7">Your teacher's whiteboard sessions, saved automatically after each class.</p>
       <div id="cb-student-sessions"></div>
     </div>
     <div id="cb-student-viewer" style="display:none">
@@ -968,35 +950,31 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
             <div style="font-family:var(--head);font-size:1rem;font-weight:700" id="cb-sv-title"></div>
             <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="cb-sv-meta"></div>
           </div>
-          <button class="btn" onclick="cb_closeStudentViewer()">&#8592; Back</button>
+          <button class="btn" onclick="cb_closeStudentViewer()">Back</button>
         </div>
         <canvas id="cb-sv-canvas" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;display:block"></canvas>
       </div>
     </div>
   </div>
-
 </div>
-
 
 <div id="page-teacher" class="page" style="display:none">
   <div class="sec">
     <div class="sec-hd"><h2>&#128105;&#8205;&#127979; Teacher Dashboard</h2><div class="sec-line"></div></div>
-    <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.5rem;line-height:1.7">Live student data from Firebase &#8212; XP, streaks, exam history.</p>
+    <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.5rem;line-height:1.7">Live student data from Firebase.</p>
     <div id="td-stats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.65rem;margin-bottom:1.5rem">
-      <div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading&#8230;</div>
+      <div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading...</div>
     </div>
     <div class="sec-hd"><h2>Student Performance</h2><div class="sec-line"></div></div>
     <div style="overflow-x:auto;margin-bottom:1.25rem">
       <table id="td-table" style="width:100%;border-collapse:collapse">
-        <thead><tr>
-          <th>Student</th><th>XP</th><th>Streak</th><th>Exams</th><th>Email</th>
-        </tr></thead>
+        <thead><tr id="td-thead"><th>Student</th><th>XP</th><th>Streak</th><th>Exams</th><th>Email</th></tr></thead>
         <tbody id="td-tbody"></tbody>
       </table>
     </div>
     <div style="display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:1.5rem">
-      <button class="btn green" onclick="td_exportCSV()">&#128202; Export CSV</button>
-      <button class="btn" onclick="renderDashboard()">&#128260; Refresh</button>
+      <button class="btn green" onclick="td_exportCSV()">Export CSV</button>
+      <button class="btn" onclick="td_refresh()">Refresh</button>
     </div>
     <div class="sec-hd"><h2>Assign Homework</h2><div class="sec-line"></div></div>
     <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:1rem">
@@ -1005,90 +983,26 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
           <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.35rem">Assign experiment to all students:</label>
           <select id="td-hw-exp" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem .75rem;border-radius:8px;font-family:var(--font)"></select>
         </div>
-        <button class="btn green" onclick="td_assignHW()">Send &#128228;</button>
+        <button class="btn green" onclick="td_assignHW()">Send</button>
       </div>
       <div id="td-hw-list" style="margin-top:.75rem"></div>
     </div>
   </div>
 </div>
-
-
 </main>
 
-<footer style="background:var(--s1);border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;margin-top:2rem">
-  <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
-  <div style="font-size:.8rem;color:var(--dim);margin-bottom:.3rem">
-    Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> &#183; IGCSE Chemistry Educator
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="mhd">
+      <div class="mhd-left"><div class="topic" id="m-topic"></div><h2 id="m-title"></h2></div>
+      <button class="mclose" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mbody" id="m-body"></div>
   </div>
-  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">&#169; 2026 Aishwarya Priya. All rights reserved. &#183; atomedge.pro</div>
-  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">All content, question papers and simulations are original works created for educational purposes.</div>
-  <div style="font-size:.8rem;color:var(--dim)">Made with <span style="display:inline-block;animation:hb .6s infinite alternate">&#128147;</span> for every curious student</div>
-</footer>
-
 </div>
+
 <script>
-'use strict';
-
-const ADMIN_EMAIL = 'aish.priya19@gmail.com';
-const DB = { save:(k,v)=>S.set(k,v), get:(k,d)=>S.get(k,d) };
-
-var _authMode = 'signin';
-
-function authSwitchTab(mode) {
-  _authMode = mode;
-  document.getElementById('auth-tab-signin').classList.toggle('on', mode==='signin');
-  document.getElementById('auth-tab-signup').classList.toggle('on', mode==='signup');
-  var nf = document.getElementById('auth-name-field');
-  if (nf) nf.style.display = mode==='signup' ? 'block' : 'none';
-  var btn = document.getElementById('auth-submit-btn');
-  if (btn) btn.textContent = mode==='signup' ? 'Create Account' : 'Sign In';
-  var err = document.getElementById('auth-err');
-  if (err) err.style.display = 'none';
-}
-
-function authSubmit() {
-  var email = (document.getElementById('auth-email').value||'').trim();
-  var pass  = (document.getElementById('auth-pass').value ||'').trim();
-  if (!email||!pass) { authShowErr('Please enter email and password.'); return; }
-  if (!window.FB)    { authShowErr('Firebase still loading — please wait a moment.'); return; }
-  if (_authMode==='signup') {
-    var name = (document.getElementById('auth-name').value||'').trim()||email.split('@')[0];
-    window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass)
-      .then(function(cred) {
-        return window.FB.setDoc(window.FB.doc(window.FB.db,'users',cred.user.uid), {
-          email:email, name:name, xp:0, streak:0, badges:[], quizHistory:[],
-          topicVisits:{}, createdAt:window.FB.serverTimestamp()
-        });
-      })
-      .catch(function(e){ authShowErr(authErrMsg(e.code)); });
-  } else {
-    window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass)
-      .catch(function(e){ authShowErr(authErrMsg(e.code)); });
-  }
-}
-
-function authShowErr(msg) {
-  var el=document.getElementById('auth-err');
-  if(el){ el.textContent=msg; el.style.display='block'; }
-}
-
-function authErrMsg(code) {
-  var m = {
-    'auth/user-not-found':       'No account found with this email.',
-    'auth/wrong-password':       'Incorrect password.',
-    'auth/invalid-credential':   'Invalid email or password.',
-    'auth/email-already-in-use': 'An account already exists with this email.',
-    'auth/weak-password':        'Password must be at least 6 characters.',
-    'auth/invalid-email':        'Please enter a valid email address.',
-    'auth/too-many-requests':    'Too many attempts. Please try again later.',
-  };
-  return m[code] || 'Error: ' + code;
-}
-
-function doSignOut() {
-  if (window.FB) window.FB.signOut(window.FB.auth).catch(function(){});
-}
-
 'use strict';
 // ════════════ STORAGE ════════════
 const S={
@@ -1116,6 +1030,85 @@ let xp=S.get('xp',0),streak=S.get('streak',0),lastDay=S.get('lastDay',''),
 if(!darkMode)document.body.classList.add('light');
 
 // ════════════ TOAST ════════════
+
+// ════════════ FIREBASE AUTH CONFIG ════════════
+const ADMIN_EMAIL = 'aish.priya19@gmail.com';
+
+// DB alias for localStorage (backward compat with S.get/S.set)
+const DB = {
+  save: function(k, v) { S.set(k, v); },
+  get:  function(k, d) { return S.get(k, d); },
+};
+
+// ════════════ AUTH FUNCTIONS ════════════
+var _authMode = 'signin';
+
+function authSwitchTab(mode) {
+  _authMode = mode;
+  var signinBtn = document.getElementById('tab-signin');
+  var signupBtn = document.getElementById('tab-signup');
+  var nameWrap  = document.getElementById('auth-name-wrap');
+  var submitBtn = document.querySelector('#auth-screen button[onclick="authSubmit()"]');
+  if (mode === 'signup') {
+    if (signinBtn) { signinBtn.style.background = 'transparent'; signinBtn.style.color = 'var(--dim)'; }
+    if (signupBtn) { signupBtn.style.background = 'var(--cyan)';  signupBtn.style.color = '#000'; }
+    if (nameWrap)  nameWrap.style.display = 'block';
+    if (submitBtn) submitBtn.textContent = 'Create Account';
+  } else {
+    if (signinBtn) { signinBtn.style.background = 'var(--cyan)'; signinBtn.style.color = '#000'; }
+    if (signupBtn) { signupBtn.style.background = 'transparent'; signupBtn.style.color = 'var(--dim)'; }
+    if (nameWrap)  nameWrap.style.display = 'none';
+    if (submitBtn) submitBtn.textContent = 'Sign In';
+  }
+  var errEl = document.getElementById('auth-err');
+  if (errEl) errEl.style.display = 'none';
+}
+
+function authSubmit() {
+  var email   = (document.getElementById('auth-email').value || '').trim();
+  var pass    = (document.getElementById('auth-pass').value  || '').trim();
+  var errEl   = document.getElementById('auth-err');
+  if (!email || !pass) { showAuthErr('Please enter email and password.'); return; }
+  if (!window.FB)      { showAuthErr('Firebase not loaded yet — please wait.'); return; }
+  if (_authMode === 'signup') {
+    var name = (document.getElementById('auth-name').value || '').trim() || email.split('@')[0];
+    window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass)
+      .then(function(cred) {
+        return window.FB.setDoc(window.FB.doc(window.FB.db, 'users', cred.user.uid), {
+          email: email, name: name, xp: 0, streak: 0,
+          badges: [], quizHistory: [], topicVisits: {},
+          createdAt: window.FB.serverTimestamp()
+        });
+      })
+      .catch(function(e) { showAuthErr(authErrMsg(e.code)); });
+  } else {
+    window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass)
+      .catch(function(e) { showAuthErr(authErrMsg(e.code)); });
+  }
+}
+
+function showAuthErr(msg) {
+  var el = document.getElementById('auth-err');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+
+function authErrMsg(code) {
+  var map = {
+    'auth/user-not-found':    'No account found with this email.',
+    'auth/wrong-password':    'Incorrect password.',
+    'auth/email-already-in-use': 'An account already exists with this email.',
+    'auth/weak-password':     'Password must be at least 6 characters.',
+    'auth/invalid-email':     'Please enter a valid email address.',
+    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+    'auth/invalid-credential':'Invalid email or password.',
+  };
+  return map[code] || 'Error: ' + code;
+}
+
+function doSignOut() {
+  if (window.FB) window.FB.signOut(window.FB.auth).catch(function(){});
+}
+
 
 function toast(msg,dur=2200){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
@@ -2794,112 +2787,91 @@ const MOCK_STUDENTS=[
   {name:'Dev N.',score:91,streak:7,visits:17,weak:'Organic Chemistry',active:false},
 ];
 let hwList=S.get('hwList',[]);
-
-// ════════════ TEACHER DASHBOARD ════════════
-
 function renderDashboard() {
+  var pg = document.getElementById('page-teacher');
+  if (pg && pg.style.display === 'none') pg.style.display = 'block';
   var statsEl = document.getElementById('td-stats');
   var tbody   = document.getElementById('td-tbody');
   if (!statsEl) return;
-  statsEl.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading students&#8230;</div>';
+  statsEl.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading...</div>';
   if (tbody) tbody.innerHTML = '';
-  if (!window.FB) {
-    statsEl.innerHTML = '<div style="color:var(--red);font-size:.85rem">Firebase not connected.</div>';
-    return;
-  }
-  window.FB.getDocs(window.FB.collection(window.FB.db,'users'))
-    .then(function(snap) {
-      var students = snap.docs
-        .map(function(d){ var o=d.data(); o.uid=d.id; return o; })
-        .filter(function(s){ return s.email!==ADMIN_EMAIL; });
-
-      if (!students.length) {
-        statsEl.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">No students registered yet.</div>';
-        return;
-      }
-
-      var totalXP   = students.reduce(function(a,s){ return a+(s.xp||0); },0);
-      var avgXP     = Math.round(totalXP/students.length);
-      var topStreak = students.reduce(function(a,s){ return Math.max(a,s.streak||0); },0);
-      var tookExams = students.filter(function(s){ return (s.quizHistory||[]).length>0; }).length;
-
-      statsEl.innerHTML = [
-        {n:students.length, l:'Students',   c:'var(--cyan)'},
-        {n:avgXP,           l:'Avg XP',     c:'var(--green)'},
-        {n:topStreak,       l:'Top Streak', c:'var(--orange)'},
-        {n:tookExams,       l:'Took Exams', c:'var(--purple)'},
-      ].map(function(d){
-        return '<div class="td-stat"><div class="td-stat-n" style="color:'+d.c+'">'+d.n+'</div><div class="td-stat-l">'+d.l+'</div></div>';
+  if (!window.FB) { statsEl.innerHTML = '<div style="color:var(--red)">Firebase not connected.</div>'; return; }
+  window.FB.getDocs(window.FB.collection(window.FB.db, 'users')).then(function(snap) {
+    var students = snap.docs.map(function(d) { var o = d.data(); o.uid = d.id; return o; })
+                            .filter(function(s) { return s.email !== ADMIN_EMAIL; });
+    if (!students.length) { statsEl.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:.5rem">No students yet.</div>'; return; }
+    var totalXP   = students.reduce(function(a,s){ return a+(s.xp||0); }, 0);
+    var avgXP     = Math.round(totalXP / students.length);
+    var topStreak = students.reduce(function(a,s){ return Math.max(a,s.streak||0); }, 0);
+    var tookExams = students.filter(function(s){ return (s.quizHistory||[]).length>0; }).length;
+    var defs = [{n:students.length,l:'Students',c:'var(--cyan)'},{n:avgXP,l:'Avg XP',c:'var(--green)'},{n:topStreak,l:'Top Streak',c:'var(--orange)'},{n:tookExams,l:'Took Exams',c:'var(--purple)'}];
+    statsEl.innerHTML = defs.map(function(d){ return '<div class="td-stat-card"><div class="td-stat-n" style="color:'+d.c+'">'+d.n+'</div><div class="td-stat-l">'+d.l+'</div></div>'; }).join('');
+    if (tbody) {
+      tbody.innerHTML = students.sort(function(a,b){ return (b.xp||0)-(a.xp||0); }).map(function(s){
+        var xp=s.xp||0; var col=xp>500?'var(--green)':xp>200?'var(--cyan)':'var(--dim)';
+        return '<tr><td>'+(s.name||s.email||'?')+'</td><td style="font-family:var(--mono);color:'+col+'">'+xp+'</td><td>'+(s.streak||0)+(s.streak>0?' &#128293;':'')+'</td><td>'+((s.quizHistory||[]).length)+'</td><td style="font-size:.72rem;color:var(--dim)">'+(s.email||'?')+'</td></tr>';
       }).join('');
-
-      if (tbody) {
-        tbody.innerHTML = students
-          .sort(function(a,b){ return (b.xp||0)-(a.xp||0); })
-          .map(function(s){
-            var xp=s.xp||0;
-            var col=xp>500?'var(--green)':xp>200?'var(--cyan)':'var(--dim)';
-            return '<tr>'
-              +'<td>'+(s.name||s.email||'&#8212;')+'</td>'
-              +'<td style="font-family:var(--mono);color:'+col+'">'+xp+'</td>'
-              +'<td>'+(s.streak||0)+(s.streak>0?' &#128293;':'')+'</td>'
-              +'<td>'+((s.quizHistory||[]).length)+'</td>'
-              +'<td style="font-size:.72rem;color:var(--dim)">'+(s.email||'&#8212;')+'</td>'
-              +'</tr>';
-          }).join('');
-      }
-      window._td_students = students;
-      td_buildHWSelect();
-    })
-    .catch(function(e){
-      statsEl.innerHTML = '<div style="color:var(--red);font-size:.85rem">Error: '+e.message+'</div>';
-    });
+    }
+    window._td_students = students;
+    td_buildHWSelect();
+  }).catch(function(e){ statsEl.innerHTML = '<div style="color:var(--red)">Error: '+e.message+'</div>'; });
 }
-
-function td_exportCSV() {
-  var s = window._td_students;
-  if (!s||!s.length){ toast('No student data to export.'); return; }
+function td_refresh(){ var s=document.getElementById('td-stats'); if(s) s.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Refreshing...</div>'; renderDashboard(); }
+function td_exportCSV(){
+  var students=window._td_students;
+  if(!students||!students.length){toast('No data to export.');return;}
   var rows=['Name,Email,XP,Streak,Exams'];
-  s.forEach(function(u){
-    rows.push([u.name||'',u.email||'',u.xp||0,u.streak||0,(u.quizHistory||[]).length].join(','));
-  });
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
-  a.download='atom-edge-'+new Date().toISOString().split('T')[0]+'.csv';
-  a.click(); toast('Downloaded! &#128202;');
+  students.forEach(function(s){rows.push([s.name||'',s.email||'',s.xp||0,s.streak||0,(s.quizHistory||[]).length].join(','));});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+  a.download='atom-edge-'+new Date().toISOString().split('T')[0]+'.csv'; a.click(); toast('Downloaded!');
 }
-
-function td_buildHWSelect() {
-  var sel=document.getElementById('td-hw-exp');
-  if(!sel||!window.EXPS) return;
-  sel.innerHTML=EXPS.map(function(e){
-    return '<option value="'+e.id+'">'+e.name+'</option>';
-  }).join('');
+function td_buildHWSelect(){
+  var sel=document.getElementById('td-hw-exp'); if(!sel||!window.EXPS) return;
+  sel.innerHTML=EXPS.map(function(e){return '<option value="'+e.id+'">'+e.name+'</option>';}).join('');
   td_renderHWList();
 }
-
-function td_assignHW() {
+function td_assignHW(){
   var sel=document.getElementById('td-hw-exp'); if(!sel) return;
   var exp=EXPS?EXPS.find(function(e){return e.id===sel.value;}):null; if(!exp) return;
   hwList.unshift({name:exp.name,date:new Date().toLocaleDateString(),id:sel.value});
-  if(hwList.length>10)hwList.pop();
-  DB.save('hwList',hwList); td_renderHWList();
-  toast('Assigned: '+exp.name+' &#128228;');
+  if(hwList.length>10)hwList.pop(); DB.save('hwList',hwList); td_renderHWList(); toast('Assigned: '+exp.name);
 }
-
-function td_renderHWList() {
+function td_renderHWList(){
   var el=document.getElementById('td-hw-list'); if(!el) return;
-  el.innerHTML = hwList.length
-    ? hwList.map(function(h){
-        return '<div style="display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:7px;background:var(--s3);margin-bottom:.3rem">'
-          +'<span style="flex:1;font-size:.8rem">'+h.name+'</span>'
-          +'<span style="font-size:.7rem;color:var(--dim)">'+h.date+'</span>'
-          +'</div>';
-      }).join('')
-    : '<div style="color:var(--dim);font-size:.78rem">No homework assigned yet.</div>';
+  el.innerHTML=hwList.length?hwList.map(function(h){return '<div style="display:flex;align-items:center;gap:.75rem;padding:.4rem .5rem;border-radius:7px;background:var(--s3);margin-bottom:.3rem"><span style="flex:1;font-size:.8rem">'+h.name+'</span><span style="font-size:.7rem;color:var(--dim)">'+h.date+'</span></div>';}).join(''):'<div style="color:var(--dim);font-size:.78rem">No homework assigned.</div>';
 }
 
 
-// ════════════ PAST PAPERS ════════════
+function assignHW(){
+  const expId=document.getElementById('hw-exp').value;
+  const exp=EXPS.find(e=>e.id===expId);
+  hwList.unshift({name:exp.name,date:new Date().toLocaleDateString(),id:expId});
+  if(hwList.length>10)hwList.pop();
+  S.set('hwList',hwList);renderHWList();toast('Homework assigned: '+exp.name+' 📤');
+}
+function renderHWList(){
+  const el=document.getElementById('hw-list');if(!el)return;
+  el.innerHTML=hwList.map(hw=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.45rem .5rem;border-radius:7px;background:var(--s3);margin-bottom:.3rem"><span style="flex:1;font-size:.8rem">${hw.name}</span><span style="font-size:.7rem;color:var(--dim)">${hw.date}</span><button class="btn" style="padding:.25rem .6rem;font-size:.7rem" onclick="openModal(EXPS.find(e=>e.id==='${hw.id}'))">Open</button></div>`).join('')||'<div style="color:var(--dim);font-size:.78rem">No homework assigned yet.</div>';
+}
+function exportReport(){
+  const lines=['Atom Edge — Class Report','Generated: '+new Date().toLocaleDateString(),'','Student,Score,Streak,Visits,Weak Topic'];
+  MOCK_STUDENTS.forEach(s=>lines.push(`${s.name},${s.score}%,${s.streak},${s.visits},${s.weak}`));
+  const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='atom-edge-report.csv';a.click();
+  toast('Report downloaded! 📊');
+}
+function copyAssignLink(){navigator.clipboard?.writeText(window.location.href+'?assigned=true').catch(()=>{});toast('Assignment link copied! 🔗');}
+function printWorksheet(){window.print();toast('Opening print dialog… 🖨️');}
+
+// ════════════ INIT ════════════
+updateXPBar();
+document.getElementById('home-xp-disp').textContent=xp;
+
+
+
+// ══════════════════════════════════════════════════════════════
+// PAST PAPERS MODULE — Built from scratch
+// ══════════════════════════════════════════════════════════════
 
 const PAPERS = [
 
@@ -3308,240 +3280,370 @@ const PAPERS = [
 
 ];
 
+// ── State ─────────────────────────────────────────────────────
 var pp_currentPaper = null;
 var pp_currentFilter = 'all';
 
+// ── Init: called when user navigates to Past Papers ───────────
 function pp_init() {
   var grid = document.getElementById('pp-grid');
-  if (!grid || grid.dataset.built==='1') return;
+  if (!grid) return;
+  if (grid.dataset.built === '1') return; // already built
   grid.dataset.built = '1';
 
-  var filterRow = document.getElementById('pp-filters');
+  // Build filter pills
+  var filterRow = document.getElementById('pp-filter-row');
   if (filterRow) {
-    [{l:'All Papers',v:'all'},{l:'Year 10',v:'Year 10'},{l:'Year 11',v:'Year 11'},
-     {l:'Core',v:'Core'},{l:'Extended',v:'Extended'}].forEach(function(f) {
+    [
+      { label: 'All Papers', value: 'all' },
+      { label: 'Year 10',    value: 'Year 10' },
+      { label: 'Year 11',    value: 'Year 11' },
+      { label: 'Core',       value: 'Core' },
+      { label: 'Extended',   value: 'Extended' },
+    ].forEach(function(f) {
       var btn = document.createElement('button');
-      btn.className = 'cat-pill'+(f.v==='all'?' on':'');
-      btn.textContent = f.l;
+      btn.className = 'cat-pill' + (f.value === 'all' ? ' on' : '');
+      btn.textContent = f.label;
       btn.onclick = function() {
-        document.querySelectorAll('#pp-filters .cat-pill').forEach(function(b){ b.classList.remove('on'); });
+        document.querySelectorAll('#pp-filter-row .cat-pill').forEach(function(p) { p.classList.remove('on'); });
         btn.classList.add('on');
-        pp_currentFilter = f.v;
+        pp_currentFilter = f.value;
         pp_renderCards();
       };
       filterRow.appendChild(btn);
     });
   }
+
   pp_renderCards();
 }
 
+// ── Render paper cards ────────────────────────────────────────
 function pp_renderCards() {
   var grid = document.getElementById('pp-grid');
   if (!grid) return;
   grid.innerHTML = '';
-  var list = pp_currentFilter==='all' ? PAPERS : PAPERS.filter(function(p){
-    return p.year===pp_currentFilter || p.difficulty===pp_currentFilter;
+
+  var filtered = PAPERS.filter(function(p) {
+    if (pp_currentFilter === 'all') return true;
+    return p.year === pp_currentFilter || p.difficulty === pp_currentFilter;
   });
-  if (!list.length) {
-    grid.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:1rem">No papers match this filter.</div>';
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:1rem">No papers match this filter.</div>';
     return;
   }
-  list.forEach(function(p) {
-    var yc = p.year==='Year 10'?'var(--cyan)':'var(--orange)';
+
+  filtered.forEach(function(p) {
+    var isCore = p.difficulty === 'Core';
+    var yearColor = p.year === 'Year 10' ? 'var(--cyan)' : 'var(--orange)';
+
     var card = document.createElement('div');
     card.className = 'pp-card';
+
     card.innerHTML =
-      '<div class="pp-card-top">'
-        +'<span class="pp-badge '+(p.difficulty==='Core'?'core':'extended')+'">'+p.difficulty+'</span>'
-        +'<span style="font-size:.65rem;font-weight:700;padding:.18rem .55rem;border-radius:20px;background:'+yc+'18;color:'+yc+';border:1px solid '+yc+'33">'+p.year+'</span>'
-      +'</div>'
-      +'<div class="pp-title">'+p.title+'</div>'
-      +'<div class="pp-subtitle">'+p.subtitle+'</div>'
-      +'<div class="pp-tags">'
-        +'<span class="pp-tag">&#9201; '+p.time+' min</span>'
-        +'<span class="pp-tag">&#128202; '+p.marks+' marks</span>'
-        +'<span class="pp-tag">&#128203; '+p.questions.length+' questions</span>'
-      +'</div>'
-      +'<div class="pp-actions">'
-        +'<button class="btn" style="flex:1" onclick="event.stopPropagation();pp_openPaper('+p.id+')">View Paper</button>'
-        +'<button class="btn" onclick="event.stopPropagation();pp_printById('+p.id+')">&#128424;&#65039;</button>'
-      +'</div>';
+      '<div class="pp-card-top">' +
+        '<span class="pp-difficulty ' + (isCore ? 'core' : 'extended') + '">' + p.difficulty + '</span>' +
+        '<span class="pp-year" style="background:' + yearColor + '18;color:' + yearColor + ';border:1px solid ' + yearColor + '33">' + p.year + '</span>' +
+      '</div>' +
+      '<div class="pp-title">' + p.title + '</div>' +
+      '<div class="pp-subtitle">' + p.subtitle + '</div>' +
+      '<div class="pp-tags">' +
+        '<span class="pp-tag">⏱ ' + p.time + ' min</span>' +
+        '<span class="pp-tag">📊 ' + p.marks + ' marks</span>' +
+        '<span class="pp-tag">📋 ' + p.questions.length + ' questions</span>' +
+      '</div>' +
+      '<div class="pp-actions">' +
+        '<button class="btn" style="flex:1" onclick="event.stopPropagation();pp_openPaper(' + p.id + ')">View Paper</button>' +
+        '<button class="btn" onclick="event.stopPropagation();pp_printById(' + p.id + ')">🖨️</button>' +
+      '</div>';
+
     grid.appendChild(card);
   });
 }
 
+// ── Open paper in viewer ──────────────────────────────────────
 function pp_openPaper(id) {
-  pp_currentPaper = PAPERS.find(function(p){ return p.id===id; });
+  pp_currentPaper = PAPERS.find(function(p) { return p.id === id; });
   if (!pp_currentPaper) return;
-  document.getElementById('pp-list-view').style.display='none';
-  document.getElementById('pp-viewer').style.display='block';
-  document.getElementById('pp-viewer-title').textContent = pp_currentPaper.title+' &#8212; '+pp_currentPaper.subtitle;
-  document.getElementById('pp-viewer-meta').textContent  = pp_currentPaper.difficulty+' Level &#183; '+pp_currentPaper.marks+' marks &#183; '+pp_currentPaper.time+' min';
+
+  // Show viewer, hide list
+  document.getElementById('pp-list-view').style.display = 'none';
+  document.getElementById('pp-viewer').style.display = 'block';
+
+  // Set header
+  document.getElementById('pp-viewer-title').textContent =
+    pp_currentPaper.title + ' — ' + pp_currentPaper.subtitle;
+  document.getElementById('pp-viewer-meta').textContent =
+    pp_currentPaper.difficulty + ' Level · ' + pp_currentPaper.marks + ' marks · ' + pp_currentPaper.time + ' min';
+
+  // Show mark scheme button for admin only
   var msBtn = document.getElementById('pp-ms-btn');
-  if (msBtn) msBtn.style.display = (window._fbUser&&window._fbUser.email===ADMIN_EMAIL)?'inline-flex':'none';
-  pp_renderContent(pp_currentPaper,'pp-content',false);
+  if (msBtn) msBtn.style.display = (window._fbUser && window._fbUser.email === ADMIN_EMAIL) ? 'inline-flex' : 'none';
+
+  // Render paper content
+  pp_renderContent(pp_currentPaper, 'pp-content', false);
+
+  // Scroll to top of viewer
+  var viewer = document.getElementById('pp-viewer');
+  if (viewer) viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ── Close viewer, go back to list ────────────────────────────
 function pp_closeViewer() {
-  document.getElementById('pp-viewer').style.display='none';
-  document.getElementById('pp-list-view').style.display='block';
+  document.getElementById('pp-viewer').style.display = 'none';
+  document.getElementById('pp-list-view').style.display = 'block';
 }
 
-function pp_renderContent(paper, containerId, showMS) {
-  var el = document.getElementById(containerId); if(!el) return;
-  var html = '<div style="border-bottom:2px solid var(--border);padding-bottom:1rem;margin-bottom:1.5rem">'
-    +'<div style="font-family:var(--head);font-size:1.2rem;font-weight:700;margin-bottom:.35rem">'+paper.title+'</div>'
-    +'<div style="font-size:.9rem;color:var(--dim)">'+paper.subtitle+'</div>'
-    +'<div style="display:flex;gap:.75rem;margin-top:.5rem;flex-wrap:wrap">'
-    +'<span style="font-size:.75rem;color:var(--cyan)">&#128202; '+paper.marks+' marks</span>'
-    +'<span style="font-size:.75rem;color:var(--orange)">&#9201; '+paper.time+' minutes</span>'
-    +'<span style="font-size:.75rem;color:var(--dim)">'+paper.difficulty+' &#183; '+paper.year+'</span>'
-    +'</div></div>';
+// ── Render paper questions into a container ───────────────────
+function pp_renderContent(paper, containerId, showMarkScheme) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+
+  var html = '';
+
+  // Paper header
+  html += '<div style="border-bottom:2px solid var(--border);padding-bottom:1rem;margin-bottom:1.5rem">' +
+    '<div style="font-family:var(--head);font-size:1.2rem;font-weight:700;margin-bottom:.35rem">' + paper.title + '</div>' +
+    '<div style="font-size:.9rem;color:var(--dim)">' + paper.subtitle + '</div>' +
+    '<div style="display:flex;gap:.75rem;margin-top:.5rem;flex-wrap:wrap">' +
+    '<span style="font-size:.75rem;color:var(--cyan)">📊 ' + paper.marks + ' marks total</span>' +
+    '<span style="font-size:.75rem;color:var(--orange)">⏱ ' + paper.time + ' minutes</span>' +
+    '<span style="font-size:.75rem;color:var(--dim)">' + paper.difficulty + ' Level · ' + paper.year + '</span>' +
+    '</div></div>';
+
+  // Questions
   paper.questions.forEach(function(q) {
-    html += '<div class="pp-q-wrap"><div class="pp-q-head">'
-      +'<span class="pp-q-num">Q'+q.n+'</span>'
-      +'<span style="font-size:.8rem;color:var(--text)">'+(q.topic||'')+'</span>'
-      +'<span class="pp-q-marks">'+q.marks+' mark'+(q.marks>1?'s':'')+'</span>'
-      +'</div>';
-    if (q.diagram) html += '<div class="pp-diagram">'+pp_svgDiagram(q.diagram)+'</div>';
-    (q.parts||[]).forEach(function(pt) {
-      html += '<div class="pp-part">'
-        +'<div class="pp-part-label">('+pt.p+') <span style="font-weight:400;color:var(--dim);font-size:.72rem">['+pt.marks+' mark'+(pt.marks>1?'s':'')+']</span></div>'
-        +'<div class="pp-part-q">'+(pt.q||'').replace(/\n/g,'<br>')+'</div>';
-      if (showMS&&pt.ms) {
-        html += '<div class="pp-ms-box">&#10003; '+pt.ms+'</div>';
+    html += '<div class="pp-question">';
+
+    // Question header
+    html += '<div class="pp-q-header">' +
+      '<span class="pp-q-num">Q' + q.n + '</span>';
+    if (q.topic) html += '<span style="font-size:.8rem;color:var(--text)">' + q.topic + '</span>';
+    html += '<span class="pp-q-topic">' + q.marks + ' marks</span>' +
+      '</div>';
+
+    // SVG diagram if present
+    if (q.diagram) {
+      html += '<div class="pp-diagram">' + pp_renderDiagram(q.diagram) + '</div>';
+    }
+
+    // Parts
+    if (q.parts && q.parts.length) {
+      q.parts.forEach(function(pt) {
+        html += '<div class="pp-part">' +
+          '<div class="pp-part-label">(' + pt.p + ') <span style="font-weight:400;color:var(--dim);font-size:.72rem">[' + pt.marks + ' mark' + (pt.marks>1?'s':'') + ']</span></div>' +
+          '<div class="pp-part-text">' + (pt.q || '').replace(/\n/g, '<br>') + '</div>';
+
+        if (showMarkScheme && pt.ms) {
+          html += '<div class="pp-ms-box">✓ ' + pt.ms + '</div>';
+        } else {
+          var lines = Math.max(2, pt.marks * 2);
+          html += '<div class="pp-answer-lines">';
+          for (var i = 0; i < lines; i++) html += '<div class="pp-answer-line"></div>';
+          html += '</div>';
+        }
+        html += '</div>';
+      });
+    } else if (q.text) {
+      // Simple question without sub-parts
+      html += '<div class="pp-part">' +
+        '<div class="pp-part-text">' + q.text + '</div>';
+      if (showMarkScheme && q.ms) {
+        html += '<div class="pp-ms-box">✓ ' + q.ms + '</div>';
       } else {
-        var n=Math.max(2,pt.marks*2); var lines='';
-        for(var i=0;i<n;i++) lines+='<div class="pp-ans-line"></div>';
-        html += lines;
+        var lines = Math.max(2, q.marks * 2);
+        html += '<div class="pp-answer-lines">';
+        for (var i = 0; i < lines; i++) html += '<div class="pp-answer-line"></div>';
+        html += '</div>';
       }
       html += '</div>';
-    });
-    html += '</div>';
+    }
+
+    html += '</div>'; // .pp-question
   });
+
   el.innerHTML = html;
 }
 
-function pp_svgDiagram(d) {
-  if (d.type==='atom') {
-    var el=d.element||'Na', sh=d.shells||[2,8,1];
-    var s='<svg viewBox="0 0 200 200" width="180" height="180" xmlns="http://www.w3.org/2000/svg">';
-    s+='<circle cx="100" cy="100" r="18" fill="#1d3347" stroke="#00e5ff" stroke-width="2"/>';
-    s+='<text x="100" y="105" text-anchor="middle" fill="#00e5ff" font-size="11" font-family="monospace">'+el+'</text>';
-    [38,62,86,110].forEach(function(r,i){
-      if(i>=sh.length)return;
-      s+='<circle cx="100" cy="100" r="'+r+'" fill="none" stroke="#1d3347" stroke-width="1.5" stroke-dasharray="4,3"/>';
-      for(var e=0;e<sh[i];e++){
-        var a=(2*Math.PI*e/sh[i])-Math.PI/2;
-        s+='<circle cx="'+(100+r*Math.cos(a)).toFixed(1)+'" cy="'+(100+r*Math.sin(a)).toFixed(1)+'" r="4" fill="#ff6b35"/>';
+// ── SVG Diagram renderer ──────────────────────────────────────
+function pp_renderDiagram(diagram) {
+  var type = diagram.type;
+
+  if (type === 'atom') {
+    var el = diagram.element || 'Na';
+    var shells = diagram.shells || [2, 8, 1];
+    var svg = '<svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">';
+    svg += '<circle cx="100" cy="100" r="18" fill="#1d3347" stroke="#00e5ff" stroke-width="2"/>';
+    svg += '<text x="100" y="105" text-anchor="middle" fill="#00e5ff" font-size="12" font-family="monospace">' + el + '</text>';
+    var radii = [38, 62, 86, 110];
+    shells.forEach(function(count, i) {
+      var r = radii[i];
+      svg += '<circle cx="100" cy="100" r="' + r + '" fill="none" stroke="#1d3347" stroke-width="1.5" stroke-dasharray="4,3"/>';
+      for (var e = 0; e < count; e++) {
+        var angle = (2 * Math.PI * e / count) - Math.PI / 2;
+        var ex = 100 + r * Math.cos(angle);
+        var ey = 100 + r * Math.sin(angle);
+        svg += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="4" fill="#ff6b35"/>';
       }
     });
-    return s+'</svg>';
+    svg += '</svg>';
+    return svg;
   }
-  return '<svg viewBox="0 0 160 60" width="160" height="60" xmlns="http://www.w3.org/2000/svg">'
-    +'<rect x="1" y="1" width="158" height="58" rx="6" fill="#0a1520" stroke="#1d3347"/>'
-    +'<text x="80" y="34" text-anchor="middle" fill="#5a8aa0" font-size="11">['+d.type+' diagram]</text>'
-    +'</svg>';
+
+  if (type === 'ph_scale') {
+    var svg = '<svg viewBox="0 0 300 60" width="300" height="60" xmlns="http://www.w3.org/2000/svg">';
+    var colors = ['#ff0000','#ff4400','#ff8800','#ffcc00','#aacc00','#00cc00','#00cc88','#0088cc','#0044ff','#2200cc','#440099','#660066','#880033','#aa0000'];
+    colors.forEach(function(col, i) {
+      svg += '<rect x="' + (i*21) + '" y="10" width="21" height="30" fill="' + col + '"/>';
+      svg += '<text x="' + (i*21+10) + '" y="52" text-anchor="middle" fill="#aaa" font-size="8">' + i + '</text>';
+    });
+    svg += '<rect x="0" y="10" width="294" height="30" fill="none" stroke="#1d3347" stroke-width="1"/>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (type === 'energy_profile') {
+    var isExo = diagram.type_reaction === 'exothermic';
+    var svg = '<svg viewBox="0 0 280 160" width="280" height="160" xmlns="http://www.w3.org/2000/svg">';
+    svg += '<line x1="30" y1="140" x2="30" y2="10" stroke="#1d3347" stroke-width="1.5"/>';
+    svg += '<line x1="30" y1="140" x2="270" y2="140" stroke="#1d3347" stroke-width="1.5"/>';
+    svg += '<path d="M50,110 Q100,108 120,50 Q140,0 160,48 Q180,95 230,95" fill="none" stroke="#00e5ff" stroke-width="2.5"/>';
+    svg += '<text x="10" y="90" fill="#5a8aa0" font-size="9" writing-mode="tb">Energy</text>';
+    svg += '<text x="140" y="155" text-anchor="middle" fill="#5a8aa0" font-size="9">Reaction Progress</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  if (type === 'reactivity_series') {
+    var metals = ['K','Na','Ca','Mg','Al','Zn','Fe','Pb','Cu','Ag'];
+    var svg = '<svg viewBox="0 0 200 220" width="200" height="220" xmlns="http://www.w3.org/2000/svg">';
+    svg += '<text x="100" y="15" text-anchor="middle" fill="#00e5ff" font-size="10" font-weight="bold">Reactivity Series</text>';
+    metals.forEach(function(m, i) {
+      var y = 28 + i * 19;
+      var shade = Math.round(255 - i * 20);
+      svg += '<rect x="40" y="' + (y-12) + '" width="120" height="16" rx="3" fill="#0a1520" stroke="#1d3347"/>';
+      svg += '<text x="100" y="' + y + '" text-anchor="middle" fill="#ddeeff" font-size="10">' + m + '</text>';
+    });
+    svg += '<text x="5" y="40" fill="#ff6b35" font-size="8">↑ Most</text>';
+    svg += '<text x="5" y="205" fill="#00e5a0" font-size="8">↓ Least</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // Generic placeholder for other diagram types
+  return '<svg viewBox="0 0 200 80" width="200" height="80" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect x="1" y="1" width="198" height="78" rx="6" fill="#0a1520" stroke="#1d3347"/>' +
+    '<text x="100" y="35" text-anchor="middle" fill="#5a8aa0" font-size="11">[' + type + ']</text>' +
+    '<text x="100" y="52" text-anchor="middle" fill="#3a6070" font-size="9">Diagram</text>' +
+    '</svg>';
 }
 
-function pp_print(showMS) {
+// ── Print ─────────────────────────────────────────────────────
+function pp_print(showMarkScheme) {
   if (!pp_currentPaper) return;
-  if (showMS && (!window._fbUser||window._fbUser.email!==ADMIN_EMAIL)) {
-    toast('Mark schemes are for teachers only.'); return;
+  if (showMarkScheme && (!window._fbUser || window._fbUser.email !== ADMIN_EMAIL)) {
+    toast('⚠️ Mark schemes are for teachers only.');
+    return;
   }
-  var tmp=document.createElement('div');
-  tmp.style.cssText='position:absolute;left:-9999px;top:0;width:800px';
+
+  // Build a temp div to render into
+  var tmp = document.createElement('div');
+  tmp.id = '__pp_print_tmp__';
+  tmp.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;';
   document.body.appendChild(tmp);
-  tmp.id='__pp_tmp__';
-  pp_renderContent(pp_currentPaper,'__pp_tmp__',showMS);
-  var content=tmp.innerHTML;
+  pp_renderContent(pp_currentPaper, '__pp_print_tmp__', showMarkScheme);
+  var content = tmp.innerHTML;
   document.body.removeChild(tmp);
 
-  var win=window.open('','_blank');
-  if(!win){toast('Pop-ups blocked &#8212; please allow pop-ups for this site.');return;}
+  var win = window.open('', '_blank');
+  if (!win) { toast('Pop-ups blocked — please allow pop-ups for this site.'); return; }
 
-  var p=pp_currentPaper;
-  var cssStr=[
-    '*{box-sizing:border-box;margin:0;padding:0}',
-    'body{font-family:"Segoe UI",Arial,sans-serif;font-size:11pt;color:#111;padding:1.5cm 2cm;line-height:1.7}',
-    '.pp-q-wrap{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #ddd;page-break-inside:avoid}',
-    '.pp-q-head{display:flex;align-items:baseline;gap:.75rem;padding:.4rem .75rem;background:#f5f5f5;border-left:3px solid #0077cc;margin-bottom:.75rem}',
-    '.pp-q-num{font-weight:700;color:#0077cc;font-size:1rem}',
-    '.pp-q-marks{margin-left:auto;font-size:.75rem;color:#888}',
-    '.pp-part{margin:.6rem 0 .6rem 1.25rem}',
-    '.pp-part-label{font-weight:600;margin-bottom:.25rem}',
-    '.pp-part-q{margin-bottom:.4rem}',
-    '.pp-ans-line{border-bottom:1px solid #ccc;height:24px;margin:3px 0}',
-    '.pp-ms-box{background:#f0fff4;border:1px solid #4caf50;border-radius:4px;padding:5px 10px;color:#1b5e20;font-size:10pt;margin-top:.3rem}',
-    '.pp-diagram{text-align:center;margin:.75rem 0;padding:.5rem;border:1px solid #eee;border-radius:4px}',
-    'svg{max-width:100%;height:auto}',
-    '@page{size:A4;margin:1.5cm}',
-  ].join('\n');
+  var isMS = showMarkScheme;
+  var paper = pp_currentPaper;
 
-  var headerStr='<div style="border-bottom:2px solid #111;padding-bottom:.75rem;margin-bottom:1.5rem">'
-    +'<div style="font-size:13pt;font-weight:700">Atom Edge Classboard</div>'
-    +'<div style="font-size:11pt;margin-top:.25rem">'+p.title+' &#8212; '+p.subtitle+'</div>'
-    +'<div style="font-size:9pt;color:#666;margin-top:.25rem">'+p.difficulty+' Level &#183; '+p.marks+' marks &#183; '+p.time+' min'+(showMS?' &#183; MARK SCHEME':'')+'</div>'
-    +'</div>';
+  var cssStr = '* {box-sizing:border-box;margin:0;padding:0}'
+    + ' body {font-family:"Segoe UI",Arial,sans-serif;font-size:11pt;color:#111;padding:1.5cm 2cm;line-height:1.7}'
+    + ' .pp-q-wrap {margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid #ddd;page-break-inside:avoid}'
+    + ' .pp-q-head {display:flex;align-items:baseline;gap:.75rem;padding:.4rem .75rem;background:#f5f5f5;border-left:3px solid #0077cc;margin-bottom:.75rem}'
+    + ' .pp-q-num {font-weight:700;color:#0077cc}'
+    + ' .pp-q-marks {margin-left:auto;font-size:.75rem;color:#888}'
+    + ' .pp-part {margin:.6rem 0 .6rem 1.25rem}'
+    + ' .pp-part-label {font-weight:600;margin-bottom:.25rem}'
+    + ' .pp-part-q {margin-bottom:.4rem}'
+    + ' .pp-ans-line {border-bottom:1px solid #ccc;height:24px;margin:3px 0}'
+    + ' .pp-ms-box {background:#f0fff4;border:1px solid #4caf50;border-radius:4px;padding:5px 10px;color:#1b5e20}'
+    + ' .pp-diagram {text-align:center;margin:.75rem 0}'
+    + ' svg {max-width:100%;height:auto}'
+    + ' @page {size:A4;margin:1.5cm}';
+  var titleStr = (isMS ? 'Mark Scheme' : 'Practice Paper') + ' - ' + paper.title;
+  var headerStr = '<div style="border-bottom:2px solid #111;padding-bottom:.75rem;margin-bottom:1.5rem">'
+    + '<div style="font-size:13pt;font-weight:700">Atom Edge Classboard</div>'
+    + '<div style="font-size:11pt;margin-top:.25rem">' + paper.title + ' - ' + paper.subtitle + '</div>'
+    + '<div style="font-size:9pt;color:#666;margin-top:.25rem">' + paper.difficulty + ' - ' + paper.marks + ' marks - ' + paper.time + ' min' + (isMS ? ' - MARK SCHEME' : '') + '</div>'
+    + '</div>';
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + titleStr + '</title><style>' + cssStr + '</style></head><body>' + headerStr + content + '</body></html>')
 
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'
-    +(showMS?'Mark Scheme':'Practice Paper')+' &#8212; '+p.title+'</title>'
-    +'<style>'+cssStr+'</style></head><body>'+headerStr+content+'</body></html>');
   win.document.close();
-  setTimeout(function(){win.print();},700);
+  setTimeout(function() { win.print(); }, 700);
 }
 
 function pp_printById(id) {
-  pp_currentPaper=PAPERS.find(function(p){return p.id===id;});
-  if(pp_currentPaper) pp_print(false);
+  pp_currentPaper = PAPERS.find(function(p) { return p.id === id; });
+  if (pp_currentPaper) pp_print(false);
 }
 
+// ── Wire into goPage ──────────────────────────────────────────
+(function() {
+  var _orig = goPage;
+  goPage = function(id, btn) {
+    _orig(id, btn);
+    if (id === 'papers') {
+      requestAnimationFrame(function() {
+        try { pp_init(); } catch(e) { console.error('pp_init error:', e); }
+      });
+    }
+  };
+})();
 
-// ════════════ WHITEBOARD / MY CLASSBOARD ════════════
 
-var cb = {
-  canvas:null, ctx:null, drawing:false, tool:'pen', color:'#1a1a1a', size:3,
-  bgWhite:true, history:[], redoStack:[], snapshot:null,
-  startX:0, startY:0, student:null, topic:'', sessionKey:null, autoSaveTimer:null
-};
+// WHITEBOARD MODULE
+var cb={canvas:null,ctx:null,drawing:false,tool:'pen',color:'#1a1a1a',size:3,bgWhite:true,history:[],redoStack:[],snapshot:null,startX:0,startY:0,student:null,topic:'',sessionKey:null,autoSaveTimer:null};
 
-function initClassboard() {
-  var isAdmin = window._fbUser && window._fbUser.email===ADMIN_EMAIL;
-  document.getElementById('cb-teacher-view').style.display = isAdmin?'block':'none';
-  document.getElementById('cb-student-view').style.display = isAdmin?'none':'block';
-  if (isAdmin) cb_loadStudentDropdown(); else cb_loadStudentSessions();
+function initClassboard(){
+  var isAdmin=window._fbUser&&window._fbUser.email===ADMIN_EMAIL;
+  document.getElementById('cb-teacher-view').style.display=isAdmin?'block':'none';
+  document.getElementById('cb-student-view').style.display=isAdmin?'none':'block';
+  if(isAdmin) cb_loadStudentDropdown(); else cb_loadStudentSessions();
 }
 
-function cb_loadStudentDropdown() {
+function cb_loadStudentDropdown(){
   var sel=document.getElementById('cb-student-sel'); if(!sel) return;
-  sel.innerHTML='<option value="">&#8212; Loading&#8230; &#8212;</option>';
-  if(!window.loadAllStudents){ sel.innerHTML='<option value="">&#8212; No Firebase &#8212;</option>'; return; }
+  sel.innerHTML='<option value="">-- Loading... --</option>';
+  if(!window.loadAllStudents){sel.innerHTML='<option value="">-- Error --</option>';return;}
   window.loadAllStudents().then(function(students){
-    sel.innerHTML='<option value="">&#8212; Select student &#8212;</option>';
-    students.forEach(function(s){
-      var o=document.createElement('option'); o.value=s.uid; o.textContent=s.name||s.email; sel.appendChild(o);
-    });
-  }).catch(function(){ sel.innerHTML='<option value="">&#8212; Error loading &#8212;</option>'; });
+    sel.innerHTML='<option value="">-- Select student --</option>';
+    students.forEach(function(s){var o=document.createElement('option');o.value=s.uid;o.textContent=s.name||s.email;sel.appendChild(o);});
+  }).catch(function(){sel.innerHTML='<option value="">-- Could not load --</option>';});
 }
 
-function cb_startSession() {
+function cb_startSession(){
   var sel=document.getElementById('cb-student-sel');
-  var err=document.getElementById('cb-sel-err');
+  var errEl=document.getElementById('cb-sel-err');
   var topic=(document.getElementById('cb-topic-input').value||'').trim();
-  if(!sel||!sel.value){ if(err){err.style.display='block';setTimeout(function(){err.style.display='none';},2500);} return; }
-  cb.student   = {uid:sel.value, name:sel.options[sel.selectedIndex].text};
-  cb.topic     = topic||'General';
-  cb.sessionKey= cb.student.name.replace(/[\s]+/g,'-')+'_'+new Date().toISOString().split('T')[0];
-  var sb=document.getElementById('cb-student-badge'); if(sb) sb.textContent=cb.student.name;
-  var tb=document.getElementById('cb-topic-badge');   if(tb) tb.textContent=cb.topic;
-  var mt=document.getElementById('cb-meta');          if(mt) mt.textContent='Auto-saves every 10s';
+  if(!sel||!sel.value){if(errEl){errEl.style.display='block';setTimeout(function(){errEl.style.display='none';},2500);}return;}
+  cb.student={uid:sel.value,name:sel.options[sel.selectedIndex].text};
+  cb.topic=topic||'General';
+  cb.sessionKey=cb.student.name.replace(/\s+/g,'-')+'_'+new Date().toISOString().split('T')[0];
+  var sb=document.getElementById('cb-student-badge');if(sb)sb.textContent=cb.student.name;
+  var tb=document.getElementById('cb-topic-badge');if(tb)tb.textContent=cb.topic;
+  var mt=document.getElementById('cb-meta');if(mt)mt.textContent='Auto-saves every 10s';
   document.getElementById('cb-selector').style.display='none';
   document.getElementById('cb-whiteboard').style.display='block';
   document.getElementById('cb-sessions-panel').style.display='none';
   cb_initCanvas();
 }
 
-function cb_changeStudent() {
+function cb_changeStudent(){
   cb_saveNow();
   if(cb.autoSaveTimer){clearInterval(cb.autoSaveTimer);cb.autoSaveTimer=null;}
   cb.student=null;
@@ -3550,8 +3652,9 @@ function cb_changeStudent() {
   cb_loadStudentDropdown();
 }
 
-function cb_initCanvas() {
-  cb.canvas=document.getElementById('cb-canvas'); if(!cb.canvas) return;
+function cb_initCanvas(){
+  cb.canvas=document.getElementById('cb-canvas');
+  if(!cb.canvas) return;
   cb.ctx=cb.canvas.getContext('2d');
   function size(){
     var sc=document.getElementById('cb-scroll');
@@ -3563,42 +3666,34 @@ function cb_initCanvas() {
     cb.history=[cb.canvas.toDataURL()]; cb.redoStack=[];
   }
   size(); setTimeout(size,80);
-
-  cb.canvas.addEventListener('mousedown', cb_onDown);
-  cb.canvas.addEventListener('mousemove', cb_onMove);
-  cb.canvas.addEventListener('mouseup',   cb_onUp);
+  cb.canvas.addEventListener('mousedown',cb_onDown);
+  cb.canvas.addEventListener('mousemove',cb_onMove);
+  cb.canvas.addEventListener('mouseup',cb_onUp);
   cb.canvas.addEventListener('mouseleave',cb_onUp);
-  cb.canvas.addEventListener('touchstart',function(e){e.preventDefault();cb_onDown(cb_touchEvt(e));},{passive:false});
-  cb.canvas.addEventListener('touchmove', function(e){if(cb.drawing){e.preventDefault();cb_onMove(cb_touchEvt(e));}},{passive:false});
-  cb.canvas.addEventListener('touchend',  function(e){e.preventDefault();cb_onUp();},{passive:false});
-
+  cb.canvas.addEventListener('touchstart',function(e){e.preventDefault();cb_onDown(cb_touch(e));},{passive:false});
+  cb.canvas.addEventListener('touchmove',function(e){if(cb.drawing){e.preventDefault();cb_onMove(cb_touch(e));}},{passive:false});
+  cb.canvas.addEventListener('touchend',function(e){e.preventDefault();cb_onUp();},{passive:false});
   var ti=document.getElementById('cb-text-input');
-  if(ti) ti.addEventListener('keydown',function(e){
-    if(e.key==='Enter'){cb_commitText();e.preventDefault();}
-    if(e.key==='Escape')ti.style.display='none';
-  });
-
+  if(ti){ti.addEventListener('keydown',function(e){if(e.key==='Enter'){cb_commitText();e.preventDefault();}if(e.key==='Escape')ti.style.display='none';});}
   document.addEventListener('keydown',function(e){
-    if(!cb.student) return;
+    if(!cb.student)return;
     if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();cb_undo();}
     if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();cb_redo();}
     if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();cb_saveNow();}
   });
-
-  if(cb.autoSaveTimer) clearInterval(cb.autoSaveTimer);
+  if(cb.autoSaveTimer)clearInterval(cb.autoSaveTimer);
   cb.autoSaveTimer=setInterval(function(){if(cb.student)cb_saveNow();},10000);
 }
 
-function cb_pos(e) {
+function cb_pos(e){
   var r=cb.canvas.getBoundingClientRect();
   var sc=document.getElementById('cb-scroll');
   var st=sc?sc.scrollTop:0;
   var sx=cb.canvas.width/r.width;
-  var sy=cb.canvas.height/(cb.canvas.height*(r.width/cb.canvas.width));
-  return{x:Math.round((e.clientX-r.left)*sx), y:Math.round((e.clientY-r.top+st)*sy)};
+  var sy=cb.canvas.height/(cb.canvas.height*r.width/cb.canvas.width);
+  return{x:Math.round((e.clientX-r.left)*sx),y:Math.round((e.clientY-r.top+st)*sy)};
 }
-
-function cb_touchEvt(e) {
+function cb_touch(e){
   var t=e.touches[0]||e.changedTouches[0];
   var r=cb.canvas.getBoundingClientRect();
   var sc=document.getElementById('cb-scroll');
@@ -3606,52 +3701,52 @@ function cb_touchEvt(e) {
   return{clientX:t.clientX,clientY:t.clientY,offsetX:t.clientX-r.left,offsetY:t.clientY-r.top+st};
 }
 
-function cb_expand(y) {
-  if(!cb.canvas||!cb.ctx||y<=cb.canvas.height-80) return;
-  var oldH=cb.canvas.height;
-  var imgData=cb.ctx.getImageData(0,0,cb.canvas.width,oldH);
-  var newH=oldH+Math.round(cb.canvas.width*1.4142);
-  cb.canvas.height=newH; cb.canvas.style.height=newH+'px';
-  cb.ctx.fillStyle='#ffffff'; cb.ctx.fillRect(0,0,cb.canvas.width,newH);
-  cb.ctx.putImageData(imgData,0,0);
-  cb.ctx.save(); cb.ctx.setLineDash([8,6]);
-  cb.ctx.strokeStyle='rgba(0,229,255,0.18)'; cb.ctx.lineWidth=1;
-  cb.ctx.beginPath(); cb.ctx.moveTo(0,oldH); cb.ctx.lineTo(cb.canvas.width,oldH); cb.ctx.stroke();
-  cb.ctx.restore();
-  cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
+function cb_expand(y){
+  if(!cb.canvas||!cb.ctx)return;
+  if(y>cb.canvas.height-80){
+    var oldH=cb.canvas.height;
+    var imgData=cb.ctx.getImageData(0,0,cb.canvas.width,oldH);
+    var newH=oldH+Math.round(cb.canvas.width*1.4142);
+    cb.canvas.height=newH; cb.canvas.style.height=newH+'px';
+    cb.ctx.fillStyle='#ffffff'; cb.ctx.fillRect(0,0,cb.canvas.width,newH);
+    cb.ctx.putImageData(imgData,0,0);
+    cb.ctx.save(); cb.ctx.setLineDash([8,6]); cb.ctx.strokeStyle='rgba(0,229,255,0.18)'; cb.ctx.lineWidth=1;
+    cb.ctx.beginPath(); cb.ctx.moveTo(0,oldH); cb.ctx.lineTo(cb.canvas.width,oldH); cb.ctx.stroke(); cb.ctx.restore();
+    cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
+  }
 }
 
-function cb_onDown(e) {
+function cb_onDown(e){
   var p=cb_pos(e); cb.startX=p.x; cb.startY=p.y;
-  if(cb.tool==='text'){cb_placeTextInput(p.x,p.y);return;}
+  if(cb.tool==='text'){cb_placeText(p.x,p.y);return;}
   cb.drawing=true; cb_expand(p.y);
   cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
   cb.ctx.lineCap='round'; cb.ctx.lineJoin='round';
   if(['pen','marker','eraser'].indexOf(cb.tool)>=0){cb.ctx.beginPath();cb.ctx.moveTo(p.x,p.y);}
 }
-
-function cb_onMove(e) {
-  if(!cb.drawing) return;
-  var p=cb_pos(e); cb_expand(p.y); cb_draw(p.x,p.y);
+function cb_onMove(e){
+  if(!cb.drawing)return;
+  var p=cb_pos(e); cb_expand(p.y);
+  if(['line','rect','circle'].indexOf(cb.tool)>=0&&cb.snapshot)cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
+  cb_draw(p.x,p.y);
+}
+function cb_onUp(){
+  if(!cb.drawing)return; cb.drawing=false; cb.redoStack=[];
+  cb.history.push(cb.canvas.toDataURL()); if(cb.history.length>60)cb.history.shift();
 }
 
-function cb_onUp() {
-  if(!cb.drawing) return; cb.drawing=false; cb.redoStack=[];
-  cb.history.push(cb.canvas.toDataURL()); if(cb.history.length>60) cb.history.shift();
-}
-
-function cb_draw(x,y) {
+function cb_draw(x,y){
   var ctx=cb.ctx; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.globalAlpha=1;
   if(cb.tool==='pen'){
     ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size;
     ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  }else if(cb.tool==='marker'){
+  } else if(cb.tool==='marker'){
     ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size*4; ctx.globalAlpha=0.35;
     ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  }else if(cb.tool==='eraser'){
+  } else if(cb.tool==='eraser'){
     ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.bgWhite?'#ffffff':'#1a1a2e'; ctx.lineWidth=cb.size*5;
     ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  }else{
+  } else {
     ctx.globalCompositeOperation='source-over'; ctx.putImageData(cb.snapshot,0,0);
     ctx.globalAlpha=0.6; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size; ctx.beginPath();
     if(cb.tool==='line'){ctx.moveTo(cb.startX,cb.startY);ctx.lineTo(x,y);}
@@ -3661,10 +3756,9 @@ function cb_draw(x,y) {
   }
 }
 
-function cb_placeTextInput(x,y){
-  var ti=document.getElementById('cb-text-input'); if(!ti) return;
-  var sx=cb.canvas.offsetWidth/cb.canvas.width;
-  var sy=cb.canvas.offsetHeight/cb.canvas.height;
+function cb_placeText(x,y){
+  var ti=document.getElementById('cb-text-input'); if(!ti)return;
+  var sx=cb.canvas.offsetWidth/cb.canvas.width; var sy=cb.canvas.offsetHeight/cb.canvas.height;
   ti.style.display='block'; ti.style.left=Math.round(x*sx)+'px'; ti.style.top=Math.round(y*sy)+'px';
   ti.style.fontSize=(cb.size*4+12)+'px'; ti.dataset.x=x; ti.dataset.y=y; ti.value=''; ti.focus();
 }
@@ -3685,54 +3779,49 @@ function cb_setColor(el){
   cb.color=el.dataset.color;
   document.querySelectorAll('.cb-swatch').forEach(function(b){b.classList.remove('on');});
   el.classList.add('on');
-  var d=document.getElementById('cb-dot'); if(d)d.style.background=cb.color;
-  var cc=document.getElementById('cb-custom-color'); if(cc)cc.value=cb.color;
+  var dot=document.getElementById('cb-dot');if(dot)dot.style.background=cb.color;
+  var cc=document.getElementById('cb-custom-color');if(cc)cc.value=cb.color;
 }
 function cb_setCustomColor(v){
   cb.color=v;
   document.querySelectorAll('.cb-swatch').forEach(function(b){b.classList.remove('on');});
-  var d=document.getElementById('cb-dot'); if(d)d.style.background=v;
+  var dot=document.getElementById('cb-dot');if(dot)dot.style.background=v;
 }
 function cb_setSize(v){
-  cb.size=+v;
-  var lbl=document.getElementById('cb-size-val'); if(lbl)lbl.textContent=v;
-  var sz=Math.max(4,Math.min(20,+v));
-  var d=document.getElementById('cb-dot'); if(d){d.style.width=sz+'px';d.style.height=sz+'px';d.style.background=cb.color;}
+  cb.size=+v; var lbl=document.getElementById('cb-size-val');if(lbl)lbl.textContent=v;
+  var sz=Math.max(4,Math.min(20,+v)); var dot=document.getElementById('cb-dot');
+  if(dot){dot.style.width=sz+'px';dot.style.height=sz+'px';dot.style.background=cb.color;}
 }
 function cb_toggleBg(){
-  cb.bgWhite=!cb.bgWhite;
-  var btn=document.getElementById('cb-tool-bg'); if(btn)btn.classList.toggle('on',!cb.bgWhite);
+  cb.bgWhite=!cb.bgWhite; var btn=document.getElementById('cb-tool-bg');if(btn)btn.classList.toggle('on',!cb.bgWhite);
   if(cb.ctx){cb.ctx.fillStyle=cb.bgWhite?'#ffffff':'#1a1a2e';cb.ctx.fillRect(0,0,cb.canvas.width,cb.canvas.height);}
 }
 function cb_undo(){
   if(cb.history.length<=1)return; cb.redoStack.push(cb.history.pop());
-  var img=new Image(); img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);}; img.src=cb.history[cb.history.length-1];
+  var img=new Image();img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);};img.src=cb.history[cb.history.length-1];
 }
 function cb_redo(){
-  if(!cb.redoStack.length)return; var d=cb.redoStack.pop(); cb.history.push(d);
-  var img=new Image(); img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);}; img.src=d;
+  if(!cb.redoStack.length)return; var d=cb.redoStack.pop();cb.history.push(d);
+  var img=new Image();img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);};img.src=d;
 }
 function cb_clearCanvas(){
   if(!confirm('Clear the whiteboard?'))return;
-  cb.ctx.fillStyle='#ffffff'; cb.ctx.fillRect(0,0,cb.canvas.width,cb.canvas.height);
-  cb.history=[cb.canvas.toDataURL()]; cb.redoStack=[]; cb_saveNow(); toast('Canvas cleared.');
+  cb.ctx.fillStyle='#ffffff';cb.ctx.fillRect(0,0,cb.canvas.width,cb.canvas.height);
+  cb.history=[cb.canvas.toDataURL()];cb.redoStack=[];cb_saveNow();toast('Canvas cleared.');
 }
 
 function cb_saveNow(){
-  if(!cb.canvas||!window.FB||!window._fbUser||!cb.student) return;
+  if(!cb.canvas||!window.FB||!window._fbUser||!cb.student)return;
   var today=new Date().toISOString().split('T')[0];
   window.FB.setDoc(window.FB.doc(window.FB.db,'whiteboards',cb.sessionKey),{
-    date:today, key:cb.sessionKey,
-    dataURL:cb.canvas.toDataURL('image/jpeg',0.82),
-    savedBy:window._fbUser.email,
-    studentUid:cb.student.uid, studentName:cb.student.name,
-    topic:cb.topic||'General',
-    updatedAt:window.FB.serverTimestamp(),
-    label:new Date(today+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(cb.topic?' &#183; '+cb.topic:'')
+    date:today,key:cb.sessionKey,dataURL:cb.canvas.toDataURL('image/jpeg',0.82),
+    savedBy:window._fbUser.email,studentUid:cb.student.uid,studentName:cb.student.name,
+    topic:cb.topic||'General',updatedAt:window.FB.serverTimestamp(),
+    label:new Date(today+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(cb.topic?' - '+cb.topic:'')
   }).then(function(){
-    var ind=document.getElementById('cb-save-indicator'); if(ind){ind.style.display='inline';setTimeout(function(){ind.style.display='none';},2000);}
-    var ls=document.getElementById('cb-last-saved'); if(ls)ls.textContent='Saved '+new Date().toLocaleTimeString();
-  }).catch(function(e){console.warn('wb save:',e);});
+    var ind=document.getElementById('cb-save-indicator');if(ind){ind.style.display='inline';setTimeout(function(){ind.style.display='none';},2000);}
+    var ls=document.getElementById('cb-last-saved');if(ls)ls.textContent='Saved '+new Date().toLocaleTimeString();
+  }).catch(function(e){console.warn('save:',e);});
 }
 
 function cb_showSessions(){
@@ -3747,40 +3836,33 @@ function cb_hideSessions(){
 
 function cb_loadSessions(isAdmin){
   var listId=isAdmin?'cb-sessions-list':'cb-student-sessions';
-  var list=document.getElementById(listId); if(!list) return;
-  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading&#8230;</div>';
-  if(!window.FB){list.innerHTML='<div style="color:var(--red)">Firebase not connected.</div>';return;}
+  var list=document.getElementById(listId);if(!list)return;
+  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading...</div>';
+  if(!window.FB){list.innerHTML='<div style="color:var(--red)">Not connected.</div>';return;}
   window.FB.getDocs(window.FB.collection(window.FB.db,'whiteboards')).then(function(snap){
     var all=snap.docs.map(function(d){return d.data();});
     var sessions;
     if(isAdmin){
       sessions=all.sort(function(a,b){return b.date.localeCompare(a.date);});
-    }else{
+    } else {
       var myUid=window._fbUser?window._fbUser.uid:null;
       sessions=all.filter(function(s){return s.studentUid===myUid;}).sort(function(a,b){return b.date.localeCompare(a.date);});
     }
-    if(!sessions.length){
-      list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">'+(isAdmin?'No sessions yet.':'No sessions yet &#8212; your teacher&#39;s whiteboard will appear here after class.')+'</div>';
-      return;
-    }
+    if(!sessions.length){list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">'+(isAdmin?'No sessions yet.':'No sessions yet - check back after class.')+'</div>';return;}
     list.innerHTML='';
     sessions.forEach(function(s){
       var sKey=s.key||s.date;
       var card=document.createElement('div'); card.className='cb-session-card';
       var L=document.createElement('div'); L.style.flex='1';
-      var dEl=document.createElement('div'); dEl.className='cb-session-date'; dEl.textContent=s.label||s.date; L.appendChild(dEl);
-      if(isAdmin&&s.studentName){var nEl=document.createElement('div');nEl.style.cssText='font-size:.72rem;color:var(--cyan);margin-top:.1rem;font-weight:600';nEl.textContent=s.studentName;L.appendChild(nEl);}
-      var tEl=document.createElement('div'); tEl.className='cb-session-topic'; tEl.textContent=s.topic||'General'; L.appendChild(tEl);
+      var d=document.createElement('div'); d.className='cb-session-date'; d.textContent=s.label||s.date; L.appendChild(d);
+      if(isAdmin&&s.studentName){var n=document.createElement('div');n.style.cssText='font-size:.72rem;color:var(--cyan);margin-top:.1rem;font-weight:600';n.textContent=s.studentName;L.appendChild(n);}
+      var t=document.createElement('div'); t.className='cb-session-topic'; t.textContent=s.topic||'General'; L.appendChild(t);
       var R=document.createElement('div'); R.style.cssText='display:flex;gap:.4rem;align-items:center';
-      var imgEl=document.createElement('img'); imgEl.className='cb-session-preview'; imgEl.src=s.dataURL; imgEl.alt='preview';
+      var img=document.createElement('img'); img.className='cb-session-preview'; img.src=s.dataURL; img.alt='preview';
       var vBtn=document.createElement('button'); vBtn.className='btn'; vBtn.textContent='View';
       vBtn.onclick=(function(k,ia){return function(){cb_viewSession(k,ia);};})(sKey,isAdmin);
-      R.appendChild(imgEl); R.appendChild(vBtn);
-      if(isAdmin){
-        var dBtn=document.createElement('button'); dBtn.className='btn'; dBtn.style.color='var(--red)'; dBtn.textContent='Del';
-        dBtn.onclick=(function(k){return function(){cb_deleteSession(k);};})(sKey);
-        R.appendChild(dBtn);
-      }
+      R.appendChild(img); R.appendChild(vBtn);
+      if(isAdmin){var dBtn=document.createElement('button');dBtn.className='btn';dBtn.style.color='var(--red)';dBtn.textContent='Del';dBtn.onclick=(function(k){return function(){cb_deleteSession(k);};})(sKey);R.appendChild(dBtn);}
       card.appendChild(L); card.appendChild(R); list.appendChild(card);
     });
   }).catch(function(e){list.innerHTML='<div style="color:var(--red)">Error: '+e.message+'</div>';});
@@ -3792,22 +3874,21 @@ function cb_viewSession(key,isAdmin){
     if(!snap.exists()){toast('Session not found.');return;}
     var data=snap.data();
     if(isAdmin){
-      if(!confirm('Load this session onto the whiteboard?'))return;
+      if(!confirm('Load session onto whiteboard?'))return;
       cb.sessionKey=key;
-      var img=new Image();
-      img.onload=function(){if(cb.ctx){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0,cb.canvas.width,cb.canvas.height);cb.history=[cb.canvas.toDataURL()];}};
+      var img=new Image(); img.onload=function(){if(cb.ctx){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0,cb.canvas.width,cb.canvas.height);cb.history=[cb.canvas.toDataURL()];}};
       img.src=data.dataURL; cb_hideSessions(); toast('Session loaded.');
-    }else{
+    } else {
       var sv=document.getElementById('cb-student-sessions');
       var view=document.getElementById('cb-student-viewer');
       if(sv)sv.parentElement.style.display='none'; if(view)view.style.display='block';
-      var ti=document.getElementById('cb-sv-title'); if(ti)ti.textContent=data.label||data.date;
-      var me=document.getElementById('cb-sv-meta');  if(me)me.textContent=(data.topic||'General')+' &#183; Read only';
+      var ti=document.getElementById('cb-sv-title');if(ti)ti.textContent=data.label||data.date;
+      var me=document.getElementById('cb-sv-meta');if(me)me.textContent=(data.topic||'General')+' - Read only';
       var vc=document.getElementById('cb-sv-canvas');
       var W=vc?vc.parentElement.getBoundingClientRect().width:800;
       vc.width=W; vc.height=Math.floor(W*1.4142);
-      var vCtx=vc.getContext('2d');
-      var img=new Image(); img.onload=function(){vCtx.drawImage(img,0,0,vc.width,vc.height);}; img.src=data.dataURL;
+      var vCtx=vc.getContext('2d'); var img=new Image();
+      img.onload=function(){vCtx.drawImage(img,0,0,vc.width,vc.height);}; img.src=data.dataURL;
     }
   });
 }
@@ -3817,37 +3898,69 @@ function cb_closeStudentViewer(){
   if(sv)sv.parentElement.style.display='block'; if(view)view.style.display='none';
 }
 function cb_deleteSession(key){
-  if(!confirm('Delete this session permanently?'))return; if(!window.FB)return;
+  if(!confirm('Delete this session?'))return; if(!window.FB)return;
   window.FB.deleteDoc(window.FB.doc(window.FB.db,'whiteboards',key))
     .then(function(){toast('Deleted.');cb_loadSessions(true);})
     .catch(function(){toast('Could not delete.');});
 }
 function cb_loadStudentSessions(){ cb_loadSessions(false); }
-
-
-// ════════════ PAGE ROUTING — override for new modules ════════════
-(function(){
-  var _orig = goPage;
-  goPage = function(id, btn) {
-    _orig(id, btn);
-    if (id==='sims') {
-      requestAnimationFrame(function(){ try{buildGrid('sims-grid');}catch(e){} });
-    }
-    if (id==='home') {
-      requestAnimationFrame(function(){ try{buildGrid('home-grid');}catch(e){} });
-    }
-    if (id==='papers') {
-      requestAnimationFrame(function(){ try{pp_init();}catch(e){console.error('pp_init:',e);} });
-    }
-    if (id==='classboard') {
-      requestAnimationFrame(function(){ try{initClassboard();}catch(e){console.error('classboard:',e);} });
-    }
-    if (id==='teacher') {
-      setTimeout(function(){ try{renderDashboard();}catch(e){console.error('teacher:',e);} }, 80);
-    }
-  };
-})();
-
 </script>
+
+<footer style="background:var(--s1);border-top:1px solid var(--border);padding:1.5rem 1rem;text-align:center;margin-top:2rem">
+  <div style="font-family:var(--head);font-size:1rem;font-weight:700;margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
+  <div style="font-size:.8rem;color:var(--dim);margin-bottom:.3rem">Designed &amp; curated by <strong style="color:var(--text)">Aishwarya Priya</strong> &middot; IGCSE Chemistry Educator</div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">&copy; 2026 Aishwarya Priya. All rights reserved. &middot; atomedge.pro</div>
+  <div style="font-size:.75rem;color:var(--dim2);margin-bottom:.4rem">All content, question papers and simulations are original works created for educational purposes.</div>
+  <div style="font-size:.8rem;color:var(--dim)">Made with <span style="display:inline-block;animation:hb .6s infinite alternate">&#128147;</span> for every curious student</div>
+</footer>
+</div>
 </body>
+</html>function pp_print(showMS) {
+  if (!pp_currentPaper) return;
+  if (showMS && (!window._fbUser || window._fbUser.email !== ADMIN_EMAIL)) {
+    toast('Mark schemes are for teachers only.'); return;
+  }
+  var tmp = document.createElement('div');
+  tmp.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px';
+  tmp.id = '__pp_tmp__';
+  document.body.appendChild(tmp);
+  pp_renderContent(pp_currentPaper, '__pp_tmp__', showMS);
+  var content = tmp.innerHTML;
+  document.body.removeChild(tmp);
+
+  var win = window.open('', '_blank');
+  if (!win) { toast('Pop-ups blocked — please allow pop-ups.'); return; }
+
+  var p = pp_currentPaper;
+  var title = (showMS ? 'Mark Scheme' : 'Practice Paper') + ' - ' + p.title;
+  var css = [
+    '* { box-sizing:border-box; margin:0; padding:0; }',
+    'body { font-family:"Segoe UI",Arial,sans-serif; font-size:11pt; color:#111; padding:1.5cm 2cm; line-height:1.7; }',
+    '.pp-q-wrap { margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid #ddd; page-break-inside:avoid; }',
+    '.pp-q-head { display:flex; align-items:baseline; gap:.75rem; padding:.4rem .75rem; background:#f5f5f5; border-left:3px solid #0077cc; margin-bottom:.75rem; }',
+    '.pp-q-num { font-weight:700; color:#0077cc; }',
+    '.pp-q-marks { margin-left:auto; font-size:.75rem; color:#888; }',
+    '.pp-part { margin:.6rem 0 .6rem 1.25rem; }',
+    '.pp-part-label { font-weight:600; margin-bottom:.25rem; }',
+    '.pp-part-q { margin-bottom:.4rem; }',
+    '.pp-ans-line { border-bottom:1px solid #ccc; height:24px; margin:3px 0; }',
+    '.pp-ms-box { background:#f0fff4; border:1px solid #4caf50; border-radius:4px; padding:5px 10px; color:#1b5e20; }',
+    '.pp-diagram { text-align:center; margin:.75rem 0; }',
+    'svg { max-width:100%; height:auto; }',
+    '@page { size:A4; margin:1.5cm; }'
+  ].join(' ');
+
+  var header = '<div style="border-bottom:2px solid #111;padding-bottom:.75rem;margin-bottom:1.5rem">'
+    + '<div style="font-size:13pt;font-weight:700">Atom Edge Classboard</div>'
+    + '<div style="font-size:11pt;margin-top:.25rem">' + p.title + ' - ' + p.subtitle + '</div>'
+    + '<div style="font-size:9pt;color:#666;margin-top:.25rem">' + p.difficulty + ' - ' + p.marks + ' marks - ' + p.time + ' min' + (showMS ? ' - MARK SCHEME' : '') + '</div>'
+    + '</div>';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + title + '</title>'
+    + '<style>' + css + '</style></head><body>' + header + content + '</body></html>';
+
+  win.document.write(html);
+  win.document.close();
+  setTimeout(function() { win.print(); }, 700);
+}
 </html>
