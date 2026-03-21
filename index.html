@@ -1746,7 +1746,7 @@ function goPage(id,btn){
   if(id==='sandbox')initSandbox();
   if(id==='progress'){updateXPBar();renderBadges();renderTopicGrid();renderQuizHistory();}
   if(id==='game')initGame();
-  if(id==='teacher') setTimeout(()=>{try{renderDashboard();}catch(e){}},100);
+  // teacher handled in goPage override above
   window.scrollTo(0,0);
 }
 function syncBnav(id,btn){
@@ -4074,100 +4074,7 @@ function togglePassVis() {
 }
 
 // ════════════ TEACHER ADMIN DASHBOARD (Firebase-powered) ════════════
-async function renderDashboard() {
-  const wrap = document.getElementById('dash-wrap');
-  if (!wrap) return;
-  wrap.innerHTML = '<div style="color:var(--dim);font-size:.85rem;padding:1rem">Loading student data…</div>';
-
-  let students = [];
-  try { students = await window.loadAllStudents(); } catch(e) {
-    wrap.innerHTML = '<div style="color:var(--red);font-size:.85rem;padding:1rem">Could not load students — check Firebase connection.</div>';
-    return;
-  }
-
-  const avg   = students.length ? Math.round(students.reduce((a,s)=>a+(s.xp||0),0)/students.length) : 0;
-  const topStreak = students.length ? Math.max(...students.map(s=>s.streak||0)) : 0;
-
-  wrap.innerHTML = `
-    <div class="sec-hd"><h2>👩‍🏫 Teacher Dashboard</h2><div class="sec-line"></div></div>
-    <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Live student data from Firebase. Add new student accounts below.</p>
-
-    <div class="dash-stats" id="dash-stats">
-      ${[{n:students.length,l:'Students'},{n:avg,l:'Avg XP'},{n:topStreak,l:'Top Streak'},{n:students.filter(s=>(s.quizHistory||[]).length>0).length,l:'Took Exam'}]
-        .map(s=>`<div class="dstat"><div class="dn">${s.n}</div><div class="dl">${s.l}</div></div>`).join('')}
-    </div>
-
-    <div class="sec-hd"><h2>Student Progress</h2><div class="sec-line"></div></div>
-    <div style="overflow-x:auto">
-      <table class="student-table">
-        <thead><tr><th>Name</th><th>XP</th><th>Progress</th><th>Streak</th><th>Labs Done</th><th>Exams</th></tr></thead>
-        <tbody>
-          ${students.map(s => {
-            const maxXP = 5000, pct = Math.min(100, Math.round((s.xp||0)/maxXP*100));
-            const col = pct>=60?'var(--green)':pct>=30?'var(--yellow)':'var(--red)';
-            const labs = Object.keys(s.topicVisits||{}).length;
-            const exams = (s.quizHistory||[]).length;
-            const lastExam = exams ? (s.quizHistory[exams-1].pct+'%') : '—';
-            return `<tr>
-              <td style="font-weight:500">${s.name||s.email}</td>
-              <td style="font-family:var(--mono);color:var(--cyan)">${s.xp||0}</td>
-              <td><div class="perf-bar"><div class="perf-fill" style="width:${pct}%;background:${col}"></div></div></td>
-              <td>🔥${s.streak||0}</td>
-              <td>${labs}/18</td>
-              <td>${lastExam}</td>
-            </tr>`;
-          }).join('')}
-          ${students.length===0?'<tr><td colspan="6" style="text-align:center;color:var(--dim);padding:1.5rem">No students yet — add one below.</td></tr>':''}
-        </tbody>
-      </table>
-    </div>
-
-    <div style="display:flex;gap:.65rem;margin-top:1.25rem;flex-wrap:wrap">
-      <button class="btn green" onclick="exportStudentReport(${JSON.stringify(students.map(s=>({name:s.name||s.email,xp:s.xp||0,streak:s.streak||0,labs:Object.keys(s.topicVisits||{}).length,exams:(s.quizHistory||[]).length})))})">📊 Export CSV</button>
-      <button class="btn" onclick="copyAssignLink()">🔗 Assignment Link</button>
-    </div>
-
-    <div class="sec-hd" style="margin-top:1.5rem"><h2>Add New Student</h2><div class="sec-line"></div></div>
-    <div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:.75rem">
-        <div>
-          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em">Student Name</label>
-          <input id="new-name" type="text" placeholder="e.g. Priya Sharma" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.55rem .75rem;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none">
-        </div>
-        <div>
-          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em">Email</label>
-          <input id="new-email" type="email" placeholder="priya@example.com" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.55rem .75rem;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none">
-        </div>
-        <div>
-          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em">Password</label>
-          <input id="new-pass" type="text" placeholder="min 6 characters" style="width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.55rem .75rem;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none">
-        </div>
-      </div>
-      <div id="add-student-err" style="color:var(--red);font-size:.78rem;margin-bottom:.5rem;min-height:1rem"></div>
-      <button class="btn green" onclick="addStudent()">➕ Create Student Account</button>
-      <div id="hw-list" style="margin-top:.75rem"></div>
-    </div>`;
-}
-
-async function addStudent() {
-  const name  = document.getElementById('new-name').value.trim();
-  const email = document.getElementById('new-email').value.trim();
-  const pass  = document.getElementById('new-pass').value.trim();
-  const errEl = document.getElementById('add-student-err');
-  errEl.textContent = '';
-  if (!name || !email || !pass) { errEl.textContent = 'All fields required.'; return; }
-  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; return; }
-  try {
-    await window.createStudentAccount(name, email, pass);
-    toast(`✅ Student account created for ${name}`);
-    // Clear fields and refresh
-    ['new-name','new-email','new-pass'].forEach(id => document.getElementById(id).value = '');
-    setTimeout(() => renderDashboard(), 500);
-  } catch(e) {
-    errEl.textContent = e.message || 'Could not create account.';
-  }
-}
-
+async 
 function exportStudentReport(students) {
   const lines = ['Name,XP,Streak,Labs Done,Exams Taken'];
   students.forEach(s => lines.push(`${s.name},${s.xp},${s.streak},${s.labs},${s.exams}`));
@@ -4177,83 +4084,7 @@ function exportStudentReport(students) {
   toast('Report downloaded 📊');
 }
 
-function copyAssignLink() {
-  navigator.clipboard?.writeText(window.location.href).catch(()=>{});
-  toast('App link copied! Share with students 🔗');
-}
 
-function printWorksheet() { window.print(); }
-
-// Show user chip in header after login
-
-
-
-// ════════════ HOME PAGE RENDERING ════════════
-
-const TOPIC_CATEGORIES = [
-  {id:'acids',name:'Acids & Bases',icon:'⚗️',color:'#00e5ff',topics:['Acids & Bases']},
-  {id:'atoms',name:'Atomic Structure',icon:'⚛️',color:'#00e5a0',topics:['Atomic Structure']},
-  {id:'bonding',name:'Chemical Bonding',icon:'🔗',color:'#ffd93d',topics:['Chemical Bonding']},
-  {id:'states',name:'States of Matter',icon:'🌡️',color:'#ffd93d',topics:['States of Matter']},
-  {id:'metals',name:'Metals & Reactivity',icon:'⚙️',color:'#ff8c00',topics:['Metals & Reactivity']},
-  {id:'electro',name:'Electrochemistry',icon:'⚡',color:'#ff6b35',topics:['Electrochemistry']},
-  {id:'organic',name:'Organic Chemistry',icon:'🧬',color:'#ff8c00',topics:['Organic Chemistry']},
-  {id:'sep',name:'Separation',icon:'🔬',color:'#b388ff',topics:['Separation']},
-  {id:'rates',name:'Rates & Equilibrium',icon:'📈',color:'#ff4757',topics:['Rates of Reaction','Reversible Reactions']},
-  {id:'industrial',name:'Industrial Chemistry',icon:'🏭',color:'#00e5a0',topics:['Industrial Chemistry']},
-  {id:'energetics',name:'Energetics',icon:'🔥',color:'#ff4757',topics:['Energetics']},
-  {id:'quant',name:'Quantitative Chem',icon:'🔢',color:'#b388ff',topics:['Quantitative Chemistry']},
-];
-
-const FEATURED_IDS = ['acid_base','electrolysis','atom_model','haber','energetics','organic_series','gas_tests','moles'];
-
-function buildHomePage() {
-  const catGrid = document.getElementById('topic-cat-grid');
-  if (!catGrid) return;
-  catGrid.innerHTML = '';
-  TOPIC_CATEGORIES.forEach(cat => {
-    const sims = EXPS.filter(e => cat.topics.includes(e.topic));
-    const done = sims.filter(e => topicVisits[e.id]).length;
-    const pct  = sims.length ? Math.round(done/sims.length*100) : 0;
-    const d = document.createElement('div');
-    d.className = 'topic-cat';
-    d.style.setProperty('--tc', cat.color);
-    d.innerHTML = `
-      <div class="tc-icon">${cat.icon}</div>
-      <div class="tc-name">${cat.name}</div>
-      <div class="tc-count">${sims.length} lab${sims.length!==1?'s':''} · ${pct}% done</div>
-      <div class="tc-prog"><div class="tc-prog-fill" style="width:${pct}%;background:${cat.color}"></div></div>`;
-    d.onclick = () => {
-      goPage('sims', document.querySelectorAll('.ntab')[2]);
-      syncBnav('sims', document.querySelectorAll('.bnav-btn')[2]);
-      filterSimsByCategory(cat.topics);
-    };
-    catGrid.appendChild(d);
-  });
-
-  // Featured grid
-  const featGrid = document.getElementById('featured-grid');
-  if (featGrid) {
-    featGrid.innerHTML = '';
-    FEATURED_IDS.map(id => EXPS.find(e => e.id === id)).filter(Boolean).forEach(e => {
-      featGrid.appendChild(makeCard(e));
-    });
-  }
-
-  // Continue learning — show last 3 visited that aren't complete
-  const visited = Object.keys(topicVisits);
-  const continueSec = document.getElementById('continue-sec');
-  const continueGrid = document.getElementById('continue-grid');
-  if (continueSec && continueGrid && visited.length > 0) {
-    const recent = visited.slice(-3).reverse().map(id => EXPS.find(e => e.id === id)).filter(Boolean);
-    if (recent.length > 0) {
-      continueSec.style.display = 'block';
-      if (!continueGrid) return;
-      continueGrid.innerHTML = '';
-      recent.forEach(e => continueGrid.appendChild(makeCard(e)));
-    }
-  }
-}
 
 // Filter simulations page by category topics
 function filterSimsByCategory(topics) {
@@ -4324,8 +4155,11 @@ const _origGoPage = goPage;
 goPage = function(id, btn) {
   _origGoPage(id, btn);
   requestAnimationFrame(() => {
-    if (id === 'home') { try { buildHomePage(); } catch(e) {} }
-    if (id === 'sims') { try { buildCatPills(); buildSimsPage(); } catch(e) {} }
+    if (id === 'home')       { try { buildHomePage(); } catch(e) {} }
+    if (id === 'sims')       { try { buildCatPills(); buildSimsPage(); } catch(e) {} }
+    if (id === 'papers')     { try { initPapersPage(); } catch(e) { console.warn('papers:', e); } }
+    if (id === 'classboard') { try { initClassboard(); } catch(e) { console.warn('classboard:', e); } }
+    if (id === 'teacher')    { try { renderDashboard(); } catch(e) { console.warn('teacher:', e); } }
   });
 };
 
