@@ -629,7 +629,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
     <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
     <button class="ntab" id="nav-teacher" onclick="goPage('teacher',this)" style="display:none">Teacher</button>
-    <button class="ntab" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
   <div class="hbtns">
     <span class="hbadge">IGCSE · Gr 9–10</span>
@@ -1192,7 +1191,1527 @@ const EXPS=[
   {id:'rates',topic:'Rates of Reaction',name:'Rate of Reaction',desc:'Heat reactions and observe collision frequency.',tags:['Rate','Temperature'],color:'#ff4757',render:renderRates},
   {id:'combustion',topic:'Organic Chemistry',name:'Combustion of Hydrocarbons',desc:'Compare complete vs incomplete combustion.',tags:['Combustion','CO₂'],color:'#ff8c00',render:renderCombust},
   {id:'distillation',topic:'Separation',name:'Fractional Distillation',desc:'Separate crude oil fractions by boiling point.',tags:['Fractions','Crude Oil'],color:'#b388ff',render:renderDistil},
-];
+,
+  // ── New Simulations Batch 2 ──
+  {id:'diffusion',topic:'States of Matter',name:'Diffusion',desc:'Watch particles diffuse across a barrier from high to low concentration.',tags:['Kinetic Theory','Concentration'],color:'#ffd93d',render:renderDiffusion},
+  {id:'isotopes',topic:'Atomic Structure',name:'Isotopes',desc:'Compare isotopes of Carbon — same protons, different neutrons.',tags:['Isotopes','Mass Number'],color:'#00e5ff',render:renderIsotopes},
+  {id:'group1',topic:'Periodic Table',name:'Group 1 — Alkali Metals',desc:'See how Li, Na and K react differently with water.',tags:['Group 1','Reactivity'],color:'#ffd93d',render:renderGroup1},
+  {id:'group7',topic:'Periodic Table',name:'Group 7 — Halogens',desc:'Properties and displacement reactions of halogens.',tags:['Group 7','Displacement'],color:'#7fff6b',render:renderGroup7},
+  {id:'metallic_bond',topic:'Bonding',name:'Metallic Bonding',desc:'Sea of delocalised electrons in a metal lattice.',tags:['Metallic','Conductivity'],color:'#ffd93d',render:renderMetallicBond},
+  {id:'dot_cross',topic:'Bonding',name:'Dot & Cross Diagrams',desc:'Electron sharing in H₂, HCl, NaCl and H₂O.',tags:['Covalent','Ionic','Electrons'],color:'#ff6b35',render:renderDotCross},
+  {id:'moles',topic:'Stoichiometry',name:'Mole Calculations',desc:'Interactive mole calculator — mass, moles, molar mass.',tags:['Moles','Avogadro'],color:'#7fff6b',render:renderMoles},
+  {id:'limiting_reagent',topic:'Stoichiometry',name:'Limiting Reagent',desc:'See which reactant limits the reaction with visual bars.',tags:['Limiting','Stoichiometry'],color:'#ff6b35',render:renderLimitingReagent},
+  {id:'electroplating',topic:'Electricity & Chemistry',name:'Electroplating',desc:'Coat objects with copper, silver or gold using electrolysis.',tags:['Electroplating','Electrolysis'],color:'#ffd93d',render:renderElectroplating},
+  {id:'bond_energy',topic:'Energetics',name:'Bond Energy Calculations',desc:'Calculate ΔH using bonds broken and formed.',tags:['Bond Energy','Enthalpy'],color:'#ff6b35',render:renderBondEnergy},
+  {id:'brine',topic:'Electricity & Chemistry',name:'Electrolysis of Brine',desc:'Produce Cl₂, H₂ and NaOH from salt solution.',tags:['Brine','Chlorine'],color:'#7fff6b',render:renderBrine},
+  {id:'greenhouse',topic:'Air & Water',name:'Greenhouse Effect',desc:'See how CO₂ and CH₄ trap heat and cause global warming.',tags:['Climate','CO2'],color:'#00e5ff',render:renderGreenhouse},
+  {id:'water_purification',topic:'Air & Water',name:'Water Purification',desc:'Sedimentation, filtration and chlorination step by step.',tags:['Water','Purification'],color:'#00e5ff',render:renderWaterPurification},
+  {id:'alkanes',topic:'Organic Chemistry',name:'Alkanes',desc:'Explore the homologous series from methane to octane.',tags:['Alkanes','Hydrocarbons'],color:'#b388ff',render:renderAlkanes},
+  {id:'alkenes',topic:'Organic Chemistry',name:'Alkenes & Addition Reactions',desc:'C=C double bond and addition of Br₂, H₂ and H₂O.',tags:['Alkenes','Addition'],color:'#b388ff',render:renderAlkenes},
+  {id:'fermentation',topic:'Organic Chemistry',name:'Fermentation',desc:'Watch glucose ferment to ethanol and CO₂ with yeast.',tags:['Fermentation','Ethanol'],color:'#b388ff',render:renderFermentation},
+  {id:'cracking',topic:'Organic Chemistry',name:'Cracking',desc:'Break long-chain alkanes into shorter useful molecules.',tags:['Cracking','Alkenes'],color:'#b388ff',render:renderCracking},
+  {id:'haber',topic:'Equilibrium',name:'Haber Process',desc:'Adjust temperature and pressure to optimise NH₃ yield.',tags:['Haber','Ammonia'],color:'#7fff6b',render:renderHaber},
+  {id:'contact_process',topic:'Equilibrium',name:'Contact Process',desc:'4 steps from sulfur to sulfuric acid.',tags:['Contact Process','H2SO4'],color:'#ffd93d',render:renderContactProcess},
+  {id:'alloys',topic:'Metals',name:'Alloys',desc:'Why alloys are harder than pure metals — lattice disruption.',tags:['Alloys','Steel'],color:'#888',render:renderAlloys},
+  {id:'corrosion',topic:'Metals',name:'Corrosion Prevention',desc:'6 methods to protect iron from rusting.',tags:['Rusting','Prevention'],color:'#ff6b35',render:renderCorrosion},
+  {id:'yield_purity',topic:'Stoichiometry',name:'% Yield & Purity',desc:'Calculate percentage yield and percentage purity.',tags:['Yield','Purity'],color:'#7fff6b',render:renderYieldPurity},
+  {id:'acid_rain',topic:'Air & Water',name:'Acid Rain',desc:'Formation of acid rain from SO₂ and NOₓ and its effects.',tags:['Acid Rain','Pollution'],color:'#ff4444',render:renderAcidRain},
+  {id:'giant_covalent',topic:'Bonding',name:'Giant Covalent Structures',desc:'Diamond, graphite and silicon dioxide — structure and properties.',tags:['Diamond','Graphite'],color:'#00e5ff',render:renderGiantCovalent},
+  {id:'empirical',topic:'Stoichiometry',name:'Empirical Formula Calculator',desc:'Work out empirical formula from % composition step by step.',tags:['Empirical','Formula'],color:'#ffd93d',render:renderEmpirical}];
+
+// ════════════ NEW SIMULATIONS ════════════
+
+// 19. DIFFUSION
+function renderDiffusion(el){
+  el.innerHTML='';
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Diffusion:</b> Particles move from high concentration to low concentration (down the concentration gradient).';el.appendChild(info);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var particles=[];
+  // Left side: red particles, Right side: blue particles
+  for(var i=0;i<60;i++){
+    particles.push({x:Math.random()*320+20,y:Math.random()*260+20,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,col:'#ff6b35',r:6});
+    particles.push({x:Math.random()*320+360,y:Math.random()*260+20,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2,col:'#00e5ff',r:6});
+  }
+  var barrier=true, t=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var removeBtn=document.createElement('button');removeBtn.className='btn green';removeBtn.textContent='Remove Barrier';
+  removeBtn.onclick=function(){barrier=false;removeBtn.disabled=true;removeBtn.textContent='Diffusing...';};
+  ctrl.appendChild(removeBtn);el.insertBefore(ctrl,cv);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Labels
+    ctx.fillStyle='rgba(255,107,53,0.1)';ctx.fillRect(0,0,350,H);
+    ctx.fillStyle='rgba(0,229,255,0.1)';ctx.fillRect(350,0,350,H);
+    ctx.fillStyle='#ff6b35';ctx.font='12px monospace';ctx.fillText('High [Red]',20,20);
+    ctx.fillStyle='#00e5ff';ctx.fillText('High [Blue]',500,20);
+    if(barrier){
+      ctx.strokeStyle='#ffd93d';ctx.lineWidth=3;ctx.setLineDash([8,4]);
+      ctx.beginPath();ctx.moveTo(350,0);ctx.lineTo(350,H);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#ffd93d';ctx.font='11px monospace';ctx.fillText('BARRIER',310,H/2);
+    }
+    t++;
+    particles.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(!barrier){p.vx+=(Math.random()-0.5)*0.3;p.vy+=(Math.random()-0.5)*0.3;}
+      if(barrier){if(p.col==='#ff6b35'&&p.x>344){p.vx*=-1;}if(p.col==='#00e5ff'&&p.x<356){p.vx*=-1;}}
+      if(p.x<p.r||p.x>W-p.r)p.vx*=-1;
+      if(p.y<p.r||p.y>H-p.r)p.vy*=-1;
+      p.vx=Math.max(-3,Math.min(3,p.vx));p.vy=Math.max(-3,Math.min(3,p.vy));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();
+    });
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 20. ISOTOPES
+function renderIsotopes(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Isotopes</b> are atoms of the same element with the same number of protons but <em>different</em> numbers of neutrons.';el.appendChild(info);
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 320');svg.setAttribute('width','100%');svg.setAttribute('height','320');el.appendChild(svg);
+  var isotopes=[
+    {name:'Carbon-12',symbol:'¹²C',protons:6,neutrons:6,electrons:6,abundance:'98.9%',col:'#00e5ff'},
+    {name:'Carbon-13',symbol:'¹³C',protons:6,neutrons:7,electrons:6,abundance:'1.1%',col:'#7fff6b'},
+    {name:'Carbon-14',symbol:'¹⁴C',protons:6,neutrons:8,electrons:6,abundance:'trace',col:'#ffd93d'},
+  ];
+  function drawAtom(svg,cx,cy,r,protons,neutrons,col){
+    // Nucleus
+    var nucR=protons*2.5+8;
+    for(var p=0;p<Math.min(protons,8);p++){
+      var a=(2*Math.PI*p/Math.min(protons,8));
+      var nx=cx+Math.cos(a)*nucR*0.5,ny=cy+Math.sin(a)*nucR*0.5;
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',nx);c.setAttribute('cy',ny);c.setAttribute('r',5);c.setAttribute('fill','#ff6b35');svg.appendChild(c);
+    }
+    for(var n=0;n<Math.min(neutrons,9);n++){
+      var a=(2*Math.PI*n/Math.min(neutrons,9))+0.3;
+      var nx=cx+Math.cos(a)*nucR*0.5+3,ny=cy+Math.sin(a)*nucR*0.5+3;
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',nx);c.setAttribute('cy',ny);c.setAttribute('r',5);c.setAttribute('fill','#888');svg.appendChild(c);
+    }
+    // Shells
+    var shells=[2,4];
+    shells.forEach(function(count,si){
+      var sr=r*(si+1)*0.45+20;
+      var circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circ.setAttribute('cx',cx);circ.setAttribute('cy',cy);circ.setAttribute('r',sr);
+      circ.setAttribute('fill','none');circ.setAttribute('stroke','#1d3347');circ.setAttribute('stroke-dasharray','4,3');svg.appendChild(circ);
+      for(var e=0;e<count;e++){
+        var ea=(2*Math.PI*e/count)-Math.PI/2;
+        var ec=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        ec.setAttribute('cx',cx+sr*Math.cos(ea));ec.setAttribute('cy',cy+sr*Math.sin(ea));ec.setAttribute('r',4);ec.setAttribute('fill',col);svg.appendChild(ec);
+      }
+    });
+  }
+  isotopes.forEach(function(iso,i){
+    var cx=117+i*233,cy=140;
+    // Box
+    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',cx-100);rect.setAttribute('y',20);rect.setAttribute('width',200);rect.setAttribute('height',280);
+    rect.setAttribute('rx',10);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',iso.col);rect.setAttribute('stroke-width','1.5');svg.appendChild(rect);
+    // Name
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',cx);t.setAttribute('y',45);t.setAttribute('text-anchor','middle');t.setAttribute('fill',iso.col);t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=iso.name;svg.appendChild(t);
+    drawAtom(svg,cx,cy+20,60,iso.protons,iso.neutrons,iso.col);
+    // Stats
+    var stats=[['Protons',iso.protons,'#ff6b35'],['Neutrons',iso.neutrons,'#888'],['Electrons',iso.electrons,iso.col],['Abundance',iso.abundance,'#ffd93d']];
+    stats.forEach(function(s,si){
+      var t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t1.setAttribute('x',cx-80);t1.setAttribute('y',235+si*17);t1.setAttribute('fill',s[2]);t1.setAttribute('font-size','11');t1.textContent=s[0]+': '+s[1];svg.appendChild(t1);
+    });
+  });
+  // Same element label
+  var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',350);t.setAttribute('y',310);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#5a8aa0');t.setAttribute('font-size','11');t.textContent='Same element (6 protons) — different mass numbers — isotopes of Carbon';svg.appendChild(t);
+}
+
+// 21. GROUP 1 METALS
+function renderGroup1(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Group 1 (Alkali Metals)</b> react vigorously with water, producing hydrogen gas and a metal hydroxide. Reactivity increases down the group.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var metals=[{name:'Lithium (Li)',col:'#ff6b35',speed:1,size:12},{name:'Sodium (Na)',col:'#ffd93d',speed:2.5,size:16},{name:'Potassium (K)',col:'#ff4444',speed:5,size:20}];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  metals.forEach(function(m,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=m.name;
+    b.onclick=function(){sel=i;bubbles=[];metalY=80;reacted=false;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.insertBefore(ctrl,cv);
+  var bubbles=[],metalY=80,reacted=false;
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Water
+    ctx.fillStyle='rgba(0,100,200,0.25)';ctx.fillRect(50,120,600,160);
+    ctx.strokeStyle='#1a5a8a';ctx.lineWidth=2;ctx.strokeRect(50,120,600,160);
+    ctx.fillStyle='#5a8aa0';ctx.font='12px monospace';ctx.fillText('Water (H₂O)',60,135);
+    // Metal piece
+    var m=metals[sel];
+    ctx.fillStyle=m.col;ctx.beginPath();ctx.roundRect(W/2-m.size,metalY,m.size*2,m.size*2,4);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText(m.name.split(' ')[0],W/2,metalY+m.size+4);ctx.textAlign='left';
+    if(!reacted){metalY+=m.speed*0.5;}
+    if(metalY>108&&!reacted){reacted=true;}
+    if(reacted){
+      metalY+=0.3;
+      // Generate bubbles
+      if(Math.random()<0.3*m.speed){bubbles.push({x:W/2+(Math.random()-0.5)*60,y:metalY+m.size,vy:-1-Math.random()*m.speed*0.5,r:2+Math.random()*4});}
+    }
+    bubbles=bubbles.filter(function(b){return b.y>0;});
+    bubbles.forEach(function(b){
+      b.y+=b.vy;b.x+=(Math.random()-0.5)*0.5;
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1;ctx.stroke();
+    });
+    // Equation
+    ctx.fillStyle='#e8f4f8';ctx.font='13px monospace';ctx.fillText('2'+m.name.split(' ')[1].replace('(','').replace(')','')+'  +  2H₂O  →  2'+m.name.split(' ')[1].replace('(','').replace(')','')+' OH  +  H₂↑',180,30);
+    // Reactivity indicator
+    var barW=Math.min(m.speed*80,400);
+    ctx.fillStyle='#1d3347';ctx.fillRect(50,260,400,16);
+    ctx.fillStyle=m.col;ctx.fillRect(50,260,barW,16);
+    ctx.fillStyle='#e8f4f8';ctx.font='11px sans-serif';ctx.fillText('Reactivity',50,255);
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 22. GROUP 7 HALOGENS
+function renderGroup7(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Group 7 (Halogens)</b>: Reactivity <em>decreases</em> down the group. A more reactive halogen displaces a less reactive one from its salt solution.';el.appendChild(info);
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 340');svg.setAttribute('width','100%');svg.setAttribute('height','340');el.appendChild(svg);
+  var halogens=[
+    {name:'Fluorine (F₂)',state:'pale yellow gas',col:'#ffffaa',reactivity:4,bp:'-188°C',use:'Toothpaste'},
+    {name:'Chlorine (Cl₂)',state:'yellow-green gas',col:'#aaff88',reactivity:3,bp:'-34°C',use:'Water treatment'},
+    {name:'Bromine (Br₂)',state:'red-brown liquid',col:'#cc4400',reactivity:2,bp:'59°C',use:'Photography'},
+    {name:'Iodine (I₂)',state:'grey-black solid',col:'#440044',reactivity:1,bp:'184°C',use:'Antiseptic'},
+  ];
+  // Draw table
+  var headers=['Halogen','State','Boiling Pt','Use','Reactivity'];
+  var colX=[10,150,310,410,550];
+  // Header
+  var headRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  headRect.setAttribute('x',5);headRect.setAttribute('y',5);headRect.setAttribute('width',690);headRect.setAttribute('height',28);headRect.setAttribute('fill','#132333');svg.appendChild(headRect);
+  headers.forEach(function(h,i){
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',colX[i]+5);t.setAttribute('y',23);t.setAttribute('fill','#00e5ff');t.setAttribute('font-size','11');t.setAttribute('font-weight','bold');t.textContent=h;svg.appendChild(t);
+  });
+  halogens.forEach(function(hal,i){
+    var y=40+i*45;
+    var bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    bg.setAttribute('x',5);bg.setAttribute('y',y-5);bg.setAttribute('width',690);bg.setAttribute('height',40);
+    bg.setAttribute('fill',i%2===0?'#0d1a24':'#0a1520');svg.appendChild(bg);
+    // Color swatch
+    var sw=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    sw.setAttribute('x',colX[0]+5);sw.setAttribute('y',y+2);sw.setAttribute('width',16);sw.setAttribute('height',16);
+    sw.setAttribute('fill',hal.col);sw.setAttribute('rx',3);svg.appendChild(sw);
+    var texts=[[hal.name,colX[0]+26],[hal.state,colX[1]],[hal.bp,colX[2]],[hal.use,colX[3]]];
+    texts.forEach(function(tx){
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',tx[1]+5);t.setAttribute('y',y+14);t.setAttribute('fill','#e8f4f8');t.setAttribute('font-size','10');t.textContent=tx[0];svg.appendChild(t);
+    });
+    // Reactivity bar
+    var barW=hal.reactivity*25;
+    var br=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    br.setAttribute('x',colX[4]+5);br.setAttribute('y',y+2);br.setAttribute('width',barW);br.setAttribute('height',14);
+    br.setAttribute('fill',hal.col);br.setAttribute('rx',3);svg.appendChild(br);
+  });
+  // Displacement diagram
+  var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',350);t.setAttribute('y',230);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#00e5ff');t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent='Displacement Reactions';svg.appendChild(t);
+  var reactions=[
+    {eq:'Cl₂ + 2KBr → 2KCl + Br₂',result:'Orange/brown colour appears',works:true},
+    {eq:'Br₂ + 2KI → 2KBr + I₂',result:'Brown/black colour appears',works:true},
+    {eq:'I₂ + 2KCl → No reaction',result:'No change observed',works:false},
+  ];
+  reactions.forEach(function(rx,i){
+    var y=250+i*28;
+    var col=rx.works?'#7fff6b':'#ff4444';
+    var t1=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t1.setAttribute('x',30);t1.setAttribute('y',y);t1.setAttribute('fill',col);t1.setAttribute('font-size','11');t1.setAttribute('font-family','monospace');t1.textContent=(rx.works?'✓ ':'✗ ')+rx.eq;svg.appendChild(t1);
+    var t2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t2.setAttribute('x',30);t2.setAttribute('y',y+13);t2.setAttribute('fill','#5a8aa0');t2.setAttribute('font-size','9');t2.textContent='  → '+rx.result;svg.appendChild(t2);
+  });
+}
+
+// 23. METALLIC BONDING
+function renderMetallicBond(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Metallic Bonding:</b> Metal ions (cations) in a lattice surrounded by a "sea" of delocalised electrons. This explains electrical conductivity, malleability, and high melting points.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  // Metal ion lattice
+  var ions=[];
+  for(var row=0;row<5;row++){for(var col=0;col<8;col++){ions.push({x:80+col*78,y:60+row*50});}}
+  // Electrons
+  var electrons=[];
+  for(var i=0;i<40;i++){electrons.push({x:Math.random()*640+30,y:Math.random()*220+30,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3});}
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Draw lattice connections
+    ctx.strokeStyle='rgba(0,229,255,0.1)';ctx.lineWidth=1;
+    ions.forEach(function(ion,i){
+      ions.forEach(function(ion2,j){
+        if(j>i){var d=Math.hypot(ion.x-ion2.x,ion.y-ion2.y);if(d<90){ctx.beginPath();ctx.moveTo(ion.x,ion.y);ctx.lineTo(ion2.x,ion2.y);ctx.stroke();}}
+      });
+    });
+    // Draw ions
+    ions.forEach(function(ion){
+      ctx.beginPath();ctx.arc(ion.x,ion.y,18,0,Math.PI*2);
+      var g=ctx.createRadialGradient(ion.x-5,ion.y-5,2,ion.x,ion.y,18);
+      g.addColorStop(0,'#2a4a6a');g.addColorStop(1,'#0d1a24');
+      ctx.fillStyle=g;ctx.fill();
+      ctx.strokeStyle='#00e5ff';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#00e5ff';ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.fillText('M⁺',ion.x,ion.y+4);
+    });
+    ctx.textAlign='left';
+    // Draw electrons
+    electrons.forEach(function(e){
+      e.x+=e.vx;e.y+=e.vy;
+      if(e.x<20||e.x>W-20)e.vx*=-1;
+      if(e.y<20||e.y>H-20)e.vy*=-1;
+      ctx.beginPath();ctx.arc(e.x,e.y,3,0,Math.PI*2);ctx.fillStyle='#ffd93d';ctx.fill();
+    });
+    // Label
+    ctx.fillStyle='#ffd93d';ctx.font='11px sans-serif';ctx.fillText('● Delocalised electrons (free to move → conducts electricity)',30,H-10);
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 24. DOT AND CROSS DIAGRAMS
+function renderDotCross(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Dot-and-Cross diagrams</b> show how electrons are shared (covalent) or transferred (ionic) between atoms.';el.appendChild(info);
+  var molecules=[
+    {name:'H₂ (Covalent)',type:'cov'},
+    {name:'HCl (Covalent)',type:'hcl'},
+    {name:'NaCl (Ionic)',type:'nacl'},
+    {name:'H₂O (Covalent)',type:'water'},
+  ];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var cv=document.createElement('canvas');cv.width=700;cv.height=280;
+  molecules.forEach(function(m,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=m.name;
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.appendChild(ctrl);el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=280;
+  function drawElectron(x,y,type){
+    ctx.beginPath();
+    if(type==='dot'){ctx.arc(x,y,4,0,Math.PI*2);ctx.fillStyle='#ff6b35';ctx.fill();}
+    else{ctx.strokeStyle='#00e5ff';ctx.lineWidth=1.5;ctx.moveTo(x-4,y-4);ctx.lineTo(x+4,y+4);ctx.moveTo(x+4,y-4);ctx.lineTo(x-4,y+4);ctx.stroke();}
+  }
+  function drawAtomCircle(x,y,r,label,col){
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=col;ctx.font='bold 14px monospace';ctx.textAlign='center';ctx.fillText(label,x,y+5);
+  }
+  function render(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    ctx.textAlign='left';
+    var mol=molecules[sel];
+    ctx.fillStyle='#e8f4f8';ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText(mol.name,W/2,30);
+    if(mol.type==='cov'){
+      // H2: two H atoms sharing 1 pair
+      drawAtomCircle(240,140,55,'H','#ff6b35');
+      drawAtomCircle(460,140,55,'H','#00e5ff');
+      // Shared electrons
+      drawElectron(330,130,'dot');drawElectron(330,150,'cross');
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='12px sans-serif';ctx.fillText('Shared pair = covalent bond',350,220);
+      ctx.fillText('Each H now has 2 electrons (full shell)',350,240);
+    } else if(mol.type==='hcl'){
+      drawAtomCircle(220,140,55,'H','#ff6b35');
+      drawAtomCircle(480,140,70,'Cl','#7fff6b');
+      // H lone electron
+      drawElectron(268,130,'dot');
+      // Cl electrons (7 outer)
+      var clAngles=[0.5,1.0,1.5,2.5,3.0,3.5];
+      clAngles.forEach(function(a,i){drawElectron(480+65*Math.cos(a),140+65*Math.sin(a),'cross');});
+      drawElectron(310,130,'dot');drawElectron(310,150,'cross');
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='12px sans-serif';ctx.fillText('H donates 1 electron to share with Cl',350,230);
+    } else if(mol.type==='nacl'){
+      // Na loses electron → Na⁺, Cl gains → Cl⁻
+      drawAtomCircle(200,140,55,'Na⁺','#ffd93d');
+      drawAtomCircle(500,140,65,'Cl⁻','#7fff6b');
+      // Arrow showing transfer
+      ctx.strokeStyle='#ff4444';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(258,130);ctx.lineTo(432,130);ctx.stroke();
+      ctx.fillStyle='#ff4444';ctx.beginPath();ctx.moveTo(432,130);ctx.lineTo(422,125);ctx.lineTo(422,135);ctx.fill();
+      ctx.fillStyle='#ff4444';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText('electron transferred',350,118);
+      // Cl- electrons (8)
+      for(var i=0;i<8;i++){
+        var a=i*Math.PI/4;
+        drawElectron(500+60*Math.cos(a),140+60*Math.sin(a),i<7?'cross':'dot');
+      }
+      ctx.fillStyle='#5a8aa0';ctx.font='12px sans-serif';ctx.fillText('Ionic bond: electrostatic attraction between Na⁺ and Cl⁻',350,230);
+      ctx.fillText('Na: 2,8,1 → 2,8  |  Cl: 2,8,7 → 2,8,8',350,248);
+    } else if(mol.type==='water'){
+      drawAtomCircle(350,130,65,'O','#00e5ff');
+      drawAtomCircle(200,210,45,'H','#ff6b35');
+      drawAtomCircle(500,210,45,'H','#ff6b35');
+      // Bonds
+      var bonds=[[290,165,220,200],[410,165,480,200]];
+      bonds.forEach(function(b){
+        ctx.strokeStyle='#5a8aa0';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(b[0],b[1]);ctx.lineTo(b[2],b[3]);ctx.stroke();
+        drawElectron(b[0]-10,b[1],'dot');drawElectron(b[0]+4,b[1]+8,'cross');
+      });
+      // Lone pairs on O
+      drawElectron(330,70,'dot');drawElectron(345,70,'dot');
+      drawElectron(355,70,'dot');drawElectron(370,70,'dot');
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='12px sans-serif';ctx.fillText('O forms 2 bonds + has 2 lone pairs | Bond angle: 104.5°',350,270);
+    }
+    ctx.textAlign='left';
+  }
+  function loop(){render();_raf=requestAnimationFrame(loop);}
+  loop();
+}
+
+// 25. MOLE CALCULATIONS
+function renderMoles(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>The Mole:</b> 1 mole = 6.02×10²³ particles (Avogadro\'s number). Moles = Mass ÷ Molar Mass';el.appendChild(info);
+  var container=document.createElement('div');container.style.cssText='padding:1rem;background:var(--s1);border-radius:12px;';
+  // Triangle diagram
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 200');svg.setAttribute('width','100%');svg.setAttribute('height','200');
+  // Triangle
+  var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points','350,20 180,170 520,170');poly.setAttribute('fill','none');poly.setAttribute('stroke','#00e5ff');poly.setAttribute('stroke-width','2');svg.appendChild(poly);
+  // Dividing line
+  var line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1','180');line.setAttribute('y1','170');line.setAttribute('x2','520');line.setAttribute('y2','170');svg.setAttribute('y1','170');
+  var hLine=document.createElementNS('http://www.w3.org/2000/svg','line');
+  hLine.setAttribute('x1','265');hLine.setAttribute('y1','95');hLine.setAttribute('x2','435');hLine.setAttribute('y2','95');
+  hLine.setAttribute('stroke','#00e5ff');hLine.setAttribute('stroke-width','2');svg.appendChild(hLine);
+  var vLine=document.createElementNS('http://www.w3.org/2000/svg','line');
+  vLine.setAttribute('x1','350');vLine.setAttribute('y1','95');vLine.setAttribute('x2','350');vLine.setAttribute('y2','170');
+  vLine.setAttribute('stroke','#00e5ff');vLine.setAttribute('stroke-width','2');svg.appendChild(vLine);
+  var labels=[{t:'MASS (g)',x:350,y:60,col:'#ffd93d'},{t:'MOLES (n)',x:265,y:140,col:'#7fff6b'},{t:'MOLAR MASS (g/mol)',x:430,y:140,col:'#ff6b35'}];
+  labels.forEach(function(l){
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',l.x);t.setAttribute('y',l.y);t.setAttribute('text-anchor','middle');t.setAttribute('fill',l.col);t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=l.t;svg.appendChild(t);
+  });
+  container.appendChild(svg);
+  // Calculator
+  var calc=document.createElement('div');calc.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem;';
+  var fields=['Mass (g)','Moles (n)','Molar Mass (g/mol)'];
+  var inputs=[];
+  fields.forEach(function(f,i){
+    var wrap=document.createElement('div');
+    var label=document.createElement('label');label.textContent=f;label.style.cssText='font-size:.8rem;color:var(--dim);display:block;margin-bottom:.3rem;';
+    var inp=document.createElement('input');inp.type='number';inp.placeholder='?';
+    inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:8px;font-size:1rem;';
+    inputs.push(inp);wrap.appendChild(label);wrap.appendChild(inp);calc.appendChild(wrap);
+  });
+  var result=document.createElement('div');result.style.cssText='margin-top:1rem;padding:.75rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:1rem;min-height:2.5rem;';
+  var calcBtn=document.createElement('button');calcBtn.className='btn green';calcBtn.textContent='Calculate';
+  calcBtn.onclick=function(){
+    var mass=parseFloat(inputs[0].value),moles=parseFloat(inputs[1].value),mm=parseFloat(inputs[2].value);
+    var filled=[!isNaN(mass),!isNaN(moles),!isNaN(mm)];
+    if(filled[0]&&filled[2]&&!filled[1]){result.textContent='Moles = '+mass+' ÷ '+mm+' = '+(mass/mm).toFixed(4)+' mol';}
+    else if(filled[1]&&filled[2]&&!filled[0]){result.textContent='Mass = '+moles+' × '+mm+' = '+(moles*mm).toFixed(4)+' g';}
+    else if(filled[0]&&filled[1]&&!filled[2]){result.textContent='Molar Mass = '+mass+' ÷ '+moles+' = '+(mass/moles).toFixed(4)+' g/mol';}
+    else{result.textContent='Enter exactly TWO values to calculate the third.';}
+  };
+  container.appendChild(calc);container.appendChild(calcBtn);container.appendChild(result);
+  // Common molar masses
+  var commonEl=document.createElement('div');commonEl.style.cssText='margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem;';
+  var common=[['H₂O',18],['CO₂',44],['NaCl',58.5],['CaCO₃',100],['H₂SO₄',98],['HCl',36.5],['NaOH',40],['NH₃',17]];
+  common.forEach(function(c){
+    var tag=document.createElement('span');tag.style.cssText='background:var(--s2);border:1px solid var(--border);padding:.25rem .6rem;border-radius:20px;font-size:.8rem;cursor:pointer;color:#00e5ff;';
+    tag.textContent=c[0]+' = '+c[1]+' g/mol';
+    tag.onclick=function(){inputs[2].value=c[1];};
+    commonEl.appendChild(tag);
+  });
+  container.appendChild(commonEl);
+  el.appendChild(container);
+}
+
+// 26. LIMITING REAGENT
+function renderLimitingReagent(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Limiting Reagent:</b> The reactant that runs out first, stopping the reaction. The other is in excess.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var ctrl=document.createElement('div');ctrl.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:.5rem 0;';
+  var molA=1,molB=1;
+  function makeSlider(label,col,onChange){
+    var wrap=document.createElement('div');
+    var lbl=document.createElement('label');lbl.style.cssText='font-size:.8rem;color:'+col+';display:block;';
+    var sl=document.createElement('input');sl.type='range';sl.min=1;sl.max=10;sl.value=3;sl.style.width='100%';
+    sl.oninput=function(){lbl.textContent=label+': '+sl.value+' mol';onChange(parseInt(sl.value));};
+    lbl.textContent=label+': 3 mol';
+    wrap.appendChild(lbl);wrap.appendChild(sl);return wrap;
+  }
+  // Reaction: 2H2 + O2 → 2H2O
+  ctrl.appendChild(makeSlider('H₂ (mol)','#ff6b35',function(v){molA=v;}));
+  ctrl.appendChild(makeSlider('O₂ (mol)','#00e5ff',function(v){molB=v;}));
+  el.insertBefore(ctrl,cv);
+  function draw(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Reaction info
+    ctx.fillStyle='#e8f4f8';ctx.font='14px monospace';ctx.textAlign='center';
+    ctx.fillText('2H₂  +  O₂  →  2H₂O',W/2,30);
+    ctx.fillText('Ratio: 2 : 1',W/2,52);
+    // Stoichiometry: need 2× H2 per O2
+    var neededH2=molB*2, neededO2=molA/2;
+    var limiting='',excess='',made=0;
+    if(molA<neededH2){limiting='H₂';excess='O₂';made=molA;}
+    else if(molA>neededH2){limiting='O₂';excess='H₂';made=molB*2;}
+    else{limiting='Both (exact)';excess='None';made=molA;}
+    // Draw bars
+    var barData=[{label:'H₂ available',val:molA,max:10,col:'#ff6b35',y:90},
+                 {label:'H₂ needed',val:neededH2,max:10,col:'rgba(255,107,53,0.3)',y:115},
+                 {label:'O₂ available',val:molB,max:10,col:'#00e5ff',y:150},
+                 {label:'O₂ needed',val:neededO2,max:10,col:'rgba(0,229,255,0.3)',y:175}];
+    barData.forEach(function(b){
+      ctx.fillStyle='#1d3347';ctx.fillRect(200,b.y,400,18);
+      ctx.fillStyle=b.col;ctx.fillRect(200,b.y,Math.min(b.val/10*400,400),18);
+      ctx.fillStyle='#e8f4f8';ctx.textAlign='left';ctx.font='11px sans-serif';ctx.fillText(b.label,10,b.y+13);
+      ctx.textAlign='right';ctx.fillText(Math.min(b.val,10).toFixed(1)+' mol',610,b.y+13);
+    });
+    // Result
+    ctx.textAlign='center';
+    ctx.fillStyle=limiting==='Both (exact)'?'#7fff6b':'#ff4444';
+    ctx.font='bold 14px sans-serif';ctx.fillText('Limiting Reagent: '+limiting,W/2,230);
+    ctx.fillStyle='#5a8aa0';ctx.font='12px sans-serif';
+    ctx.fillText('H₂O produced: '+made.toFixed(1)+' mol',W/2,255);
+    ctx.fillText('Excess reagent: '+excess,W/2,275);
+    ctx.textAlign='left';
+  }
+  function loop(){draw();_raf=requestAnimationFrame(loop);}
+  loop();
+}
+
+// 27. ELECTROPLATING
+function renderElectroplating(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Electroplating:</b> Coating an object with metal using electrolysis. The object = cathode. The plating metal = anode. The electrolyte contains ions of the plating metal.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=320;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=320;
+  var t=0,coating=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var metals=[{name:'Copper plating',col:'#cc6622',ionCol:'#ff8844',ion:'Cu²⁺'},{name:'Silver plating',col:'#cccccc',ionCol:'#aaaaaa',ion:'Ag⁺'},{name:'Gold plating',col:'#ffd700',ionCol:'#ffcc00',ion:'Au³⁺'}];
+  var sel=0;
+  metals.forEach(function(m,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=m.name;
+    b.onclick=function(){sel=i;coating=0;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.insertBefore(ctrl,cv);
+  var ions=[];
+  for(var i=0;i<20;i++)ions.push({x:Math.random()*500+100,y:Math.random()*180+90,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*1.5});
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    var m=metals[sel];
+    // Electrolyte solution
+    ctx.fillStyle='rgba(0,100,150,0.1)';ctx.fillRect(80,80,540,200);
+    ctx.strokeStyle='#1d3347';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(80,80);ctx.lineTo(80,280);ctx.lineTo(620,280);ctx.lineTo(620,80);ctx.stroke();
+    // Anode (left) - dissolves
+    ctx.fillStyle=m.col;ctx.fillRect(110,70,30,220);
+    ctx.fillStyle='#e8f4f8';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText('ANODE (+)',125,60);ctx.fillText('dissolves',125,310);
+    // Cathode (right) - gains coating
+    var coatThick=Math.min(coating/5,20);
+    ctx.fillStyle='#888';ctx.fillRect(560,70,30,220); // base metal
+    ctx.fillStyle=m.col;ctx.fillRect(560-coatThick,70,coatThick,220); // coating
+    ctx.fillStyle='#e8f4f8';ctx.fillText('CATHODE (-)',575,60);ctx.fillText('coated',575,310);
+    // Battery
+    ctx.fillStyle='#1d3347';ctx.fillRect(285,20,130,30);ctx.strokeStyle='#ffd93d';ctx.lineWidth=2;ctx.strokeRect(285,20,130,30);
+    ctx.fillStyle='#ffd93d';ctx.fillText('Battery',350,40);
+    ctx.strokeStyle='#888';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(125,70);ctx.lineTo(125,35);ctx.lineTo(285,35);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(575,70);ctx.lineTo(575,35);ctx.lineTo(415,35);ctx.stroke();
+    // + and - signs
+    ctx.fillStyle='#ff6b35';ctx.font='bold 16px monospace';ctx.fillText('+',293,40);
+    ctx.fillStyle='#00e5ff';ctx.fillText('−',400,40);
+    // Moving ions
+    t++;coating+=0.05;
+    ions.forEach(function(ion){
+      ion.x-=Math.abs(ion.vx)*0.8; // drift toward cathode
+      ion.y+=ion.vy*0.3;
+      if(ion.x<150)ion.x=500+Math.random()*60;
+      if(ion.y<85)ion.vy=Math.abs(ion.vy);
+      if(ion.y>270)ion.vy=-Math.abs(ion.vy);
+      ctx.beginPath();ctx.arc(ion.x,ion.y,5,0,Math.PI*2);ctx.fillStyle=m.ionCol;ctx.fill();
+      ctx.fillStyle=m.ionCol;ctx.font='9px monospace';ctx.textAlign='left';ctx.fillText(m.ion,ion.x+6,ion.y+3);
+    });
+    // Coating thickness meter
+    ctx.fillStyle='#1d3347';ctx.fillRect(W/2-60,H-40,120,14);
+    ctx.fillStyle=m.col;ctx.fillRect(W/2-60,H-40,Math.min(coatThick*6,120),14);
+    ctx.fillStyle='#e8f4f8';ctx.textAlign='center';ctx.font='10px sans-serif';ctx.fillText('Coating thickness',W/2,H-28);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 28. BOND ENERGIES
+function renderBondEnergy(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Bond Energies:</b> Energy is <em>required</em> to break bonds (endothermic) and <em>released</em> when bonds form (exothermic). ΔH = Energy in − Energy out';el.appendChild(info);
+  var container=document.createElement('div');container.style.cssText='padding:1rem;';
+  // Reaction selector
+  var reactions=[
+    {name:'H₂ + Cl₂ → 2HCl',broken:[{bond:'H-H',e:436},{bond:'Cl-Cl',e:243}],formed:[{bond:'H-Cl×2',e:862}]},
+    {name:'CH₄ + 2O₂ → CO₂ + 2H₂O',broken:[{bond:'C-H×4',e:1652},{bond:'O=O×2',e:996}],formed:[{bond:'C=O×2',e:1486},{bond:'O-H×4',e:1856}]},
+    {name:'N₂ + 3H₂ → 2NH₃',broken:[{bond:'N≡N',e:945},{bond:'H-H×3',e:1308}],formed:[{bond:'N-H×6',e:2322}]},
+  ];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  reactions.forEach(function(r,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=r.name;
+    b.onclick=function(){sel=i;draw();ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  container.appendChild(ctrl);
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 240');svg.setAttribute('width','100%');svg.setAttribute('height','240');
+  container.appendChild(svg);
+  function draw(){
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    var r=reactions[sel];
+    var energyIn=r.broken.reduce(function(a,b){return a+b.e;},0);
+    var energyOut=r.formed.reduce(function(a,b){return a+b.e;},0);
+    var dH=energyIn-energyOut;
+    var isExo=dH<0;
+    // Title
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',350);t.setAttribute('y',20);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#e8f4f8');t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=r.name;svg.appendChild(t);
+    // Bonds broken column
+    var brkT=document.createElementNS('http://www.w3.org/2000/svg','text');
+    brkT.setAttribute('x',100);brkT.setAttribute('y',45);brkT.setAttribute('text-anchor','middle');brkT.setAttribute('fill','#ff6b35');brkT.setAttribute('font-size','11');brkT.setAttribute('font-weight','bold');brkT.textContent='Bonds BROKEN (energy IN)';svg.appendChild(brkT);
+    var y=65;
+    r.broken.forEach(function(b){
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',100);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#ff8844');t.setAttribute('font-size','11');t.textContent=b.bond+': +'+b.e+' kJ/mol';svg.appendChild(t);y+=20;
+    });
+    var totalBrkT=document.createElementNS('http://www.w3.org/2000/svg','text');
+    totalBrkT.setAttribute('x',100);totalBrkT.setAttribute('y',y+5);totalBrkT.setAttribute('text-anchor','middle');totalBrkT.setAttribute('fill','#ff6b35');totalBrkT.setAttribute('font-size','12');totalBrkT.setAttribute('font-weight','bold');totalBrkT.textContent='Total IN: +'+energyIn+' kJ/mol';svg.appendChild(totalBrkT);
+    // Bonds formed column
+    var frmT=document.createElementNS('http://www.w3.org/2000/svg','text');
+    frmT.setAttribute('x',580);frmT.setAttribute('y',45);frmT.setAttribute('text-anchor','middle');frmT.setAttribute('fill','#7fff6b');frmT.setAttribute('font-size','11');frmT.setAttribute('font-weight','bold');frmT.textContent='Bonds FORMED (energy OUT)';svg.appendChild(frmT);
+    y=65;
+    r.formed.forEach(function(b){
+      var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',580);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#88ff88');t.setAttribute('font-size','11');t.textContent=b.bond+': −'+b.e+' kJ/mol';svg.appendChild(t);y+=20;
+    });
+    var totalFrmT=document.createElementNS('http://www.w3.org/2000/svg','text');
+    totalFrmT.setAttribute('x',580);totalFrmT.setAttribute('y',y+5);totalFrmT.setAttribute('text-anchor','middle');totalFrmT.setAttribute('fill','#7fff6b');totalFrmT.setAttribute('font-size','12');totalFrmT.setAttribute('font-weight','bold');totalFrmT.textContent='Total OUT: −'+energyOut+' kJ/mol';svg.appendChild(totalFrmT);
+    // ΔH result
+    var dhCol=isExo?'#7fff6b':'#ff6b35';
+    var dhRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    dhRect.setAttribute('x',250);dhRect.setAttribute('y',180);dhRect.setAttribute('width',200);dhRect.setAttribute('height',50);
+    dhRect.setAttribute('rx',8);dhRect.setAttribute('fill','#132333');dhRect.setAttribute('stroke',dhCol);dhRect.setAttribute('stroke-width','2');svg.appendChild(dhRect);
+    var dhT=document.createElementNS('http://www.w3.org/2000/svg','text');
+    dhT.setAttribute('x',350);dhT.setAttribute('y',202);dhT.setAttribute('text-anchor','middle');dhT.setAttribute('fill',dhCol);dhT.setAttribute('font-size','13');dhT.setAttribute('font-weight','bold');dhT.textContent='ΔH = '+(dH>0?'+':'')+dH+' kJ/mol';svg.appendChild(dhT);
+    var dhT2=document.createElementNS('http://www.w3.org/2000/svg','text');
+    dhT2.setAttribute('x',350);dhT2.setAttribute('y',222);dhT2.setAttribute('text-anchor','middle');dhT2.setAttribute('fill',dhCol);dhT2.setAttribute('font-size','11');dhT2.textContent=isExo?'EXOTHERMIC ▼':'ENDOTHERMIC ▲';svg.appendChild(dhT2);
+    // Arrow between columns
+    var arr=document.createElementNS('http://www.w3.org/2000/svg','text');
+    arr.setAttribute('x',350);arr.setAttribute('y',100);arr.setAttribute('text-anchor','middle');arr.setAttribute('fill','#5a8aa0');arr.setAttribute('font-size','24');arr.textContent='⇄';svg.appendChild(arr);
+  }
+  draw();
+  el.appendChild(container);
+}
+
+// 29. ELECTROLYSIS OF BRINE
+function renderBrine(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Electrolysis of Brine (NaCl solution)</b> produces 3 important products: Chlorine gas (anode), Hydrogen gas (cathode), Sodium hydroxide solution (NaOH).';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=320;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=320;
+  var cathBubbles=[],anodeBubbles=[],t=0;
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t++;
+    // Solution
+    ctx.fillStyle='rgba(100,150,200,0.12)';ctx.fillRect(60,80,580,200);
+    ctx.strokeStyle='#1d3347';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(60,80);ctx.lineTo(60,280);ctx.lineTo(640,280);ctx.lineTo(640,80);ctx.stroke();
+    // NaOH label in solution
+    ctx.fillStyle='rgba(127,255,107,0.15)';ctx.fillRect(250,150,200,100);
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='12px monospace';ctx.fillText('NaOH solution',350,200);ctx.fillText('(remains)',350,215);
+    // Cathode
+    ctx.fillStyle='#5a8aa0';ctx.fillRect(100,70,20,220);
+    ctx.fillStyle='#00e5ff';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText('CATHODE (−)',110,60);
+    ctx.fillText('2H⁺+2e⁻→H₂',110,300);
+    // Anode
+    ctx.fillStyle='#5a8aa0';ctx.fillRect(580,70,20,220);
+    ctx.fillStyle='#7fff6b';ctx.fillText('ANODE (+)',590,60);
+    ctx.fillText('2Cl⁻→Cl₂+2e⁻',590,300);
+    // Battery
+    ctx.fillStyle='#1d3347';ctx.fillRect(290,15,120,30);ctx.strokeStyle='#ffd93d';ctx.lineWidth=2;ctx.strokeRect(290,15,120,30);
+    ctx.fillStyle='#ffd93d';ctx.fillText('Battery',350,35);
+    ctx.strokeStyle='#888';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(110,70);ctx.lineTo(110,30);ctx.lineTo(290,30);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(590,70);ctx.lineTo(590,30);ctx.lineTo(410,30);ctx.stroke();
+    // H2 bubbles at cathode
+    if(t%8===0)cathBubbles.push({x:110+Math.random()*10-5,y:260,r:3+Math.random()*3,vy:-1.2-Math.random()});
+    cathBubbles=cathBubbles.filter(function(b){return b.y>60;});
+    cathBubbles.forEach(function(b){b.y+=b.vy;b.x+=(Math.random()-0.5)*0.5;
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle='rgba(0,229,255,0.7)';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    // Cl2 bubbles at anode
+    if(t%10===0)anodeBubbles.push({x:590+Math.random()*10-5,y:260,r:4+Math.random()*3,vy:-1+Math.random()*-0.5});
+    anodeBubbles=anodeBubbles.filter(function(b){return b.y>60;});
+    anodeBubbles.forEach(function(b){b.y+=b.vy;b.x+=(Math.random()-0.5)*0.5;
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle='rgba(127,255,107,0.7)';ctx.lineWidth=1.5;ctx.stroke();
+    });
+    // Gas labels above
+    ctx.fillStyle='#00e5ff';ctx.font='bold 12px monospace';ctx.fillText('H₂ gas',75,72);
+    ctx.fillStyle='#7fff6b';ctx.fillText('Cl₂ gas',565,72);
+    // Uses
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.textAlign='left';
+    ctx.fillText('Uses: bleach, PVC',30,H-5);
+    ctx.textAlign='center';ctx.fillText('Use: cleaning agent',350,H-5);
+    ctx.textAlign='right';ctx.fillText('Use: water treatment',W-10,H-5);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 30. GREENHOUSE EFFECT
+function renderGreenhouse(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Greenhouse Effect:</b> CO₂, CH₄ and H₂O vapour trap heat radiating from Earth\'s surface, warming the planet. Enhanced greenhouse effect = global warming.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=320;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=320;
+  var rays=[],t=0;
+  // Solar rays coming in
+  for(var i=0;i<8;i++)rays.push({x:50+i*80,y:0,vy:2,type:'solar',col:'#ffd93d',bounced:false,bx:0,by:0,bvy:0});
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t++;
+    // Space
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,120);
+    // Atmosphere band
+    ctx.fillStyle='rgba(0,150,100,0.15)';ctx.fillRect(0,100,W,60);
+    ctx.strokeStyle='rgba(0,200,150,0.3)';ctx.lineWidth=1;ctx.strokeRect(0,100,W,60);
+    ctx.fillStyle='#00c880';ctx.textAlign='center';ctx.font='11px sans-serif';
+    ctx.fillText('ATMOSPHERE (CO₂, CH₄, H₂O)',W/2,128);
+    // Earth surface
+    var grad=ctx.createLinearGradient(0,160,0,H);
+    grad.addColorStop(0,'#1a4a1a');grad.addColorStop(1,'#0a2a0a');
+    ctx.fillStyle=grad;ctx.fillRect(0,160,W,H-160);
+    ctx.fillStyle='#2a8a2a';ctx.font='12px sans-serif';ctx.fillText('Earth\'s Surface',W/2,200);
+    // Sun
+    ctx.beginPath();ctx.arc(60,50,30,0,Math.PI*2);
+    var sg=ctx.createRadialGradient(60,50,5,60,50,30);
+    sg.addColorStop(0,'#ffd93d');sg.addColorStop(1,'#ff8800');
+    ctx.fillStyle=sg;ctx.fill();
+    ctx.fillStyle='#ffd93d';ctx.font='bold 11px sans-serif';ctx.fillText('SUN',46,53);
+    // Animate rays
+    if(t%30===0&&rays.filter(function(r){return r.type==='solar'&&!r.bounced;}).length<5){
+      rays.push({x:80+Math.random()*540,y:0,vy:2.5,type:'solar',col:'#ffd93d',bounced:false});
+    }
+    rays.forEach(function(r,i){
+      if(!r.bounced){
+        r.y+=r.vy;
+        ctx.strokeStyle=r.col;ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(r.x,r.y-15);ctx.lineTo(r.x,r.y);ctx.stroke();
+        if(r.y>158){r.bounced=true;r.bx=r.x;r.by=158;r.bvy=-1.5;r.col='#ff6b35';}
+      } else {
+        r.by+=r.bvy;r.bx+=(Math.random()-0.5)*0.5;
+        ctx.strokeStyle=r.col;ctx.lineWidth=1.5;
+        ctx.beginPath();ctx.moveTo(r.bx,r.by);ctx.lineTo(r.bx,r.by+10);ctx.stroke();
+        // Trapped by atmosphere
+        if(r.by<130&&r.by>100){
+          r.bvy=Math.abs(r.bvy)*0.8+1; // bounce back down
+          r.col='#ff4444';
+          // Small heat dot
+          ctx.beginPath();ctx.arc(r.bx,r.by,3,0,Math.PI*2);ctx.fillStyle='rgba(255,100,0,0.5)';ctx.fill();
+        }
+        if(r.by<0||r.by>H)rays.splice(i,1);
+      }
+    });
+    // Legend
+    ctx.fillStyle='#ffd93d';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText('→ Solar radiation',10,H-30);
+    ctx.fillStyle='#ff6b35';ctx.fillText('→ Infrared radiation from Earth',10,H-15);
+    ctx.fillStyle='#ff4444';ctx.textAlign='right';ctx.fillText('Trapped heat = Global Warming',W-10,H-15);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 31. WATER PURIFICATION
+function renderWaterPurification(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Water Purification:</b> Sedimentation → Filtration → Chlorination. This removes solids, bacteria, and makes water safe to drink.';el.appendChild(info);
+  var stages=[
+    {name:'1. Sedimentation',desc:'Large solids settle to bottom by gravity',icon:'⬇️',col:'#8B6914',detail:'Aluminium sulfate (alum) is added to cause small particles to clump together (flocculation) and sink.'},
+    {name:'2. Filtration',desc:'Water passes through sand and gravel layers',icon:'🔍',col:'#5a8aa0',detail:'Multi-layer filter: gravel (large particles), coarse sand, fine sand. Removes suspended particles.'},
+    {name:'3. Chlorination',desc:'Chlorine added to kill bacteria & microbes',icon:'🧪',col:'#7fff6b',detail:'Cl₂ dissolves in water to form HClO (hypochlorous acid) which kills bacteria. pH is also adjusted.'},
+    {name:'4. Safe Water',desc:'Clean, safe drinking water',icon:'💧',col:'#00e5ff',detail:'Water is tested for pH (6.5-8.5), turbidity, and bacteria counts before being distributed.'},
+  ];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem;';
+  stages.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.style.cssText='padding:.5rem;background:'+(i===0?s.col:'var(--s1)')+';border:1px solid '+(i===0?s.col:'var(--border)')+';border-radius:8px;color:var(--text);cursor:pointer;font-size:.8rem;text-align:center;';
+    b.innerHTML=s.icon+'<br>'+s.name.split('.')[1];
+    b.onclick=function(){
+      sel=i;
+      ctrl.querySelectorAll('button').forEach(function(x,j){
+        x.style.background=j===i?stages[j].col:'var(--s1)';
+        x.style.borderColor=j===i?stages[j].col:'var(--border)';
+      });
+      updateInfo();
+    };
+    ctrl.appendChild(b);
+  });
+  el.appendChild(ctrl);
+  var infoDiv=document.createElement('div');infoDiv.style.cssText='padding:1.25rem;background:var(--s1);border-radius:12px;border-left:4px solid var(--accent);';
+  var cv=document.createElement('canvas');cv.width=700;cv.height=200;
+  el.appendChild(infoDiv);el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=200;
+  function updateInfo(){
+    var s=stages[sel];
+    infoDiv.style.borderColor=s.col;
+    infoDiv.innerHTML='<div style="font-weight:bold;color:'+s.col+';margin-bottom:.5rem">'+s.name+'</div>'+
+      '<div style="color:var(--text);margin-bottom:.5rem">'+s.desc+'</div>'+
+      '<div style="color:var(--dim);font-size:.85rem">'+s.detail+'</div>';
+  }
+  updateInfo();
+  function draw(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Draw flow diagram
+    stages.forEach(function(s,i){
+      var x=30+i*168,w=140,h=120,y=40;
+      // Tank
+      ctx.strokeStyle=i===sel?s.col:'#1d3347';ctx.lineWidth=i===sel?2.5:1.5;
+      ctx.fillStyle='rgba(0,0,0,0.3)';
+      ctx.beginPath();ctx.roundRect(x,y,w,h,6);ctx.fill();ctx.stroke();
+      // Fill based on stage
+      if(i===0){ctx.fillStyle='rgba(139,105,20,0.3)';ctx.fillRect(x+2,y+40,w-4,h-42);}
+      else if(i===1){
+        ctx.fillStyle='rgba(150,150,100,0.4)';ctx.fillRect(x+2,y+60,w-4,30);
+        ctx.fillStyle='rgba(200,200,150,0.4)';ctx.fillRect(x+2,y+90,w-4,h-92);
+        ctx.fillStyle='rgba(90,138,160,0.2)';ctx.fillRect(x+2,y+2,w-4,60);
+      }
+      else if(i===2){ctx.fillStyle='rgba(127,255,107,0.15)';ctx.fillRect(x+2,y+2,w-4,h-4);}
+      else{ctx.fillStyle='rgba(0,229,255,0.15)';ctx.fillRect(x+2,y+2,w-4,h-4);}
+      // Icon + name
+      ctx.fillStyle=i===sel?s.col:'#5a8aa0';ctx.textAlign='center';ctx.font='11px sans-serif';
+      ctx.fillText(s.name,x+w/2,y-8);
+      ctx.font='20px sans-serif';ctx.fillText(s.icon,x+w/2,y+h/2);
+      // Arrow
+      if(i<3){
+        ctx.fillStyle='#5a8aa0';ctx.font='18px sans-serif';ctx.fillText('→',x+w+5,y+h/2+7);
+      }
+    });
+    ctx.textAlign='left';
+  }
+  draw();
+}
+
+// 32. ALKANES
+function renderAlkanes(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Alkanes</b> are saturated hydrocarbons with the general formula CₙH₂ₙ₊₂. They contain only C-C single bonds. Used as fuels.';el.appendChild(info);
+  var alkanes=[
+    {name:'Methane',formula:'CH₄',n:1,bp:-161,state:'gas',use:'Natural gas'},
+    {name:'Ethane',formula:'C₂H₆',n:2,bp:-89,state:'gas',use:'Fuel'},
+    {name:'Propane',formula:'C₃H₈',n:3,bp:-42,state:'gas',use:'LPG'},
+    {name:'Butane',formula:'C₄H₁₀',n:4,bp:-1,state:'gas',use:'Lighters'},
+    {name:'Pentane',formula:'C₅H₁₂',n:5,bp:36,state:'liquid',use:'Solvent'},
+    {name:'Octane',formula:'C₈H₁₈',n:8,bp:126,state:'liquid',use:'Petrol'},
+  ];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.style.cssText='display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;';
+  alkanes.forEach(function(a,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');
+    b.textContent=a.name;
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';drawSel();};
+    ctrl.appendChild(b);
+  });
+  el.appendChild(ctrl);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=280;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=280;
+  function drawAtom(x,y,label,col,r){
+    ctx.beginPath();ctx.arc(x,y,r||18,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.fillText(label,x,y+4);
+  }
+  function drawBond(x1,y1,x2,y2){
+    ctx.strokeStyle='#5a8aa0';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  function drawSel(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    var a=alkanes[sel];
+    var n=a.n;
+    var cx=W/2-(n-1)*50, cy=140;
+    // Draw backbone C atoms and bonds
+    for(var i=0;i<n;i++){
+      var x=cx+i*100;
+      // H atoms up and down
+      drawBond(x,cy,x,cy-50);drawAtom(x,cy-60,'H','#ff6b35',14);
+      drawBond(x,cy,x,cy+50);drawAtom(x,cy+60,'H','#ff6b35',14);
+      if(i===0){drawBond(x,cy,x-50,cy);drawAtom(x-62,cy,'H','#ff6b35',14);}
+      if(i===n-1){drawBond(x,cy,x+50,cy);drawAtom(x+62,cy,'H','#ff6b35',14);}
+      if(i<n-1){drawBond(x+18,cy,x+82,cy);}
+      drawAtom(x,cy,'C','#444',22);
+    }
+    // Info panel
+    ctx.fillStyle='#e8f4f8';ctx.textAlign='center';ctx.font='bold 14px sans-serif';
+    ctx.fillText(a.name+' ('+a.formula+')',W/2,25);
+    var props=[['Formula',a.formula],['Boiling Point',a.bp+'°C'],['State at RT',a.state],['Use',a.use],['H atoms',2*a.n+2]];
+    props.forEach(function(p,i){
+      ctx.fillStyle='#5a8aa0';ctx.font='11px sans-serif';ctx.fillText(p[0]+': ',W/2-40,H-60+i*14);
+      ctx.fillStyle='#00e5ff';ctx.textAlign='left';ctx.fillText(p[1],W/2+40,H-60+i*14);
+      ctx.textAlign='center';
+    });
+    ctx.textAlign='left';
+  }
+  drawSel();
+}
+
+// 33. ALKENES & ADDITION REACTIONS
+function renderAlkenes(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Alkenes</b> are unsaturated hydrocarbons (CₙH₂ₙ) containing a C=C double bond. They undergo addition reactions and decolourise bromine water.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=310;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=310;
+  var reactions=[
+    {name:'+ Bromine water (Br₂)',product:'Dibromoethane',col:'#cc4400',result:'Orange → Colourless (decolourises)',btn:'Add Br₂'},
+    {name:'+ Hydrogen (H₂)',product:'Ethane',col:'#888',result:'Alkene → Alkane (hydrogenation)',btn:'Add H₂'},
+    {name:'+ Water (H₂O)',product:'Ethanol',col:'#00e5ff',result:'Produces alcohol (hydration)',btn:'Add H₂O'},
+  ];
+  var sel=-1;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  reactions.forEach(function(r,i){
+    var b=document.createElement('button');b.className='btn';b.textContent=r.btn;
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  var resetBtn=document.createElement('button');resetBtn.className='btn';resetBtn.textContent='Reset';resetBtn.onclick=function(){sel=-1;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});};
+  ctrl.appendChild(resetBtn);
+  el.insertBefore(ctrl,cv);
+  function drawDoubleBond(x1,y1,x2,y2){
+    ctx.strokeStyle='#ff6b35';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(x1,y1-3);ctx.lineTo(x2,y2-3);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x1,y1+3);ctx.lineTo(x2,y2+3);ctx.stroke();
+  }
+  function drawSingleBond(x1,y1,x2,y2,col){
+    ctx.strokeStyle=col||'#5a8aa0';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  function drawAtom(x,y,label,col){
+    ctx.beginPath();ctx.arc(x,y,20,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 12px monospace';ctx.textAlign='center';ctx.fillText(label,x,y+4);
+  }
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Ethene molecule
+    var c1x=250,c2x=380,cy=120;
+    drawAtom(c1x-60,cy,'H','#ff6b35');drawSingleBond(c1x-40,cy,c1x-20,cy);
+    drawAtom(c1x,cy-55,'H','#ff6b35');drawSingleBond(c1x,cy-35,c1x,cy-20);
+    drawAtom(c1x,cy,'C','#333',22);
+    drawDoubleBond(c1x+22,cy,c2x-22,cy);
+    drawAtom(c2x,cy,'C','#333',22);
+    drawAtom(c2x,cy-55,'H','#ff6b35');drawSingleBond(c2x,cy-35,c2x,cy-20);
+    drawAtom(c2x+60,cy,'H','#ff6b35');drawSingleBond(c2x+20,cy,c2x+40,cy);
+    ctx.fillStyle='#ff6b35';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Ethene (C₂H₄)',310,50);
+    ctx.fillStyle='#ffd93d';ctx.font='11px sans-serif';ctx.fillText('C=C double bond',310,68);
+    if(sel>=0){
+      var r=reactions[sel];
+      // Arrow
+      ctx.fillStyle='#5a8aa0';ctx.font='24px sans-serif';ctx.fillText('→',490,127);
+      ctx.fillStyle=r.col;ctx.font='bold 12px sans-serif';ctx.fillText(r.name,490,108);
+      // Product
+      ctx.fillStyle='#1d3347';ctx.fillRect(530,90,160,60);ctx.strokeStyle=r.col;ctx.lineWidth=2;ctx.strokeRect(530,90,160,60);
+      ctx.fillStyle=r.col;ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.fillText(r.product,610,117);
+      ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText('(addition product)',610,133);
+      // Result note
+      ctx.fillStyle='#e8f4f8';ctx.font='12px sans-serif';ctx.fillText(r.result,350,220);
+      // Test for unsaturation
+      if(sel===0){
+        ctx.fillStyle='#cc4400';ctx.fillRect(100,240,200,40);ctx.fillStyle='#fff';ctx.font='11px sans-serif';
+        ctx.fillText('Before: Orange Br₂ water',130,255);ctx.fillText('After: Colourless → Unsaturated!',110,270);
+      }
+    } else {
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='12px sans-serif';
+      ctx.fillText('Select a reaction above to see what happens to the double bond',350,220);
+      ctx.fillText('Test for C=C: Add bromine water — it decolourises if unsaturated',350,240);
+    }
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 34. FERMENTATION & ETHANOL
+function renderFermentation(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Fermentation:</b> Glucose → Ethanol + CO₂ (using yeast, 25-35°C, anaerobic). Ethanol can also be made industrially by hydration of ethene.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var bubbles=[],t=0,progress=0;
+  var running=false;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var startBtn=document.createElement('button');startBtn.className='btn green';startBtn.textContent='Start Fermentation';
+  startBtn.onclick=function(){running=!running;startBtn.textContent=running?'Pause':'Resume';};
+  var resetBtn=document.createElement('button');resetBtn.className='btn';resetBtn.textContent='Reset';
+  resetBtn.onclick=function(){running=false;progress=0;bubbles=[];startBtn.textContent='Start Fermentation';};
+  ctrl.appendChild(startBtn);ctrl.appendChild(resetBtn);
+  el.insertBefore(ctrl,cv);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    // Flask
+    ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(280,30);ctx.lineTo(280,80);ctx.lineTo(180,220);ctx.lineTo(520,220);ctx.lineTo(420,80);ctx.lineTo(420,30);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(280,30);ctx.lineTo(420,30);ctx.stroke();
+    // Liquid level (glucose solution)
+    var fillH=Math.min(progress/100*140,140);
+    ctx.save();
+    ctx.beginPath();ctx.moveTo(180,220);ctx.lineTo(520,220);ctx.lineTo(420,80);ctx.lineTo(280,80);ctx.closePath();ctx.clip();
+    var grad=ctx.createLinearGradient(0,220-fillH,0,220);
+    grad.addColorStop(0,'rgba(200,160,0,0.3)');grad.addColorStop(1,'rgba(200,160,0,0.6)');
+    ctx.fillStyle=grad;ctx.fillRect(180,220-fillH,340,fillH);
+    ctx.restore();
+    // Yeast label
+    ctx.fillStyle='#ffd93d';ctx.textAlign='center';ctx.font='11px sans-serif';ctx.fillText('Glucose solution + Yeast',350,200);
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText('25-35°C, anaerobic conditions',350,215);
+    // Bubbles (CO2)
+    if(running){
+      progress=Math.min(progress+0.2,100);
+      if(t%12===0&&fillH>10)bubbles.push({x:280+Math.random()*140,y:215-fillH+10,vy:-1-Math.random()*1.5,r:3+Math.random()*3});
+    }
+    t++;
+    bubbles=bubbles.filter(function(b){return b.y>30;});
+    bubbles.forEach(function(b){b.y+=b.vy;b.x+=(Math.random()-0.5)*0.5;
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.strokeStyle='rgba(200,200,200,0.6)';ctx.lineWidth=1;ctx.stroke();
+    });
+    // Tube to collection
+    ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(350,30);ctx.lineTo(350,10);ctx.lineTo(600,10);ctx.lineTo(600,50);ctx.stroke();
+    ctx.fillStyle='#888';ctx.font='10px sans-serif';ctx.fillText('CO₂ gas →',450,8);
+    // Equation
+    ctx.fillStyle='#e8f4f8';ctx.font='13px monospace';
+    ctx.fillText('C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂',160,260);
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText('glucose         ethanol    carbon dioxide',185,275);
+    // Progress bar
+    ctx.fillStyle='#1d3347';ctx.fillRect(30,240,120,14);
+    ctx.fillStyle='#ffd93d';ctx.fillRect(30,240,progress*1.2,14);
+    ctx.fillStyle='#e8f4f8';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText('Progress: '+Math.round(progress)+'%',30,230);
+    if(progress>=100){
+      ctx.fillStyle='#7fff6b';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText('Fermentation Complete! Ethanol produced.',350,50);
+    }
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 35. CRACKING
+function renderCracking(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Cracking:</b> Long-chain alkanes are broken into shorter, more useful molecules (alkanes + alkenes) using high temperature and a catalyst (Al₂O₃ or SiO₂).';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var particles=[],t=0,cracking=false,done=false;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var crackBtn=document.createElement('button');crackBtn.className='btn green';crackBtn.textContent='Heat + Catalyst → Crack!';
+  crackBtn.onclick=function(){cracking=true;crackBtn.disabled=true;};
+  var resetBtn=document.createElement('button');resetBtn.className='btn';resetBtn.textContent='Reset';
+  resetBtn.onclick=function(){cracking=false;done=false;particles=[];crackBtn.disabled=false;t=0;};
+  ctrl.appendChild(crackBtn);ctrl.appendChild(resetBtn);
+  el.insertBefore(ctrl,cv);
+  // Long chain molecule
+  var chain=[];for(var i=0;i<12;i++)chain.push({x:80+i*46,y:150,col:'#888'});
+  var broken=false,breakT=0;
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t++;
+    if(cracking&&t>60)broken=true;
+    if(broken)breakT++;
+    // Catalyst/heat visual
+    if(cracking){
+      ctx.fillStyle='rgba(255,100,0,'+Math.abs(Math.sin(t*0.1))*0.2+')';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#ff6b35';ctx.textAlign='center';ctx.font='12px sans-serif';ctx.fillText('⚡ Heat: ~500°C + Al₂O₃ catalyst',W/2,20);
+    }
+    if(!broken){
+      // Draw long chain
+      ctx.fillStyle='#8B8B00';ctx.textAlign='center';ctx.font='12px sans-serif';ctx.fillText('Long-chain alkane (C₁₂H₂₆) — heavy fuel oil',W/2,50);
+      for(var i=0;i<chain.length;i++){
+        if(i<chain.length-1){ctx.strokeStyle='#5a8aa0';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(chain[i].x+16,chain[i].y);ctx.lineTo(chain[i+1].x-16,chain[i+1].y);ctx.stroke();}
+        ctx.beginPath();ctx.arc(chain[i].x,chain[i].y,16,0,Math.PI*2);ctx.fillStyle='#444';ctx.fill();ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+        ctx.fillStyle='#aaa';ctx.font='bold 9px monospace';ctx.fillText('C',chain[i].x,chain[i].y+3);
+      }
+    } else {
+      // Split into 3 products
+      var sep=Math.min(breakT*2,80);
+      var products=[
+        {label:'Octane C₈H₁₈',formula:'(petrol)',col:'#ffd93d',x:120,n:8},
+        {label:'Ethene C₂H₄',formula:'(=C=C= monomer)',col:'#ff6b35',x:380,n:2},
+        {label:'Propene C₃H₆',formula:'(=C=C= polymer)',col:'#7fff6b',x:560,n:3},
+      ];
+      products.forEach(function(p){
+        var px=p.x-sep*(p.x>350?1:-1);
+        for(var i=0;i<p.n;i++){
+          var cx=px+(i-(p.n-1)/2)*32;
+          if(i<p.n-1){ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx+12,150);ctx.lineTo(cx+20,150);ctx.stroke();}
+          ctx.beginPath();ctx.arc(cx,150,14,0,Math.PI*2);ctx.fillStyle='#333';ctx.fill();ctx.strokeStyle=p.col;ctx.lineWidth=1.5;ctx.stroke();
+          ctx.fillStyle=p.col;ctx.font='bold 8px monospace';ctx.textAlign='center';ctx.fillText('C',cx,154);
+        }
+        ctx.fillStyle=p.col;ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.fillText(p.label,p.x-sep*(p.x>350?1:-1),190);
+        ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText(p.formula,p.x-sep*(p.x>350?1:-1),205);
+      });
+      // Crack line
+      if(breakT<40){
+        ctx.strokeStyle='#ff4444';ctx.lineWidth=3;ctx.setLineDash([5,3]);
+        ctx.beginPath();ctx.moveTo(330,100);ctx.lineTo(330,200);ctx.stroke();ctx.setLineDash([]);
+        ctx.fillStyle='#ff4444';ctx.textAlign='center';ctx.font='bold 11px sans-serif';ctx.fillText('CRACK!',330,90);
+      }
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='11px sans-serif';
+      ctx.fillText('Long chain → shorter, more useful molecules',W/2,240);
+      ctx.fillText('Alkenes produced can be used for addition polymerisation',W/2,258);
+    }
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 36. HABER PROCESS (interactive)
+function renderHaber(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Haber Process:</b> N₂ + 3H₂ ⇌ 2NH₃  |  450°C, 200 atm, Iron catalyst. A compromise between yield and rate.';el.appendChild(info);
+  var container=document.createElement('div');container.style.padding='1rem';
+  // Sliders
+  var params=[
+    {label:'Temperature (°C)',min:300,max:600,val:450,step:10,id:'temp'},
+    {label:'Pressure (atm)',min:50,max:400,val:200,step:10,id:'pres'},
+  ];
+  var vals={temp:450,pres:200};
+  var sliders=document.createElement('div');sliders.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;';
+  params.forEach(function(p){
+    var wrap=document.createElement('div');
+    var lbl=document.createElement('label');lbl.style.cssText='font-size:.85rem;color:var(--dim);display:block;margin-bottom:.35rem;';
+    lbl.textContent=p.label+': '+p.val;
+    var sl=document.createElement('input');sl.type='range';sl.min=p.min;sl.max=p.max;sl.value=p.val;sl.step=p.step;sl.style.width='100%';
+    sl.oninput=function(){vals[p.id]=parseInt(sl.value);lbl.textContent=p.label+': '+sl.value+(p.id==='temp'?'°C':' atm');};
+    wrap.appendChild(lbl);wrap.appendChild(sl);sliders.appendChild(wrap);
+  });
+  container.appendChild(sliders);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=250;container.appendChild(cv);
+  el.appendChild(container);
+  var ctx=cv.getContext('2d'),W=700,H=250;
+  function getYield(t,p){
+    // Approximate: lower temp = higher yield, higher pressure = higher yield
+    // Actual Haber: ~15% at 450°C, 200atm
+    var tFactor=1-(t-300)/600;
+    var pFactor=p/400;
+    return Math.round(Math.min(tFactor*0.4+pFactor*0.5,0.98)*100);
+  }
+  function getRate(t,p){
+    // Higher temp = faster rate
+    var tFactor=(t-300)/300;
+    var pFactor=p/400;
+    return Math.round((tFactor*0.6+pFactor*0.4)*100);
+  }
+  function draw(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    var yld=getYield(vals.temp,vals.pres);
+    var rate=getRate(vals.temp,vals.pres);
+    var compromise=(yld+rate)/2;
+    // Gauges
+    var gauges=[{label:'NH₃ Yield',val:yld,col:'#00e5ff',x:120},{label:'Reaction Rate',val:rate,col:'#ff6b35',x:350},{label:'Overall Score',val:compromise,col:'#7fff6b',x:580}];
+    gauges.forEach(function(g){
+      // Arc gauge
+      ctx.strokeStyle='#1d3347';ctx.lineWidth=10;
+      ctx.beginPath();ctx.arc(g.x,120,70,Math.PI,2*Math.PI);ctx.stroke();
+      ctx.strokeStyle=g.col;ctx.lineWidth=10;
+      var angle=Math.PI+(g.val/100)*Math.PI;
+      ctx.beginPath();ctx.arc(g.x,120,70,Math.PI,angle);ctx.stroke();
+      // Value
+      ctx.fillStyle=g.col;ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.fillText(g.val+'%',g.x,130);
+      ctx.fillStyle='#5a8aa0';ctx.font='12px sans-serif';ctx.fillText(g.label,g.x,160);
+    });
+    // Optimal zone indicator
+    var optCol=compromise>55?'#7fff6b':compromise>35?'#ffd93d':'#ff4444';
+    ctx.fillStyle=optCol;ctx.textAlign='center';ctx.font='bold 13px sans-serif';
+    var msg=compromise>55?'✓ Good compromise!':compromise>35?'⚠ Acceptable':'✗ Poor conditions';
+    ctx.fillText(msg,W/2,200);
+    // Actual conditions line
+    ctx.fillStyle='#5a8aa0';ctx.font='11px sans-serif';
+    ctx.fillText('Industrial conditions: 450°C + 200 atm + Fe catalyst = ~15% yield (good rate)',W/2,225);
+    ctx.textAlign='left';
+  }
+  function loop(){draw();_raf=requestAnimationFrame(loop);}
+  loop();
+}
+
+// 37. CONTACT PROCESS
+function renderContactProcess(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Contact Process</b> makes sulfuric acid (H₂SO₄):<br>Step 1: S + O₂ → SO₂  |  Step 2: 2SO₂ + O₂ ⇌ 2SO₃ (450°C, V₂O₅)  |  Step 3: SO₃ + H₂O → H₂SO₄';el.appendChild(info);
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 280');svg.setAttribute('width','100%');svg.setAttribute('height','280');el.appendChild(svg);
+  var steps=[
+    {n:1,title:'Burn Sulfur',eq:'S + O₂ → SO₂',temp:'~1000°C',col:'#ff6b35',x:60},
+    {n:2,title:'Catalytic Oxidation',eq:'2SO₂ + O₂ ⇌ 2SO₃',temp:'450°C, V₂O₅',col:'#ffd93d',x:250},
+    {n:3,title:'Absorption',eq:'SO₃ + H₂SO₄ → H₂S₂O₇',temp:'Oleum formed',col:'#00e5ff',x:440},
+    {n:4,title:'Dilution',eq:'H₂S₂O₇ + H₂O → H₂SO₄',temp:'Final product',col:'#7fff6b',x:600},
+  ];
+  steps.forEach(function(s,i){
+    var bx=s.x,by=60,bw=150,bh=100;
+    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',bx);rect.setAttribute('y',by);rect.setAttribute('width',bw);rect.setAttribute('height',bh);
+    rect.setAttribute('rx',8);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',s.col);rect.setAttribute('stroke-width','2');svg.appendChild(rect);
+    // Step number
+    var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',bx+15);circle.setAttribute('cy',by+15);circle.setAttribute('r',12);circle.setAttribute('fill',s.col);svg.appendChild(circle);
+    var cn=document.createElementNS('http://www.w3.org/2000/svg','text');
+    cn.setAttribute('x',bx+15);cn.setAttribute('y',by+19);cn.setAttribute('text-anchor','middle');cn.setAttribute('fill','#000');cn.setAttribute('font-size','11');cn.setAttribute('font-weight','bold');cn.textContent=s.n;svg.appendChild(cn);
+    // Title
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',bx+bw/2);t.setAttribute('y',by+40);t.setAttribute('text-anchor','middle');t.setAttribute('fill',s.col);t.setAttribute('font-size','10');t.setAttribute('font-weight','bold');t.textContent=s.title;svg.appendChild(t);
+    // Equation
+    var eq=document.createElementNS('http://www.w3.org/2000/svg','text');
+    eq.setAttribute('x',bx+bw/2);eq.setAttribute('y',by+62);eq.setAttribute('text-anchor','middle');eq.setAttribute('fill','#e8f4f8');eq.setAttribute('font-size','9');eq.textContent=s.eq;svg.appendChild(eq);
+    // Temp
+    var tp=document.createElementNS('http://www.w3.org/2000/svg','text');
+    tp.setAttribute('x',bx+bw/2);tp.setAttribute('y',by+80);tp.setAttribute('text-anchor','middle');tp.setAttribute('fill','#5a8aa0');tp.setAttribute('font-size','9');tp.textContent=s.temp;svg.appendChild(tp);
+    // Arrow
+    if(i<steps.length-1){
+      var arr=document.createElementNS('http://www.w3.org/2000/svg','text');
+      arr.setAttribute('x',bx+bw+5);arr.setAttribute('y',by+55);arr.setAttribute('fill','#5a8aa0');arr.setAttribute('font-size','20');arr.textContent='→';svg.appendChild(arr);
+    }
+  });
+  // Uses of H2SO4
+  var useT=document.createElementNS('http://www.w3.org/2000/svg','text');
+  useT.setAttribute('x',350);useT.setAttribute('y',200);useT.setAttribute('text-anchor','middle');useT.setAttribute('fill','#7fff6b');useT.setAttribute('font-size','13');useT.setAttribute('font-weight','bold');useT.textContent='Uses of H₂SO₄:';svg.appendChild(useT);
+  var uses=['Fertilisers (ammonium sulfate)','Car batteries (lead-acid)','Making detergents','Paint manufacture'];
+  uses.forEach(function(u,i){
+    var ut=document.createElementNS('http://www.w3.org/2000/svg','text');
+    ut.setAttribute('x',350);ut.setAttribute('y',220+i*14);ut.setAttribute('text-anchor','middle');ut.setAttribute('fill','#5a8aa0');ut.setAttribute('font-size','10');ut.textContent='• '+u;svg.appendChild(ut);
+  });
+}
+
+// 38. ALLOYS
+function renderAlloys(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Alloys</b> are mixtures of metals. The different-sized atoms disrupt the regular lattice, making alloys harder and stronger than pure metals.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var alloys=[
+    {name:'Steel',metals:['Fe (95-99%)','C (0.1-2%)'],props:'Hard, strong',use:'Construction, cars',col:'#888'},
+    {name:'Stainless Steel',metals:['Fe','Cr (18%)','Ni (8%)'],props:'Rust-resistant',use:'Cutlery, medical',col:'#aaa'},
+    {name:'Bronze',metals:['Cu (88%)','Sn (12%)'],props:'Hard, corrosion-resistant',use:'Coins, statues',col:'#cd7f32'},
+    {name:'Brass',metals:['Cu (70%)','Zn (30%)'],props:'Attractive, workable',use:'Musical instruments',col:'#cfb53b'},
+  ];
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  alloys.forEach(function(a,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.style.borderColor=a.col;b.textContent=a.name;
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.insertBefore(ctrl,cv);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    var a=alloys[sel];
+    // Left: pure metal lattice
+    ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.fillText('Pure Metal (regular lattice)',175,30);
+    for(var row=0;row<4;row++){for(var col=0;col<4;col++){
+      var x=80+col*60,y=50+row*55;
+      ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);
+      var g=ctx.createRadialGradient(x-5,y-5,2,x,y,18);g.addColorStop(0,'#2a4a6a');g.addColorStop(1,'#0d1a24');
+      ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='#5a8aa0';ctx.lineWidth=1.5;ctx.stroke();
+      if(row<3){ctx.strokeStyle='rgba(90,138,160,0.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y+18);ctx.lineTo(x,y+37);ctx.stroke();}
+      if(col<3){ctx.beginPath();ctx.moveTo(x+18,y);ctx.lineTo(x+42,y);ctx.stroke();}
+    }}
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText('Planes slide easily → soft',175,275);
+    // Arrow
+    ctx.fillStyle='#ffd93d';ctx.font='24px sans-serif';ctx.fillText('→',340,155);
+    ctx.fillStyle='#ffd93d';ctx.font='10px sans-serif';ctx.fillText('Add other',350,145);ctx.fillText('metal(s)',350,160);
+    // Right: alloy lattice (disrupted)
+    ctx.fillStyle=a.col;ctx.textAlign='center';ctx.font='bold 12px sans-serif';ctx.fillText(a.name+' (disrupted lattice)',535,30);
+    var diffSizes=[22,14,18,20,14,22,16,14,22,18,14,20,22,14,18,16];
+    var diffCols=['#2a4a6a','#444','#2a4a6a','#2a4a6a','#333','#2a4a6a','#2a4a6a','#333'];
+    for(var row=0;row<4;row++){for(var col=0;col<4;col++){
+      var idx=row*4+col;
+      var x=440+col*60+(row%2)*8,y=50+row*55+(col%2)*6;
+      var r=diffSizes[idx]||18;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      var g2=ctx.createRadialGradient(x-3,y-3,2,x,y,r);
+      if(r<17){g2.addColorStop(0,a.col);g2.addColorStop(1,'#1a1a00');}
+      else{g2.addColorStop(0,'#2a4a6a');g2.addColorStop(1,'#0d1a24');}
+      ctx.fillStyle=g2;ctx.fill();ctx.strokeStyle=r<17?a.col:'#5a8aa0';ctx.lineWidth=1.5;ctx.stroke();
+    }}
+    ctx.fillStyle=a.col;ctx.font='10px sans-serif';ctx.fillText('Planes cannot slide → harder',535,275);
+    // Info box
+    ctx.fillStyle='#1d3347';ctx.fillRect(30,220,640,55);ctx.strokeStyle=a.col;ctx.lineWidth=1.5;ctx.strokeRect(30,220,640,55);
+    ctx.fillStyle=a.col;ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(a.name,350,238);
+    ctx.fillStyle='#e8f4f8';ctx.font='11px sans-serif';ctx.fillText('Composition: '+a.metals.join(' + ')+'  |  Properties: '+a.props,350,255);
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText('Uses: '+a.use,350,270);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 39. CORROSION PREVENTION
+function renderCorrosion(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Rusting</b> needs both oxygen AND water. Prevention methods: painting, galvanising (zinc coating), sacrificial anode, electroplating, alloying.';el.appendChild(info);
+  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 300');svg.setAttribute('width','100%');svg.setAttribute('height','300');el.appendChild(svg);
+  var methods=[
+    {name:'Painting',desc:'Physical barrier — keeps O₂ and H₂O away from iron surface',col:'#ff6b35',icon:'🖌️',x:60,y:40},
+    {name:'Galvanising',desc:'Zinc coat — zinc is more reactive, oxidises preferentially (sacrificial)',col:'#7fff6b',icon:'⚡',x:250,y:40},
+    {name:'Electroplating',desc:'Chrome/tin coat via electrolysis — shiny barrier',col:'#00e5ff',icon:'🔋',x:440,y:40},
+    {name:'Sacrificial Anode',desc:'Zinc/magnesium block attached — corrodes instead of iron',col:'#ffd93d',icon:'🔩',x:60,y:170},
+    {name:'Alloying (Stainless)',desc:'Add Cr + Ni — Cr₂O₃ layer forms, self-sealing barrier',col:'#aaa',icon:'⚙️',x:250,y:170},
+    {name:'Oiling/Greasing',desc:'Physical barrier — used on machine parts',col:'#888',icon:'💧',x:440,y:170},
+  ];
+  methods.forEach(function(m){
+    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x',m.x);rect.setAttribute('y',m.y);rect.setAttribute('width',180);rect.setAttribute('height',110);
+    rect.setAttribute('rx',8);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',m.col);rect.setAttribute('stroke-width','1.5');svg.appendChild(rect);
+    var icon=document.createElementNS('http://www.w3.org/2000/svg','text');
+    icon.setAttribute('x',m.x+20);icon.setAttribute('y',m.y+28);icon.setAttribute('font-size','18');icon.textContent=m.icon;svg.appendChild(icon);
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',m.x+42);t.setAttribute('y',m.y+25);t.setAttribute('fill',m.col);t.setAttribute('font-size','11');t.setAttribute('font-weight','bold');t.textContent=m.name;svg.appendChild(t);
+    // Description - wrap text
+    var words=m.desc.split(' ');var line='',lineY=m.y+45,lineCount=0;
+    words.forEach(function(w){
+      var test=line+w+' ';
+      if(test.length>28&&line!==''){
+        var dt=document.createElementNS('http://www.w3.org/2000/svg','text');
+        dt.setAttribute('x',m.x+10);dt.setAttribute('y',lineY);dt.setAttribute('fill','#5a8aa0');dt.setAttribute('font-size','9');dt.textContent=line;svg.appendChild(dt);
+        line=w+' ';lineY+=13;lineCount++;
+      } else line=test;
+      if(lineCount<4){
+        var dt=document.createElementNS('http://www.w3.org/2000/svg','text');
+        dt.setAttribute('x',m.x+10);dt.setAttribute('y',lineY);dt.setAttribute('fill','#5a8aa0');dt.setAttribute('font-size','9');dt.textContent=line;svg.appendChild(dt);
+      }
+    });
+  });
+  // Rust equation at bottom
+  var eq=document.createElementNS('http://www.w3.org/2000/svg','text');
+  eq.setAttribute('x',350);eq.setAttribute('y',290);eq.setAttribute('text-anchor','middle');eq.setAttribute('fill','#ff4444');eq.setAttribute('font-size','11');eq.setAttribute('font-family','monospace');eq.textContent='4Fe + 3O₂ + xH₂O → 2Fe₂O₃·xH₂O (rust)';svg.appendChild(eq);
+}
+
+// 40. PERCENTAGE YIELD & PURITY
+function renderYieldPurity(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>% Yield</b> = (actual yield ÷ theoretical yield) × 100  |  <b>% Purity</b> = (mass of pure substance ÷ total mass) × 100';el.appendChild(info);
+  var container=document.createElement('div');container.style.padding='1rem';
+  // Interactive calculator
+  var calcs=[
+    {title:'% Yield Calculator',fields:[{l:'Theoretical Yield (g)',id:'ty'},{l:'Actual Yield (g)',id:'ay'}],
+     formula:function(v){return v.ay&&v.ty?(v.ay/v.ty*100).toFixed(1)+'%':'—';},result:'% Yield'},
+    {title:'% Purity Calculator',fields:[{l:'Mass of Sample (g)',id:'ms'},{l:'Mass of Pure Substance (g)',id:'mp'}],
+     formula:function(v){return v.mp&&v.ms?(v.mp/v.ms*100).toFixed(1)+'%':'—';},result:'% Purity'},
+  ];
+  calcs.forEach(function(c){
+    var box=document.createElement('div');box.style.cssText='background:var(--s1);border-radius:12px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);';
+    var title=document.createElement('div');title.style.cssText='font-weight:bold;color:#00e5ff;margin-bottom:.75rem;font-size:1rem;';title.textContent=c.title;box.appendChild(title);
+    var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr auto;gap:.75rem;align-items:end;';
+    var vals={};
+    c.fields.forEach(function(f){
+      var wrap=document.createElement('div');
+      var lbl=document.createElement('label');lbl.style.cssText='font-size:.8rem;color:var(--dim);display:block;margin-bottom:.3rem;';lbl.textContent=f.l;
+      var inp=document.createElement('input');inp.type='number';inp.min=0;inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:8px;font-size:.9rem;';
+      inp.oninput=function(){vals[f.id]=parseFloat(inp.value);res.textContent=c.result+': '+c.formula(vals);};
+      wrap.appendChild(lbl);wrap.appendChild(inp);grid.appendChild(wrap);
+    });
+    var res=document.createElement('div');res.style.cssText='padding:.6rem 1rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:1rem;white-space:nowrap;';res.textContent=c.result+': —';
+    grid.appendChild(res);box.appendChild(grid);container.appendChild(box);
+  });
+  // Why yield < 100%?
+  var reasons=document.createElement('div');reasons.style.cssText='background:var(--s1);border-radius:12px;padding:1rem;border-left:4px solid #ffd93d;';
+  reasons.innerHTML='<div style="font-weight:bold;color:#ffd93d;margin-bottom:.5rem">Why is % Yield never 100%?</div>'+
+    '<div style="color:var(--dim);font-size:.85rem;line-height:1.6">'+
+    '• Reversible reactions don\'t go to completion<br>'+
+    '• Product lost during separation/filtration<br>'+
+    '• Side reactions produce unwanted products<br>'+
+    '• Reactants may not be pure<br>'+
+    '• Practical difficulties in collection</div>';
+  container.appendChild(reasons);
+  el.appendChild(container);
+}
+
+// 41. ACID RAIN
+function renderAcidRain(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Acid Rain</b> forms when SO₂ and NOₓ dissolve in rainwater. pH < 5.6. Caused by burning fossil fuels. Damages buildings, lakes, forests.';el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300;
+  var drops=[],t=0;
+  for(var i=0;i<30;i++)drops.push({x:Math.random()*W,y:Math.random()*H,vy:2+Math.random()*2,length:8+Math.random()*8});
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t++;
+    // Clouds
+    [[150,60],[400,50],[600,70]].forEach(function(c){
+      ctx.beginPath();ctx.arc(c[0],c[1],40,0,Math.PI*2);ctx.arc(c[0]+35,c[1]-10,30,0,Math.PI*2);ctx.arc(c[0]-30,c[1]+5,28,0,Math.PI*2);
+      ctx.fillStyle='#2a2a3a';ctx.fill();
+    });
+    // Factory smoke (source)
+    ctx.fillStyle='#888';ctx.fillRect(30,200,20,80);ctx.fillRect(60,210,20,70);
+    for(var s=0;s<3;s++){
+      var sx=35+s*30,sy=200-t%(60+s*20);
+      ctx.beginPath();ctx.arc(sx,sy,8+s*2,0,Math.PI*2);ctx.fillStyle='rgba(150,100,50,'+(0.5-sy/400)+')';ctx.fill();
+    }
+    ctx.fillStyle='#ff6b35';ctx.font='10px sans-serif';ctx.fillText('SO₂, NOₓ',10,180);
+    // Acid rain drops
+    drops.forEach(function(d){
+      d.y+=d.vy;if(d.y>H)d.y=0;
+      ctx.strokeStyle='rgba(150,200,255,0.7)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-2,d.y+d.length);ctx.stroke();
+    });
+    // Reactions in cloud
+    ctx.fillStyle='rgba(200,150,100,0.1)';ctx.fillRect(100,20,500,90);
+    ctx.fillStyle='#ffd93d';ctx.font='10px monospace';ctx.textAlign='center';
+    ctx.fillText('SO₂ + H₂O → H₂SO₃  (sulfurous acid)',350,45);
+    ctx.fillText('2NO₂ + H₂O → HNO₃ + HNO₂  (nitric acid)',350,60);
+    ctx.fillText('Normal rain pH: 5.6  |  Acid rain pH: < 5.6  (can be pH 2-3)',350,80);
+    // Effects
+    var effects=[{x:350,y:220,icon:'🏛️',label:'Limestone buildings dissolve'},{x:500,y:240,icon:'🌲',label:'Forests die'},{x:200,y:250,icon:'🐟',label:'Lakes become acidic'}];
+    effects.forEach(function(e){
+      ctx.font='18px sans-serif';ctx.fillText(e.icon,e.x,e.y);
+      ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText(e.label,e.x,e.y+15);
+    });
+    // Solution
+    ctx.fillStyle='#7fff6b';ctx.font='10px sans-serif';ctx.textAlign='left';
+    ctx.fillText('Solutions: catalytic converters, scrubbers, lime to neutralise lakes',30,H-10);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 42. GIANT COVALENT STRUCTURES
+function renderGiantCovalent(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Giant covalent structures</b> have millions of atoms bonded covalently. Diamond and graphite are both pure carbon but have very different structures and properties.';el.appendChild(info);
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var cv=document.createElement('canvas');cv.width=700;cv.height=280;
+  [['Diamond','#00e5ff'],['Graphite','#888'],['Silicon Dioxide (SiO₂)','#ffd93d']].forEach(function(m,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=m[0];
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.appendChild(ctrl);el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=280;
+  function drawDiamond(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#00e5ff';ctx.textAlign='center';ctx.font='bold 13px sans-serif';ctx.fillText('Diamond — Tetrahedral lattice',W/2,25);
+    // Draw tetrahedral unit cells
+    var atoms=[[200,100],[280,60],[280,140],[160,60],[160,140],[240,100],[200,160],[320,100]];
+    var bonds=[[0,1],[0,2],[0,3],[0,4],[5,1],[5,2],[5,6],[5,7]];
+    bonds.forEach(function(b){var a1=atoms[b[0]],a2=atoms[b[1]];ctx.strokeStyle='rgba(0,229,255,0.4)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a1[0],a1[1]);ctx.lineTo(a2[0],a2[1]);ctx.stroke();});
+    atoms.forEach(function(a){ctx.beginPath();ctx.arc(a[0],a[1],12,0,Math.PI*2);ctx.fillStyle='#00e5ff';ctx.fill();ctx.fillStyle='#000';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('C',a[0],a[1]+3);});
+    // Properties
+    var props=['Each C bonded to 4 others (tetrahedral)','All electrons in bonds → no free electrons → insulator','Hardest natural substance (hardness 10)','Very high melting point (3550°C)','Used: cutting tools, drill bits, jewellery'];
+    props.forEach(function(p,i){ctx.fillStyle=i<2?'#00e5ff':'#5a8aa0';ctx.font='11px sans-serif';ctx.textAlign='left';ctx.fillText('• '+p,400,60+i*30);});
+  }
+  function drawGraphite(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#888';ctx.textAlign='center';ctx.font='bold 13px sans-serif';ctx.fillText('Graphite — Layered hexagonal',W/2,25);
+    // Draw hexagonal layers
+    function drawHexLayer(offsetX,offsetY,col,alpha){
+      ctx.globalAlpha=alpha;
+      var hex=[[0,-35],[30,-17],[30,17],[0,35],[-30,17],[-30,-17]];
+      var centers=[[160,80],[220,80],[280,80],[190,115],[250,115]];
+      centers.forEach(function(c){
+        for(var i=0;i<6;i++){
+          var p1=hex[i],p2=hex[(i+1)%6];
+          ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(c[0]+offsetX+p1[0],c[1]+offsetY+p1[1]);ctx.lineTo(c[0]+offsetX+p2[0],c[1]+offsetY+p2[1]);ctx.stroke();
+          ctx.beginPath();ctx.arc(c[0]+offsetX+p1[0],c[1]+offsetY+p1[1],5,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+        }
+      });
+      ctx.globalAlpha=1;
+    }
+    drawHexLayer(0,0,'#888',1);
+    drawHexLayer(10,35,'#666',0.6);
+    drawHexLayer(20,70,'#444',0.35);
+    // Weak forces label
+    ctx.strokeStyle='rgba(255,215,0,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(330,80);ctx.lineTo(330,115);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#ffd93d';ctx.font='10px sans-serif';ctx.fillText('Weak van der Waals',335,100);ctx.fillText('forces between layers',335,113);
+    var props=['Each C bonded to 3 others in hexagonal layers','1 delocalised electron per C → CONDUCTS electricity','Layers slide over each other → lubricant','High melting point (bonds within layers strong)','Used: electrodes, pencils, lubricants'];
+    props.forEach(function(p,i){ctx.fillStyle=i<2?'#888':'#5a8aa0';ctx.font='11px sans-serif';ctx.textAlign='left';ctx.fillText('• '+p,400,60+i*30);});
+  }
+  function drawSiO2(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#ffd93d';ctx.textAlign='center';ctx.font='bold 13px sans-serif';ctx.fillText('Silicon Dioxide (SiO₂) — Giant covalent network',W/2,25);
+    var atoms2=[[200,120],[240,80],[240,160],[160,80],[160,160],[280,120],[200,60],[200,180]];
+    atoms2.forEach(function(a,i){
+      if(i>0){ctx.strokeStyle='rgba(255,215,0,0.4)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(200,120);ctx.lineTo(a[0],a[1]);ctx.stroke();}
+    });
+    atoms2.forEach(function(a,i){
+      ctx.beginPath();ctx.arc(a[0],a[1],i===0?16:12,0,Math.PI*2);ctx.fillStyle=i===0?'#ffd93d':'#ff6b35';ctx.fill();
+      ctx.fillStyle='#000';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText(i===0?'Si':'O',a[0],a[1]+3);
+    });
+    var props=['Si bonded to 4 O atoms (tetrahedral)','O bridges between Si atoms','Whole structure = giant covalent lattice','Very high melting point (1710°C)','Used: glass, optical fibres, semiconductors'];
+    props.forEach(function(p,i){ctx.fillStyle=i<2?'#ffd93d':'#5a8aa0';ctx.font='11px sans-serif';ctx.textAlign='left';ctx.fillText('• '+p,400,60+i*30);});
+  }
+  function loop(){
+    if(sel===0)drawDiamond();
+    else if(sel===1)drawGraphite();
+    else drawSiO2();
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// 43. EMPIRICAL FORMULA
+function renderEmpirical(el){
+  el.innerHTML='';
+  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Empirical Formula</b> = simplest whole number ratio of atoms. <b>Molecular Formula</b> = actual number of atoms. Find from % composition using: moles = mass ÷ Ar, then divide by smallest.';el.appendChild(info);
+  var container=document.createElement('div');container.style.padding='1rem';
+  // Step calculator
+  var elements=[{symbol:'',ar:0,percent:0},{symbol:'',ar:0,percent:0},{symbol:'',ar:0,percent:0}];
+  var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem;';
+  var inputs=[];
+  elements.forEach(function(e,i){
+    var col=document.createElement('div');col.style.cssText='background:var(--s1);border-radius:10px;padding:.75rem;border:1px solid var(--border);';
+    col.innerHTML='<div style="color:#00e5ff;font-weight:bold;margin-bottom:.5rem">Element '+(i+1)+'</div>';
+    var fields=[{l:'Symbol',p:'e.g. C',t:'text',k:'sym'},{l:'Ar (atomic mass)',p:'e.g. 12',t:'number',k:'ar'},{l:'% or mass',p:'e.g. 40',t:'number',k:'pct'}];
+    var inps={};
+    fields.forEach(function(f){
+      var lbl=document.createElement('label');lbl.style.cssText='font-size:.75rem;color:var(--dim);display:block;';lbl.textContent=f.l;
+      var inp=document.createElement('input');inp.type=f.t;inp.placeholder=f.p;
+      inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.4rem;border-radius:6px;font-size:.85rem;margin-bottom:.4rem;';
+      inps[f.k]=inp;col.appendChild(lbl);col.appendChild(inp);
+    });
+    inputs.push(inps);grid.appendChild(col);
+  });
+  container.appendChild(grid);
+  var calcBtn=document.createElement('button');calcBtn.className='btn green';calcBtn.textContent='Calculate Empirical Formula';
+  var result=document.createElement('div');result.style.cssText='margin-top:1rem;background:var(--s1);border-radius:10px;padding:1rem;border-left:4px solid #7fff6b;min-height:3rem;font-family:monospace;';
+  calcBtn.onclick=function(){
+    var data=inputs.map(function(inp){return{sym:inp.sym.value.trim(),ar:parseFloat(inp.ar.value),pct:parseFloat(inp.pct.value)};}).filter(function(d){return d.sym&&!isNaN(d.ar)&&!isNaN(d.pct);});
+    if(data.length<2){result.innerHTML='<span style="color:#ff4444">Enter at least 2 elements</span>';return;}
+    var moles=data.map(function(d){return{sym:d.sym,mol:d.pct/d.ar};});
+    var minMol=Math.min.apply(null,moles.map(function(m){return m.mol;}));
+    var ratios=moles.map(function(m){return{sym:m.sym,ratio:Math.round(m.mol/minMol*10)/10};});
+    var html='<div style="color:#7fff6b;font-weight:bold;margin-bottom:.5rem">Steps:</div>';
+    html+='<div style="color:#5a8aa0;font-size:.85rem;">';
+    html+='Step 1 — Moles = mass ÷ Ar:<br>';
+    moles.forEach(function(m){html+='&nbsp;&nbsp;'+m.sym+': '+m.mol.toFixed(4)+' mol<br>';});
+    html+='Step 2 — Divide by smallest ('+minMol.toFixed(4)+'):<br>';
+    ratios.forEach(function(r){html+='&nbsp;&nbsp;'+r.sym+': '+r.ratio+'<br>';});
+    html+='</div>';
+    html+='<div style="color:#7fff6b;font-size:1.1rem;margin-top:.5rem">Empirical Formula: ';
+    ratios.forEach(function(r){html+=r.sym+(r.ratio!==1?'<sub>'+r.ratio+'</sub>':'');});
+    html+='</div>';
+    result.innerHTML=html;
+  };
+  container.appendChild(calcBtn);container.appendChild(result);
+  // Example
+  var eg=document.createElement('div');eg.style.cssText='margin-top:1rem;background:var(--s1);border-radius:10px;padding:.75rem;border-left:4px solid #ffd93d;';
+  eg.innerHTML='<div style="color:#ffd93d;font-weight:bold;margin-bottom:.3rem">Example: Compound is 40% C, 6.7% H, 53.3% O</div>'+
+    '<div style="color:#5a8aa0;font-size:.85rem;">C: 40/12=3.33 | H: 6.7/1=6.7 | O: 53.3/16=3.33<br>Divide by 3.33: C=1, H=2, O=1 → <strong style="color:#ffd93d">CH₂O</strong> (glucose empirical formula)</div>';
+  container.appendChild(eg);
+  el.appendChild(container);
+}
 
 // ════════════ SEARCH ════════════
 function handleSearch(v){
@@ -2415,26 +3934,209 @@ function showEl(el){
 }
 
 // ════════════ SANDBOX ════════════
-const REAGENTS=[{n:'HCl(aq)',label:'HCl'},{n:'NaOH(aq)',label:'NaOH'},{n:'CuSO₄(aq)',label:'CuSO₄'},{n:'Na₂CO₃(aq)',label:'Na₂CO₃'},{n:'Iron (Fe)',label:'Fe'},{n:'Zinc (Zn)',label:'Zn'},{n:'Copper (Cu)',label:'Cu'},{n:'Magnesium (Mg)',label:'Mg'},{n:'AgNO₃(aq)',label:'AgNO₃'},{n:'NaCl(aq)',label:'NaCl'},{n:'H₂SO₄(aq)',label:'H₂SO₄'},{n:'KOH(aq)',label:'KOH'},{n:'FeCl₃(aq)',label:'FeCl₃'},{n:'Ca(OH)₂',label:'Ca(OH)₂'}];
-const REACTIONS={'HCl+NaOH':{obs:'🔵 Colourless, warm. Neutralisation!',eq:'HCl + NaOH → NaCl + H₂O',explain:'Acid-base neutralisation. H⁺ + OH⁻ → H₂O. Salt + water formed. Exothermic.'},'HCl+Na₂CO₃':{obs:'💨 Vigorous fizzing! CO₂ gas produced.',eq:'2HCl + Na₂CO₃ → 2NaCl + H₂O + CO₂↑',explain:'Acid + carbonate. CO₂ turns limewater milky. Test for carbonates.'},'HCl+Fe':{obs:'🫧 Slow bubbles. Solution turns pale green.',eq:'Fe + 2HCl → FeCl₂ + H₂↑',explain:'Fe is above H in reactivity series. H₂ produced (squeaky pop). FeCl₂ = pale green.'},'HCl+Zn':{obs:'🫧 Moderate fizzing.',eq:'Zn + 2HCl → ZnCl₂ + H₂↑',explain:'Zinc displaces H from acid. Faster than Fe, slower than Mg.'},'HCl+Mg':{obs:'⚡ Rapid violent fizzing! Gets hot.',eq:'Mg + 2HCl → MgCl₂ + H₂↑',explain:'Mg is very reactive. Very fast H₂ production. Highly exothermic.'},'HCl+Cu':{obs:'🔴 No reaction. Cu unchanged.',eq:'No reaction',explain:'Cu is below H in reactivity series — cannot displace H⁺ from acid.'},'CuSO₄+Fe':{obs:'🟤 Blue fades. Brown deposit on iron.',eq:'Fe + CuSO₄ → FeSO₄ + Cu',explain:'Fe is more reactive than Cu. Displacement redox. Fe oxidised, Cu²⁺ reduced.'},'CuSO₄+Zn':{obs:'🟤 Blue fades fast. Brown Cu deposits.',eq:'Zn + CuSO₄ → ZnSO₄ + Cu',explain:'Classic displacement. ZnSO₄ colourless. Cu metal precipitates.'},'CuSO₄+Mg':{obs:'⚡ Blue fades instantly! Lots of Cu.',eq:'Mg + CuSO₄ → MgSO₄ + Cu',explain:'Mg >> Cu in reactivity. Very fast. MgSO₄ colourless.'},'CuSO₄+Na₂CO₃':{obs:'💙 Pale blue precipitate!',eq:'CuSO₄ + Na₂CO₃ → CuCO₃↓ + Na₂SO₄',explain:'Precipitation. Cu²⁺ + CO₃²⁻ → CuCO₃ (insoluble). Tests for Cu²⁺.'},'AgNO₃+NaCl':{obs:'🤍 White curdy precipitate instantly!',eq:'AgNO₃ + NaCl → AgCl↓ + NaNO₃',explain:'AgCl precipitate insoluble in dilute HNO₃. Standard test for Cl⁻ ions.'},'NaOH+FeCl₃':{obs:'🟠 Red-brown precipitate!',eq:'3NaOH + FeCl₃ → Fe(OH)₃↓ + 3NaCl',explain:'Fe(OH)₃ = characteristic red-brown. Test for Fe³⁺ ions.'},'H₂SO₄+NaOH':{obs:'🔵 Colourless, very warm.',eq:'H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O',explain:'Diprotic acid — needs 2× NaOH. Na₂SO₄ formed. Strongly exothermic.'},'HCl+KOH':{obs:'🔵 Colourless, warm, neutral.',eq:'HCl + KOH → KCl + H₂O',explain:'Neutralisation forming KCl salt and water.'}};
+const REAGENTS=[
+  // Acids
+  {n:'HCl(aq)',label:'HCl',type:'acid',col:'#ff6b35'},
+  {n:'H₂SO₄(aq)',label:'H₂SO₄',type:'acid',col:'#ff6b35'},
+  {n:'HNO₃(aq)',label:'HNO₃',type:'acid',col:'#ff6b35'},
+  {n:'CH₃COOH(aq)',label:'CH₃COOH',type:'acid',col:'#ff8844'},
+  // Bases & Alkalis
+  {n:'NaOH(aq)',label:'NaOH',type:'alkali',col:'#00e5ff'},
+  {n:'KOH(aq)',label:'KOH',type:'alkali',col:'#00e5ff'},
+  {n:'Ca(OH)₂(aq)',label:'Ca(OH)₂',type:'alkali',col:'#00e5ff'},
+  {n:'NH₃(aq)',label:'NH₃(aq)',type:'alkali',col:'#00e5ff'},
+  // Carbonates
+  {n:'Na₂CO₃(aq)',label:'Na₂CO₃',type:'carbonate',col:'#ffd93d'},
+  {n:'CaCO₃(s)',label:'CaCO₃',type:'carbonate',col:'#ffd93d'},
+  {n:'MgCO₃(s)',label:'MgCO₃',type:'carbonate',col:'#ffd93d'},
+  {n:'ZnCO₃(s)',label:'ZnCO₃',type:'carbonate',col:'#ffd93d'},
+  {n:'CuCO₃(s)',label:'CuCO₃',type:'carbonate',col:'#ffd93d'},
+  // Metals
+  {n:'Magnesium(s)',label:'Mg',type:'metal',col:'#888'},
+  {n:'Zinc(s)',label:'Zn',type:'metal',col:'#888'},
+  {n:'Iron(s)',label:'Fe',type:'metal',col:'#888'},
+  {n:'Copper(s)',label:'Cu',type:'metal',col:'#cc6622'},
+  {n:'Calcium(s)',label:'Ca',type:'metal',col:'#888'},
+  {n:'Sodium(s)',label:'Na',type:'metal',col:'#ffd93d'},
+  // Metal salt solutions
+  {n:'CuSO₄(aq)',label:'CuSO₄',type:'salt',col:'#00aaff'},
+  {n:'FeCl₂(aq)',label:'FeCl₂',type:'salt',col:'#88aa44'},
+  {n:'FeCl₃(aq)',label:'FeCl₃',type:'salt',col:'#aa6600'},
+  {n:'AgNO₃(aq)',label:'AgNO₃',type:'salt',col:'#ccc'},
+  {n:'Pb(NO₃)₂(aq)',label:'Pb(NO₃)₂',type:'salt',col:'#ccc'},
+  {n:'BaCl₂(aq)',label:'BaCl₂',type:'salt',col:'#ccc'},
+  {n:'ZnSO₄(aq)',label:'ZnSO₄',type:'salt',col:'#ccc'},
+  // Other
+  {n:'NaCl(aq)',label:'NaCl',type:'salt',col:'#ccc'},
+  {n:'KI(aq)',label:'KI',type:'salt',col:'#ccc'},
+  {n:'KBr(aq)',label:'KBr',type:'salt',col:'#ccc'},
+  {n:'Cl₂(aq)',label:'Cl₂(aq)',type:'halogen',col:'#aaff88'},
+  {n:'Br₂(aq)',label:'Br₂(aq)',type:'halogen',col:'#cc4400'},
+  {n:'Universal Indicator',label:'UI',type:'indicator',col:'#aa44aa'},
+  {n:'Litmus(aq)',label:'Litmus',type:'indicator',col:'#aa44aa'},
+  {n:'Limewater',label:'Limewater',type:'other',col:'#e8f4f8'},
+  {n:'Water(l)',label:'H₂O',type:'other',col:'#00aaff'},
+];
+
+const REACTIONS={
+  // ── ACID + METAL ────────────────────────────────────────────────────
+  'HCl+Mg':{obs:'⚡ Violent fizzing! Tube gets very hot. Mg dissolves rapidly.',eq:'Mg + 2HCl → MgCl₂ + H₂↑',explain:'Mg is high in reactivity series. Displaces H⁺ from acid. H₂ gives squeaky pop with lit splint. Exothermic.',color:'#ff4444',animation:'bubbles-fast'},
+  'HCl+Zn':{obs:'🫧 Steady fizzing. Solution remains colourless.',eq:'Zn + 2HCl → ZnCl₂ + H₂↑',explain:'Zinc is above hydrogen in reactivity series. H₂ produced. Slower than Mg, faster than Fe.',color:'#ff8844',animation:'bubbles-med'},
+  'HCl+Fe':{obs:'🫧 Slow bubbles. Solution turns pale green.',eq:'Fe + 2HCl → FeCl₂ + H₂↑',explain:'Iron displaces H₂. FeCl₂ gives characteristic pale green colour. Slow reaction.',color:'#88aa44',animation:'bubbles-slow'},
+  'HCl+Cu':{obs:'🔴 No reaction. Cu below H in reactivity series.',eq:'No reaction',explain:'Copper is less reactive than hydrogen. Cannot displace H⁺ from dilute acids. No reaction with HCl or H₂SO₄.',color:'#666',animation:'none'},
+  'H₂SO₄+Mg':{obs:'⚡ Extremely violent fizzing! Very exothermic.',eq:'Mg + H₂SO₄ → MgSO₄ + H₂↑',explain:'Same as with HCl but produces MgSO₄ salt. Very rapid. H₂ test: squeaky pop.',color:'#ff4444',animation:'bubbles-fast'},
+  'H₂SO₄+Zn':{obs:'🫧 Moderate fizzing. Colourless solution.',eq:'Zn + H₂SO₄ → ZnSO₄ + H₂↑',explain:'ZnSO₄ formed. H₂ produced. Rate comparable to HCl + Zn.',color:'#ff8844',animation:'bubbles-med'},
+  'H₂SO₄+Fe':{obs:'🫧 Slow fizzing. Pale green solution forms.',eq:'Fe + H₂SO₄ → FeCl₂ + H₂↑',explain:'FeSO₄ (pale green) formed. Slow reaction. H₂ produced.',color:'#88aa44',animation:'bubbles-slow'},
+  'H₂SO₄+Cu':{obs:'No reaction with dilute H₂SO₄.',eq:'No reaction (dilute H₂SO₄)',explain:'Copper is below hydrogen. Cannot react with dilute acids. Reacts only with HOT CONCENTRATED H₂SO₄ (not IGCSE).',color:'#666',animation:'none'},
+  'HNO₃+Cu':{obs:'🟢 Blue solution forms. Brown NO₂ gas (dilute: colourless NO).',eq:'3Cu + 8HNO₃(dil) → 3Cu(NO₃)₂ + 2NO + 4H₂O',explain:'Nitric acid is an oxidising acid — reacts with Cu unlike HCl/H₂SO₄. Cu²⁺ makes solution blue. Gas produced.',color:'#00aaff',animation:'bubbles-slow'},
+  // ── ACID + BASE (NEUTRALISATION) ────────────────────────────────────
+  'HCl+NaOH':{obs:'🔵 Colourless solution. Gets warm. pH → 7.',eq:'HCl + NaOH → NaCl + H₂O',explain:'Classic acid-base neutralisation. H⁺ + OH⁻ → H₂O. Salt (NaCl) + water. Exothermic. Used in titrations.',color:'#00e5ff',animation:'heat'},
+  'HCl+KOH':{obs:'🔵 Colourless solution. Exothermic neutralisation.',eq:'HCl + KOH → KCl + H₂O',explain:'Same mechanism as NaOH. Produces KCl (potassium chloride). Used in titrations.',color:'#00e5ff',animation:'heat'},
+  'HCl+Ca(OH)₂':{obs:'🔵 Colourless solution. Neutralisation.',eq:'2HCl + Ca(OH)₂ → CaCl₂ + 2H₂O',explain:'Ca(OH)₂ is a base. CaCl₂ formed. Note: 2 moles HCl needed per mole Ca(OH)₂.',color:'#00e5ff',animation:'heat'},
+  'HCl+NH₃(aq)':{obs:'💨 White fumes/smoke of NH₄Cl if gases meet.',eq:'HCl + NH₃ → NH₄Cl',explain:'Ammonium chloride (white solid) formed. White smoke test — classic identification of HCl and NH₃.',color:'#ffffff',animation:'smoke'},
+  'H₂SO₄+NaOH':{obs:'🔵 Colourless, warm. Neutralisation.',eq:'H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O',explain:'2 moles NaOH per mole H₂SO₄ (diprotic acid). Na₂SO₄ salt + water. Used in titrations.',color:'#00e5ff',animation:'heat'},
+  'H₂SO₄+Ca(OH)₂':{obs:'⬜ White precipitate forms! CaSO₄ is insoluble.',eq:'H₂SO₄ + Ca(OH)₂ → CaSO₄↓ + 2H₂O',explain:'CaSO₄ is sparingly soluble → white ppt. This causes H₂SO₄ to react slowly with CaCO₃/Ca(OH)₂ (protective coat).',color:'#ffffff',animation:'precipitate'},
+  'CH₃COOH+NaOH':{obs:'🔵 Colourless. Less heat than strong acid + base.',eq:'CH₃COOH + NaOH → CH₃COONa + H₂O',explain:'Weak acid + strong base neutralisation. Sodium ethanoate (CH₃COONa) formed. Less exothermic than strong acids.',color:'#00e5ff',animation:'heat'},
+  // ── ACID + CARBONATE ────────────────────────────────────────────────
+  'HCl+Na₂CO₃':{obs:'💨 Vigorous fizzing! CO₂ produced.',eq:'2HCl + Na₂CO₃ → 2NaCl + H₂O + CO₂↑',explain:'CO₂ turns limewater milky. This is the standard test for carbonates. Na₂CO₃ dissolves completely.',color:'#ffd93d',animation:'bubbles-med'},
+  'HCl+CaCO₃':{obs:'💨 Fizzing (marble chips). CO₂ gas produced.',eq:'2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂↑',explain:'Classic rate of reaction experiment. CO₂ collected over water. Rate increases with smaller chips/higher temp.',color:'#ffd93d',animation:'bubbles-med'},
+  'HCl+MgCO₃':{obs:'💨 Fizzing. Colourless solution of MgCl₂.',eq:'2HCl + MgCO₃ → MgCl₂ + H₂O + CO₂↑',explain:'MgCO₃ dissolves in acid. CO₂ produced. MgCl₂ solution colourless.',color:'#ffd93d',animation:'bubbles-med'},
+  'HCl+ZnCO₃':{obs:'💨 Fizzing. Colourless ZnCl₂ solution.',eq:'2HCl + ZnCO₃ → ZnCl₂ + H₂O + CO₂↑',explain:'Standard acid + carbonate. ZnCO₃ dissolves. CO₂ turns limewater milky.',color:'#ffd93d',animation:'bubbles-med'},
+  'HCl+CuCO₃':{obs:'💨 Fizzing. Turns blue-green then blue. CO₂ produced.',eq:'2HCl + CuCO₃ → CuCl₂ + H₂O + CO₂↑',explain:'CuCO₃ is green. CuCl₂ solution is blue. Colour change visible as reaction proceeds.',color:'#00aaff',animation:'bubbles-colour'},
+  'H₂SO₄+Na₂CO₃':{obs:'💨 Vigorous fizzing. CO₂ produced.',eq:'H₂SO₄ + Na₂CO₃ → Na₂SO₄ + H₂O + CO₂↑',explain:'CO₂ produced (turns limewater milky). Na₂SO₄ in solution. Vigorous reaction.',color:'#ffd93d',animation:'bubbles-med'},
+  'H₂SO₄+CaCO₃':{obs:'💨 Initial fizzing then STOPS. Surface coated.',eq:'H₂SO₄ + CaCO₃ → CaSO₄↓ + H₂O + CO₂↑',explain:'CaSO₄ forms a protective layer on CaCO₃ surface, preventing further reaction. This is why H₂SO₄ reacts slowly.',color:'#ffd93d',animation:'bubbles-slow-stop'},
+  // ── ACID + METAL OXIDE ──────────────────────────────────────────────
+  'HCl+CuO':{obs:'🔵 Black CuO dissolves to give blue CuCl₂ solution.',eq:'CuO + 2HCl → CuCl₂ + H₂O',explain:'Metal oxide + acid → salt + water. Excess CuO used to ensure all acid reacted. Filter off excess.',color:'#00aaff',animation:'dissolve-colour'},
+  'H₂SO₄+CuO':{obs:'🔵 Black powder dissolves. Blue CuSO₄ solution.',eq:'CuO + H₂SO₄ → CuSO₄ + H₂O',explain:'Basis of copper sulfate crystal preparation. Excess CuO added, filtered, solution evaporated to crystallise.',color:'#00aaff',animation:'dissolve-colour'},
+  // ── DISPLACEMENT REACTIONS ──────────────────────────────────────────
+  'CuSO₄+Fe':{obs:'🔴 Iron coated with pink/red copper. Blue fades.',eq:'Fe + CuSO₄ → FeSO₄ + Cu',explain:'Fe is more reactive than Cu. Displaces Cu²⁺ from solution. Blue CuSO₄ fades. Fe dissolves, Cu deposits.',color:'#cc6622',animation:'displacement'},
+  'CuSO₄+Zn':{obs:'🔴 Zinc coated with copper. Blue solution fades.',eq:'Zn + CuSO₄ → ZnSO₄ + Cu',explain:'Zn more reactive than Cu. Cu deposits on Zn surface. Blue colour fades as Cu²⁺ removed.',color:'#cc6622',animation:'displacement'},
+  'CuSO₄+Mg':{obs:'⚡ Rapid coating of Mg with copper. Blue fades fast.',eq:'Mg + CuSO₄ → MgSO₄ + Cu',explain:'Mg is much more reactive than Cu. Very fast displacement. Cu deposits, Mg dissolves. Blue fades quickly.',color:'#cc6622',animation:'displacement-fast'},
+  'CuSO₄+Na':{obs:'⚡ VIOLENT! Na reacts with water in CuSO₄ solution. Blue Cu(OH)₂ precipitate.',eq:'2Na+2H₂O→2NaOH+H₂↑; Cu²⁺+2OH⁻→Cu(OH)₂↓',explain:'Na reacts with water first (too reactive). NaOH produced precipitates Cu(OH)₂ (pale blue). Not a simple displacement.',color:'#7fff6b',animation:'violent'},
+  'ZnSO₄+Fe':{obs:'No reaction. Fe less reactive than Zn.',eq:'No reaction',explain:'Fe cannot displace Zn from solution — Zn is more reactive than Fe.',color:'#666',animation:'none'},
+  'ZnSO₄+Cu':{obs:'No reaction. Cu less reactive than Zn.',eq:'No reaction',explain:'Cu cannot displace Zn — Zn is higher in reactivity series.',color:'#666',animation:'none'},
+  // ── HALOGEN DISPLACEMENT ────────────────────────────────────────────
+  'Cl₂(aq)+KBr':{obs:'🟠 Solution turns orange-brown. Br₂ displaced.',eq:'Cl₂ + 2KBr → 2KCl + Br₂',explain:'Cl₂ more reactive than Br₂. Displaces Br⁻ → Br₂ (orange). Shake with hexane — orange organic layer confirms.',color:'#cc4400',animation:'colour-change'},
+  'Cl₂(aq)+KI':{obs:'🟤 Turns brown/black. I₂ displaced.',eq:'Cl₂ + 2KI → 2KCl + I₂',explain:'Cl₂ displaces I⁻ → I₂ (brown/black). Starch turns blue-black — confirms I₂. Cl₂ is most reactive halogen here.',color:'#440044',animation:'colour-change'},
+  'Br₂(aq)+KI':{obs:'🟤 Turns darker brown. I₂ displaced.',eq:'Br₂ + 2KI → 2KBr + I₂',explain:'Br₂ more reactive than I₂. Displaces I⁻ → I₂. Starch test gives blue-black. Confirms halogen reactivity trend.',color:'#440044',animation:'colour-change'},
+  'Br₂(aq)+KBr':{obs:'No change. Same halogen — no displacement.',eq:'No reaction',explain:'A halogen cannot displace itself from solution.',color:'#666',animation:'none'},
+  'Cl₂(aq)+NaCl':{obs:'No reaction. Cl⁻ cannot be displaced by Cl₂.',eq:'No reaction',explain:'Same halogen — chlorine cannot displace chloride ions.',color:'#666',animation:'none'},
+  // ── PRECIPITATION REACTIONS ─────────────────────────────────────────
+  'AgNO₃+NaCl':{obs:'⬜ Immediate white precipitate of AgCl.',eq:'AgNO₃ + NaCl → AgCl↓ + NaNO₃',explain:'Test for Cl⁻ ions! AgCl is white, insoluble in dilute HNO₃. Add dilute HNO₃ first to remove CO₃²⁻/SO₄²⁻.',color:'#ffffff',animation:'precipitate-white'},
+  'AgNO₃+KBr':{obs:'🟡 Cream/pale yellow precipitate of AgBr.',eq:'AgNO₃ + KBr → AgBr↓ + KNO₃',explain:'Test for Br⁻ ions! AgBr = cream precipitate. Insoluble in dilute HNO₃. Slightly soluble in conc. NH₃.',color:'#ffee88',animation:'precipitate-cream'},
+  'AgNO₃+KI':{obs:'🟡 Yellow precipitate of AgI.',eq:'AgNO₃ + KI → AgI↓ + KNO₃',explain:'Test for I⁻ ions! AgI = yellow precipitate. Insoluble in dilute AND conc. HNO₃. Insoluble in NH₃.',color:'#ffcc00',animation:'precipitate-yellow'},
+  'BaCl₂+H₂SO₄':{obs:'⬜ Immediate white precipitate of BaSO₄.',eq:'BaCl₂ + H₂SO₄ → BaSO₄↓ + 2HCl',explain:'Test for SO₄²⁻ ions! Add dilute HCl first to acidify, then BaCl₂. White ppt = sulfate confirmed.',color:'#ffffff',animation:'precipitate-white'},
+  'BaCl₂+Na₂CO₃':{obs:'⬜ White precipitate of BaCO₃.',eq:'BaCl₂ + Na₂CO₃ → BaCO₃↓ + 2NaCl',explain:'BaCO₃ is insoluble. White precipitate. Dissolves in dilute HCl (producing CO₂) — distinguishes from BaSO₄.',color:'#ffffff',animation:'precipitate-white'},
+  'Pb(NO₃)₂+NaCl':{obs:'⬜ White precipitate of PbCl₂.',eq:'Pb(NO₃)₂ + 2NaCl → PbCl₂↓ + 2NaNO₃',explain:'PbCl₂ is insoluble in cold water. White ppt. Dissolves in hot water (distinguish from AgCl).',color:'#ffffff',animation:'precipitate-white'},
+  'Pb(NO₃)₂+KI':{obs:'🟡 Bright yellow precipitate of PbI₂! Beautiful.',eq:'Pb(NO₃)₂ + 2KI → PbI₂↓ + 2KNO₃',explain:'PbI₂ is a striking yellow precipitate. Famous "golden rain" experiment. Insoluble.',color:'#ffcc00',animation:'precipitate-yellow'},
+  // ── NaOH + METAL IONS (testing) ─────────────────────────────────────
+  'NaOH+FeCl₃':{obs:'🟤 Rust-brown precipitate of Fe(OH)₃.',eq:'FeCl₃ + 3NaOH → Fe(OH)₃↓ + 3NaCl',explain:'Test for Fe³⁺! Rust-brown precipitate. Does NOT dissolve in excess NaOH. Contrast with Fe²⁺ (green ppt).',color:'#aa4400',animation:'precipitate-brown'},
+  'NaOH+FeCl₂':{obs:'🟢 Pale green precipitate of Fe(OH)₂.',eq:'FeCl₂ + 2NaOH → Fe(OH)₂↓ + 2NaCl',explain:'Test for Fe²⁺! Pale green ppt. Turns rust-brown on standing (oxidised to Fe(OH)₃). Does not dissolve in excess.',color:'#88aa44',animation:'precipitate-green'},
+  'NaOH+CuSO₄':{obs:'🔵 Pale blue precipitate of Cu(OH)₂.',eq:'CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄',explain:'Test for Cu²⁺! Pale blue ppt. Does NOT dissolve in excess NaOH. Turns black on heating (CuO).',color:'#4488ff',animation:'precipitate-blue'},
+  'NaOH+ZnSO₄':{obs:'⬜ White precipitate of Zn(OH)₂. Dissolves in excess!',eq:'ZnSO₄ + 2NaOH → Zn(OH)₂↓ + Na₂SO₄',explain:'Test for Zn²⁺! White ppt dissolves in EXCESS NaOH → amphoteric. Zn(OH)₂ + 2OH⁻ → [Zn(OH)₄]²⁻',color:'#ffffff',animation:'precipitate-dissolve'},
+  'NaOH+NH₃(aq)':{obs:'💨 Gas produced. Turns damp red litmus BLUE.',eq:'NH₄⁺ + OH⁻ → NH₃ + H₂O',explain:'Test for NH₄⁺! NH₃ gas is alkaline. Pungent smell. Turns damp red litmus blue. Only gas that does this.',color:'#7fff6b',animation:'gas'},
+  // ── INDICATORS ──────────────────────────────────────────────────────
+  'UI+HCl':{obs:'🔴 Turns red. pH 1-2. Strong acid.',eq:'Indicator shows: RED',explain:'Universal indicator turns red in strong acids (pH 1-3). HCl is a strong acid — fully dissociates.',color:'#ff2200',animation:'colour-change'},
+  'UI+H₂SO₄':{obs:'🔴 Turns red. pH 1-2. Strong acid.',eq:'Indicator shows: RED',explain:'H₂SO₄ is a diprotic strong acid. pH very low. UI turns red.',color:'#ff2200',animation:'colour-change'},
+  'UI+CH₃COOH':{obs:'🟠 Turns orange. pH ~3-4. Weak acid.',eq:'Indicator shows: ORANGE',explain:'Ethanoic acid is a weak acid — partially dissociates. pH 3-4. Orange on UI.',color:'#ff6600',animation:'colour-change'},
+  'UI+NaOH':{obs:'🟣 Turns purple/violet. pH 13-14.',eq:'Indicator shows: PURPLE',explain:'NaOH is a strong alkali. High pH. UI turns purple. OH⁻ ions present.',color:'#8800cc',animation:'colour-change'},
+  'UI+Na₂CO₃':{obs:'🔵 Turns blue. pH ~11. Weak alkali.',eq:'Indicator shows: BLUE',explain:'Na₂CO₃ is a weak alkali (pH ~11). CO₃²⁻ hydrolyses: CO₃²⁻ + H₂O → HCO₃⁻ + OH⁻.',color:'#0044ff',animation:'colour-change'},
+  'UI+H₂O':{obs:'🟢 Stays green. pH 7. Neutral.',eq:'Indicator shows: GREEN',explain:'Pure water is neutral. pH 7. Universal indicator is green at neutrality.',color:'#00aa00',animation:'colour-change'},
+  'Litmus+HCl':{obs:'🔴 Litmus turns RED. Acid present.',eq:'Indicator: turns RED in acid',explain:'Red litmus test for acids. Blue litmus turns red. Classic indicator test.',color:'#ff2200',animation:'colour-change'},
+  'Litmus+NaOH':{obs:'🔵 Litmus turns BLUE. Alkali present.',eq:'Indicator: turns BLUE in alkali',explain:'Blue litmus stays blue in alkali; red litmus turns blue. Classic indicator.',color:'#0044ff',animation:'colour-change'},
+  // ── LIMEWATER TESTS ─────────────────────────────────────────────────
+  'Limewater+Na₂CO₃':{obs:'⬜ Milky white precipitate of CaCO₃.',eq:'Ca(OH)₂ + Na₂CO₃ → CaCO₃↓ + 2NaOH',explain:'CO₃²⁻ precipitates Ca²⁺. Same principle as CO₂ test — milky white.',color:'#ffffff',animation:'precipitate-white'},
+  'Limewater+HCl':{obs:'⬜ Initially milky then clears with excess HCl.',eq:'CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂↑',explain:'If CaCO₃ ppt present, excess HCl dissolves it. Clears again. Shows amphoteric nature of CaCO₃.',color:'#ffffff',animation:'dissolve'},
+  // ── METALS + WATER ──────────────────────────────────────────────────
+  'Na+H₂O':{obs:'⚡ VIOLENT! Floats, fizzes rapidly, may ignite. Solution turns alkaline.',eq:'2Na + 2H₂O → 2NaOH + H₂↑',explain:'Na is very reactive. H₂ produced may ignite (lilac flame). Solution becomes strongly alkaline (NaOH). Very exothermic.',color:'#ffd93d',animation:'violent'},
+  'Ca+H₂O':{obs:'🫧 Steady fizzing. White Ca(OH)₂ precipitate. Alkaline.',eq:'Ca + 2H₂O → Ca(OH)₂ + H₂↑',explain:'Ca reacts steadily. Ca(OH)₂ is sparingly soluble → milky. Less vigorous than Na but more than Mg.',color:'#ffd93d',animation:'bubbles-med'},
+  'Mg+H₂O':{obs:'🫧 Very slow reaction with cold water. Faster with steam.',eq:'Mg + H₂O(steam) → MgO + H₂↑',explain:'Mg reacts slowly with cold water. With steam: MgO + H₂. Much less reactive than Na/Ca.',color:'#888',animation:'bubbles-slow'},
+  'Fe+H₂O':{obs:'No reaction with cold or warm water.',eq:'3Fe + 4H₂O(steam) → Fe₃O₄ + 4H₂↑',explain:'Fe does not react with liquid water. Reacts with steam to form Fe₃O₄. This is why Fe rusts in moist air (not pure water).',color:'#666',animation:'none'},
+  'Cu+H₂O':{obs:'No reaction at all.',eq:'No reaction',explain:'Cu is below H in reactivity series. Cannot displace H from water or dilute acids.',color:'#666',animation:'none'},
+};;
 function getMixKey(a,b){const k1=`${a.label}+${b.label}`,k2=`${b.label}+${a.label}`;return REACTIONS[k1]?k1:REACTIONS[k2]?k2:null;}
 let selReagents=[],mixExplain='';
 const reagentDomMap={};
 function initSandbox(){
-  const shelf=document.getElementById('reagent-shelf');if(shelf.dataset.built)return;shelf.dataset.built='1';
-  REAGENTS.forEach(r=>{const d=document.createElement('div');d.className='reagent';d.textContent=r.label;reagentDomMap[r.label]=d;
-    d.onclick=()=>{if(d.classList.contains('sel')){selReagents=selReagents.filter(s=>s.label!==r.label);d.classList.remove('sel');}
-    else{if(selReagents.length>=2){const rem=selReagents.shift();const rd=reagentDomMap[rem.label];if(rd)rd.classList.remove('sel');}selReagents.push(r);d.classList.add('sel');}updateMix();};shelf.appendChild(d);});
+  var shelf=document.getElementById('reagent-shelf');
+  if(shelf.dataset.built)return;shelf.dataset.built='1';
+  // Group reagents by type
+  var groups=[
+    {label:'⚗️ Acids',type:'acid',col:'#ff6b35'},
+    {label:'🔵 Alkalis',type:'alkali',col:'#00e5ff'},
+    {label:'🟡 Carbonates',type:'carbonate',col:'#ffd93d'},
+    {label:'⚙️ Metals',type:'metal',col:'#888'},
+    {label:'🧪 Salt Solutions',type:'salt',col:'#7fff6b'},
+    {label:'🟢 Halogens',type:'halogen',col:'#aaff88'},
+    {label:'🔮 Indicators',type:'indicator',col:'#aa44aa'},
+    {label:'💧 Other',type:'other',col:'#5a8aa0'},
+  ];
+  groups.forEach(function(g){
+    var reagentsInGroup = REAGENTS.filter(function(r){return r.type===g.type;});
+    if(!reagentsInGroup.length)return;
+    var groupDiv=document.createElement('div');
+    groupDiv.style.cssText='margin-bottom:.5rem;';
+    var groupLabel=document.createElement('div');
+    groupLabel.style.cssText='font-size:.68rem;color:'+g.col+';font-weight:bold;margin-bottom:.25rem;letter-spacing:.05em;';
+    groupLabel.textContent=g.label;
+    groupDiv.appendChild(groupLabel);
+    var btnRow=document.createElement('div');btnRow.style.cssText='display:flex;flex-wrap:wrap;gap:.25rem;';
+    reagentsInGroup.forEach(function(r){
+      var d=document.createElement('div');
+      d.className='reagent';
+      d.textContent=r.label;
+      d.style.borderColor=g.col+'44';
+      reagentDomMap[r.label]=d;
+      d.onclick=function(){
+        if(d.classList.contains('sel')){
+          selReagents=selReagents.filter(function(s){return s.label!==r.label;});
+          d.classList.remove('sel');d.style.background='';
+        } else {
+          if(selReagents.length>=2){
+            var rem=selReagents.shift();
+            var rd=reagentDomMap[rem.label];
+            if(rd){rd.classList.remove('sel');rd.style.background='';}
+          }
+          selReagents.push(r);d.classList.add('sel');d.style.background=g.col+'33';
+        }
+        updateMix();
+      };
+      btnRow.appendChild(d);
+    });
+    groupDiv.appendChild(btnRow);shelf.appendChild(groupDiv);
+  });
   initQuiz();
 }
 function updateMix(){
-  const sd=document.getElementById('sel-display'),mr=document.getElementById('mix-result'),me=document.getElementById('mix-explain');
-  sd.textContent='Selected: '+(selReagents.map(r=>r.label).join(' + ')||'none');
+  var sd=document.getElementById('sel-display');
+  var mr=document.getElementById('mix-result');
+  var me=document.getElementById('mix-explain');
+  sd.textContent='Selected: '+(selReagents.map(function(r){return r.label;}).join(' + ')||'none');
   me.style.display='none';mixExplain='';
-  if(selReagents.length===2){const key=getMixKey(selReagents[0],selReagents[1]);
-    if(key){mr.className='mix-result reacted';mr.innerHTML=`<div><b>${selReagents[0].label} + ${selReagents[1].label}</b><br>${REACTIONS[key].obs}<br><span style="font-family:var(--mono);font-size:.75rem;color:var(--cyan)">${REACTIONS[key].eq}</span></div>`;mixExplain=REACTIONS[key].explain;addXP(3,'Sandbox reaction!');}
-    else{mr.className='mix-result';mr.textContent='No visible reaction between '+selReagents.map(r=>r.label).join(' + ')+'.';}
-  }else{mr.className='mix-result';mr.textContent=selReagents.length===1?'Select one more…':'Select two reagents…';}
+  if(selReagents.length===2){
+    var key=getMixKey(selReagents[0],selReagents[1]);
+    if(key){
+      var rx=REACTIONS[key];
+      var col=rx.color||'#00e5ff';
+      mr.className='mix-result reacted';
+      mr.style.borderLeft='4px solid '+col;
+      mr.style.background='rgba(0,0,0,0.3)';
+      mr.innerHTML='<div style="margin-bottom:.4rem;font-size:.85rem;color:#888">'+selReagents[0].label+' + '+selReagents[1].label+'</div>'+
+        '<div style="font-size:1.1rem;margin-bottom:.4rem;">'+rx.obs+'</div>'+
+        '<div style="font-family:monospace;font-size:.8rem;color:'+col+';padding:.3rem .5rem;background:rgba(0,0,0,0.3);border-radius:4px;margin-bottom:.35rem">'+rx.eq+'</div>';
+      mixExplain=rx.explain;
+      addXP(3,'Sandbox reaction!');
+    } else {
+      mr.className='mix-result';
+      mr.style.borderLeft='4px solid #333';
+      mr.style.background='';
+      mr.innerHTML='<span style="color:#666">⚪ No visible reaction between '+selReagents[0].label+' and '+selReagents[1].label+'.</span>'+
+        '<div style="font-size:.75rem;color:#444;margin-top:.3rem">Check the reactivity series or ion rules.</div>';
+    }
+  } else {
+    mr.className='mix-result';mr.style.borderLeft='';mr.style.background='';
+    mr.textContent=selReagents.length===1?'Select one more reagent…':'Select two reagents to mix…';
+  }
 }
 function clearMix(){selReagents=[];document.querySelectorAll('.reagent.sel').forEach(r=>r.classList.remove('sel'));updateMix();}
 function revealExplanation(){const me=document.getElementById('mix-explain');me.style.display='block';me.textContent=mixExplain||'Select two reagents first.';}
