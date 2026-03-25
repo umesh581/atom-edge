@@ -4831,7 +4831,9 @@ function renderGameQuestion(){
     html2 += '</div>';
     html2 += '</div>';
     // Init coefficients
-    html2 += '<script>window._gEqCoeffs=new Array('+q.answer.length+').fill(null);window._gEqBlank=0;</script>';
+    // Init eq state directly (no inline script needed)
+    window._gEqCoeffs = new Array(q.answer.length).fill(null);
+    window._gEqBlank = 0;
     html2 += '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">';
     html2 += '<button onclick="checkEqAnswer()" class="btn green">✓ Check</button>';
     html2 += '<button onclick="showGameHint()" class="btn">💡 Hint</button>';
