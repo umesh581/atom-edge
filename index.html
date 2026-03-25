@@ -471,6 +471,13 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 #cb-toolbar::-webkit-scrollbar{display:none}
 </style>
 
+  <!-- Disable login until Firebase ready -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var b = document.getElementById('auth-submit-btn');
+      if (b) b.disabled = true;
+    });
+  </script>
   <!-- Firebase -->
   <script type="module">
     import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -497,6 +504,12 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     window.FB = { auth, db, doc, getDoc, setDoc, updateDoc,
                   collection, getDocs, deleteDoc, serverTimestamp,
                   createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
+    window._fbReady = true;
+    // Re-enable login button now that Firebase is ready
+    var submitBtn = document.getElementById('auth-submit-btn');
+    if (submitBtn) submitBtn.disabled = false;
+    var fbSt = document.getElementById('fb-status');
+    if (fbSt) fbSt.textContent = '✓ Connected — ready to sign in';
 
     window.loadAllStudents = async function() {
       if (!window.FB) return [];
@@ -586,7 +599,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
             style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.6rem .85rem;border-radius:9px;font-family:var(--font);font-size:.9rem;outline:none;box-sizing:border-box">
         </div>
         <div id="auth-err" style="color:var(--red);font-size:.78rem;display:none;padding:.4rem .6rem;background:rgba(255,71,87,.08);border-radius:7px;border:1px solid rgba(255,71,87,.2)"></div>
-        <button onclick="authSubmit()"
+        <button id="auth-submit-btn" onclick="authSubmit()"
           style="width:100%;padding:.7rem;background:var(--cyan);color:#000;border:none;border-radius:9px;font-family:var(--font);font-size:.9rem;font-weight:700;cursor:pointer;transition:.2s">
           Sign In
         </button>
@@ -1004,7 +1017,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 </div>
 
 <script>
-'use strict';
 // ════════════ STORAGE ════════════
 const S={
   get:(k,d=null)=>{try{const v=localStorage.getItem('ae_'+k);return v!==null?JSON.parse(v):d;}catch{return d;}},
@@ -1070,7 +1082,18 @@ function authSubmit() {
   var pass    = (document.getElementById('auth-pass').value  || '').trim();
   var errEl   = document.getElementById('auth-err');
   if (!email || !pass) { showAuthErr('Please enter email and password.'); return; }
-  if (!window.FB)      { showAuthErr('Firebase not loaded yet — please wait.'); return; }
+  if (!window.FB) {
+    var btn3 = document.getElementById('auth-submit-btn');
+    if (btn3) btn3.disabled = true;
+    showAuthErr('Connecting… retrying in a moment.');
+    setTimeout(function() {
+      if (btn3) btn3.disabled = false;
+      var e3 = document.getElementById('auth-err');
+      if (e3) e3.style.display = 'none';
+      authSubmit();
+    }, 1200);
+    return;
+  }
   if (_authMode === 'signup') {
     var name = (document.getElementById('auth-name').value || '').trim() || email.split('@')[0];
     window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass)
