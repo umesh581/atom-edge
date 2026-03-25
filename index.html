@@ -549,9 +549,13 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
         });
         // Show/hide teacher tab
         const teacherTab = document.querySelector('[onclick*="teacher"]');
-        if (teacherTab) teacherTab.style.display = (user.email === window.ADMIN_EMAIL) ? '' : 'none';
-        const cbTab = document.querySelector('[onclick*="classboard"]');
-        if (cbTab) cbTab.style.display = '';
+        const ADMIN = window.ADMIN_EMAIL || 'aish.priya19@gmail.com';
+        if (teacherTab) teacherTab.style.display = (user.email === ADMIN) ? '' : 'none';
+        // Also trigger dashboard load for admin
+        if (user.email === ADMIN) {
+          setTimeout(function(){ if(typeof renderDashboard==='function') renderDashboard(); }, 500);
+        }
+
       } else {
         // Signed out
         if (authScreen) authScreen.style.display = 'flex';
@@ -624,7 +628,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
     <button class="ntab" onclick="goPage('game',this)">Game</button>
     <button class="ntab" onclick="goPage('periodic',this)">Periodic Table</button>
     <button class="ntab" onclick="goPage('papers',this)">Past Papers</button>
-    <button class="ntab" onclick="goPage('classboard',this)">My Classboard</button>
     <button class="ntab" id="nav-teacher" onclick="goPage('teacher',this)" style="display:none">Teacher</button>
     <button class="ntab" onclick="goPage('teacher',this)">Teacher</button>
   </nav>
@@ -862,116 +865,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 
 
 <!-- TEACHER DASHBOARD -->
-<div id="page-classboard" class="page" style="display:none">
-  <div id="cb-teacher-view" style="display:none">
-    <div id="cb-selector" class="sec">
-      <div class="sec-hd"><h2>&#128394; Start a Whiteboard Session</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.83rem;margin-bottom:1.25rem;line-height:1.7">Select the student you are teaching, then click Start Session.</p>
-      <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
-        <div style="flex:1;min-width:200px">
-          <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.4rem">Student</label>
-          <select id="cb-student-sel" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.55rem .75rem;border-radius:9px;font-family:var(--font);font-size:.88rem">
-            <option value="">-- Select student --</option>
-          </select>
-        </div>
-        <div style="flex:1;min-width:180px">
-          <label style="font-size:.7rem;color:var(--dim);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:.4rem">Topic (optional)</label>
-          <input id="cb-topic-input" type="text" placeholder="e.g. Acids and Bases" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.55rem .75rem;border-radius:9px;font-family:var(--font);font-size:.88rem;outline:none">
-        </div>
-        <button class="btn green" onclick="cb_startSession()" style="padding:.6rem 1.5rem;white-space:nowrap">Start Session</button>
-      </div>
-      <div id="cb-sel-err" style="color:var(--red);font-size:.78rem;margin-top:.5rem;display:none">Please select a student first.</div>
-    </div>
-    <div id="cb-whiteboard" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;padding:.75rem 1rem;background:var(--s1);border-bottom:1px solid var(--border)">
-        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-          <span id="cb-student-badge" style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--cyan);border-radius:20px;padding:.2rem .75rem;font-size:.78rem;font-weight:600"></span>
-          <span id="cb-topic-badge" style="background:var(--s2);border:1px solid var(--border);color:var(--dim);border-radius:20px;padding:.2rem .75rem;font-size:.75rem"></span>
-          <span id="cb-save-indicator" style="font-size:.72rem;color:var(--green);display:none">Saved</span>
-        </div>
-        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
-          <span id="cb-meta" style="font-size:.72rem;color:var(--dim2);line-height:2"></span>
-          <button class="btn" onclick="cb_changeStudent()">Change</button>
-          <button class="btn green" onclick="cb_saveNow()">Save</button>
-          <button class="btn" onclick="cb_showSessions()">Sessions</button>
-          <button class="btn" style="color:var(--red)" onclick="cb_clearCanvas()">Clear</button>
-        </div>
-      </div>
-      <div id="cb-toolbar" style="display:flex;align-items:center;gap:3px;background:var(--s1);border-bottom:1px solid var(--border);padding:6px 12px;overflow-x:auto;white-space:nowrap">
-        <button class="cb-tool on" id="cb-tool-pen"    onclick="cb_setTool('pen')"   >PEN</button>
-        <button class="cb-tool"    id="cb-tool-marker" onclick="cb_setTool('marker')">MARK</button>
-        <button class="cb-tool"    id="cb-tool-eraser" onclick="cb_setTool('eraser')">ERASE</button>
-        <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-        <button class="cb-tool"    id="cb-tool-line"   onclick="cb_setTool('line')"  >LINE</button>
-        <button class="cb-tool"    id="cb-tool-rect"   onclick="cb_setTool('rect')"  >RECT</button>
-        <button class="cb-tool"    id="cb-tool-circle" onclick="cb_setTool('circle')">OVAL</button>
-        <button class="cb-tool"    id="cb-tool-text"   onclick="cb_setTool('text')"  >TEXT</button>
-        <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-        <div style="display:inline-flex;align-items:center;gap:5px;flex-shrink:0">
-          <div class="cb-swatch on" data-color="#1a1a1a" onclick="cb_setColor(this)" style="background:#1a1a1a"></div>
-          <div class="cb-swatch"    data-color="#e74c3c" onclick="cb_setColor(this)" style="background:#e74c3c"></div>
-          <div class="cb-swatch"    data-color="#2980b9" onclick="cb_setColor(this)" style="background:#2980b9"></div>
-          <div class="cb-swatch"    data-color="#27ae60" onclick="cb_setColor(this)" style="background:#27ae60"></div>
-          <div class="cb-swatch"    data-color="#f39c12" onclick="cb_setColor(this)" style="background:#f39c12"></div>
-          <div class="cb-swatch"    data-color="#8e44ad" onclick="cb_setColor(this)" style="background:#8e44ad"></div>
-          <div class="cb-swatch"    data-color="#ffffff" onclick="cb_setColor(this)" style="background:#fff;box-shadow:inset 0 0 0 1.5px #aaa"></div>
-          <label style="width:22px;height:22px;border-radius:50%;border:2px dashed var(--border2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--dim);position:relative;flex-shrink:0">
-            <input type="color" id="cb-custom-color" value="#1a1a1a" oninput="cb_setCustomColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%">+
-          </label>
-        </div>
-        <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-        <div style="display:inline-flex;align-items:center;gap:6px;flex-shrink:0">
-          <div id="cb-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;pointer-events:none"></div>
-          <input type="range" id="cb-size" min="1" max="40" value="3" oninput="cb_setSize(this.value)" style="-webkit-appearance:none;width:70px;height:3px;border-radius:3px;background:var(--border2);outline:none;cursor:pointer">
-          <span id="cb-size-val" style="font-family:var(--mono);font-size:11px;color:var(--cyan);min-width:14px">3</span>
-        </div>
-        <div style="width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0"></div>
-        <button class="cb-tool" onclick="cb_undo()">UNDO</button>
-        <button class="cb-tool" onclick="cb_redo()">REDO</button>
-        <button class="cb-tool" id="cb-tool-bg" onclick="cb_toggleBg()">BG</button>
-      </div>
-      <div id="cb-scroll" style="width:100%;overflow-y:auto;overflow-x:hidden;background:#e8ecf0;max-height:82vh;position:relative">
-        <div style="position:relative;width:100%">
-          <canvas id="cb-canvas" style="display:block;background:#fff;cursor:crosshair;touch-action:none"></canvas>
-          <input type="text" id="cb-text-input" placeholder="Type and press Enter" style="display:none;position:absolute;border:2px solid var(--cyan);border-radius:6px;padding:5px 10px;font-size:16px;outline:none;background:rgba(255,255,255,.97);color:#111;font-family:var(--font);min-width:160px;z-index:10">
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:.4rem 1rem;font-size:.7rem;color:var(--dim2);background:var(--s1);border-top:1px solid var(--border)">
-        <span>Canvas auto-expands as you write</span>
-        <span id="cb-last-saved"></span>
-      </div>
-    </div>
-    <div id="cb-sessions-panel" style="display:none">
-      <div class="sec">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-          <div style="font-family:var(--head);font-size:1rem;font-weight:700">Saved Sessions</div>
-          <button class="btn" onclick="cb_hideSessions()">Back to Board</button>
-        </div>
-        <div id="cb-sessions-list"></div>
-      </div>
-    </div>
-  </div>
-  <div id="cb-student-view" style="display:none">
-    <div class="sec">
-      <div class="sec-hd"><h2>&#128394; My Classboard</h2><div class="sec-line"></div></div>
-      <p style="color:var(--dim);font-size:.85rem;margin-bottom:1.25rem;line-height:1.7">Your teacher's whiteboard sessions, saved automatically after each class.</p>
-      <div id="cb-student-sessions"></div>
-    </div>
-    <div id="cb-student-viewer" style="display:none">
-      <div class="sec">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
-          <div>
-            <div style="font-family:var(--head);font-size:1rem;font-weight:700" id="cb-sv-title"></div>
-            <div style="font-size:.75rem;color:var(--dim);margin-top:.2rem" id="cb-sv-meta"></div>
-          </div>
-          <button class="btn" onclick="cb_closeStudentViewer()">Back</button>
-        </div>
-        <canvas id="cb-sv-canvas" style="width:100%;border-radius:8px;border:1px solid var(--border);background:#fff;display:block"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="page-teacher" class="page" style="display:none">
   <div class="sec">
     <div class="sec-hd"><h2>&#128105;&#8205;&#127979; Teacher Dashboard</h2><div class="sec-line"></div></div>
@@ -2840,7 +2733,7 @@ function renderDashboard() {
     td_buildHWSelect();
   }).catch(function(e){ statsEl.innerHTML = '<div style="color:var(--red)">Error: '+e.message+'</div>'; });
 }
-function td_refresh(){ var s=document.getElementById('td-stats'); if(s) s.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Refreshing...</div>'; renderDashboard(); }
+function td_refresh() { renderDashboard(); }
 function td_exportCSV(){
   var students=window._td_students;
   if(!students||!students.length){toast('No data to export.');return;}
@@ -3492,69 +3385,474 @@ function pp_renderContent(paper, containerId, showMarkScheme) {
 // ── SVG Diagram renderer ──────────────────────────────────────
 function pp_renderDiagram(diagram) {
   var type = diagram.type;
+  var S = '<svg xmlns="http://www.w3.org/2000/svg"';
 
+  // ── ATOM ────────────────────────────────────────────────────────────
   if (type === 'atom') {
     var el = diagram.element || 'Na';
-    var shells = diagram.shells || [2, 8, 1];
-    var svg = '<svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">';
+    var shells = diagram.shells || [2,8,1];
+    var svg = S + ' viewBox="0 0 200 200" width="200" height="200">';
     svg += '<circle cx="100" cy="100" r="18" fill="#1d3347" stroke="#00e5ff" stroke-width="2"/>';
     svg += '<text x="100" y="105" text-anchor="middle" fill="#00e5ff" font-size="12" font-family="monospace">' + el + '</text>';
-    var radii = [38, 62, 86, 110];
-    shells.forEach(function(count, i) {
-      var r = radii[i];
+    var radii = [38,62,86,110];
+    shells.forEach(function(count,si) {
+      var r = radii[si];
       svg += '<circle cx="100" cy="100" r="' + r + '" fill="none" stroke="#1d3347" stroke-width="1.5" stroke-dasharray="4,3"/>';
-      for (var e = 0; e < count; e++) {
-        var angle = (2 * Math.PI * e / count) - Math.PI / 2;
-        var ex = 100 + r * Math.cos(angle);
-        var ey = 100 + r * Math.sin(angle);
-        svg += '<circle cx="' + ex.toFixed(1) + '" cy="' + ey.toFixed(1) + '" r="4" fill="#ff6b35"/>';
+      for (var e=0;e<count;e++) {
+        var ang = (2*Math.PI*e/count)-Math.PI/2;
+        svg += '<circle cx="'+(100+r*Math.cos(ang)).toFixed(1)+'" cy="'+(100+r*Math.sin(ang)).toFixed(1)+'" r="4" fill="#ff6b35"/>';
       }
     });
     svg += '</svg>';
     return svg;
   }
 
+  // ── MOLECULE ─────────────────────────────────────────────────────────
+  if (type === 'molecule') {
+    var name = diagram.name || 'H₂O';
+    var shape = diagram.shape || '';
+    var angle = diagram.angle || '';
+    var svg = S + ' viewBox="0 0 260 140" width="260" height="140">';
+    svg += '<rect width="260" height="140" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    // Draw H2O as default
+    svg += '<circle cx="130" cy="55" r="20" fill="#1d3347" stroke="#00e5ff" stroke-width="2"/>';
+    svg += '<text x="130" y="60" text-anchor="middle" fill="#00e5ff" font-size="13" font-family="monospace">O</text>';
+    svg += '<circle cx="85" cy="90" r="14" fill="#1d3347" stroke="#ff6b35" stroke-width="2"/>';
+    svg += '<text x="85" y="95" text-anchor="middle" fill="#ff6b35" font-size="11" font-family="monospace">H</text>';
+    svg += '<circle cx="175" cy="90" r="14" fill="#1d3347" stroke="#ff6b35" stroke-width="2"/>';
+    svg += '<text x="175" y="95" text-anchor="middle" fill="#ff6b35" font-size="11" font-family="monospace">H</text>';
+    svg += '<line x1="112" y1="68" x2="95" y2="80" stroke="#5a8aa0" stroke-width="2"/>';
+    svg += '<line x1="148" y1="68" x2="165" y2="80" stroke="#5a8aa0" stroke-width="2"/>';
+    svg += '<text x="130" y="118" text-anchor="middle" fill="#5a8aa0" font-size="10">' + name + ' — ' + shape + '</text>';
+    if (angle) svg += '<text x="130" y="132" text-anchor="middle" fill="#3a6070" font-size="9">Bond angle: ' + angle + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── PERIODIC TABLE SECTION ──────────────────────────────────────────
+  if (type === 'pt_section') {
+    var els = diagram.elements || ['Li','Be','B','C','N','O','F','Ne'];
+    var period = diagram.period || 2;
+    var w = els.length * 38 + 20;
+    var svg = S + ' viewBox="0 0 ' + w + ' 80" width="' + w + '" height="80">';
+    svg += '<rect width="' + w + '" height="80" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="' + (w/2) + '" y="14" text-anchor="middle" fill="#5a8aa0" font-size="9">Period ' + period + '</text>';
+    els.forEach(function(el, idx) {
+      var x = 10 + idx*38;
+      svg += '<rect x="' + x + '" y="20" width="32" height="32" rx="4" fill="#132333" stroke="#1d3347"/>';
+      svg += '<text x="' + (x+16) + '" y="40" text-anchor="middle" fill="#00e5ff" font-size="13" font-family="monospace">' + el + '</text>';
+      svg += '<text x="' + (x+16) + '" y="65" text-anchor="middle" fill="#3a6070" font-size="8">' + (idx+3) + '</text>';
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── PROPERTIES TABLE ────────────────────────────────────────────────
+  if (type === 'properties_table') {
+    var svg = S + ' viewBox="0 0 320 120" width="320" height="120">';
+    svg += '<rect width="320" height="120" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    var headers = ['Property','Ionic','Covalent'];
+    var rows = [['Melting pt','High','Low'],['Conducts?','When molten','No'],['Solubility','Often soluble','Often insoluble']];
+    var cols = [10,120,220];
+    headers.forEach(function(h,i){ svg += '<text x="'+(cols[i]+5)+'" y="20" fill="#00e5ff" font-size="10" font-weight="bold">'+h+'</text>'; });
+    svg += '<line x1="10" y1="25" x2="310" y2="25" stroke="#1d3347"/>';
+    rows.forEach(function(row,ri){
+      var y = 42 + ri*26;
+      row.forEach(function(cell,ci){
+        svg += '<text x="'+(cols[ci]+5)+'" y="'+y+'" fill="'+(ci===0?'#5a8aa0':'#e8f4f8')+'" font-size="9">'+cell+'</text>';
+      });
+      svg += '<line x1="10" y1="'+(y+8)+'" x2="310" y2="'+(y+8)+'" stroke="#0d1a24"/>';
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── PH SCALE ────────────────────────────────────────────────────────
   if (type === 'ph_scale') {
-    var svg = '<svg viewBox="0 0 300 60" width="300" height="60" xmlns="http://www.w3.org/2000/svg">';
-    var colors = ['#ff0000','#ff4400','#ff8800','#ffcc00','#aacc00','#00cc00','#00cc88','#0088cc','#0044ff','#2200cc','#440099','#660066','#880033','#aa0000'];
-    colors.forEach(function(col, i) {
-      svg += '<rect x="' + (i*21) + '" y="10" width="21" height="30" fill="' + col + '"/>';
-      svg += '<text x="' + (i*21+10) + '" y="52" text-anchor="middle" fill="#aaa" font-size="8">' + i + '</text>';
-    });
-    svg += '<rect x="0" y="10" width="294" height="30" fill="none" stroke="#1d3347" stroke-width="1"/>';
+    var svg = S + ' viewBox="0 0 300 60" width="300" height="60">';
+    var colors = ['#ff2020','#ff5500','#ff8800','#ffcc00','#aacc00','#66bb44','#44aa88','#2299cc','#1188ee','#0066ff','#4400cc','#6600aa','#880077','#aa0055'];
+    for (var p=0;p<=14;p++) {
+      svg += '<rect x="'+(p*20)+'" y="10" width="20" height="20" fill="'+(colors[p]||'#880077')+'"/>';
+      if (p%2===0) svg += '<text x="'+(p*20+10)+'" y="42" text-anchor="middle" fill="#5a8aa0" font-size="8">'+p+'</text>';
+    }
+    svg += '<text x="0" y="58" fill="#ff4444" font-size="8">Acid</text>';
+    svg += '<text x="130" y="58" fill="#888" font-size="8">Neutral</text>';
+    svg += '<text x="260" y="58" fill="#4488ff" font-size="8">Alkali</text>';
     svg += '</svg>';
     return svg;
   }
 
-  if (type === 'energy_profile') {
-    var isExo = diagram.type_reaction === 'exothermic';
-    var svg = '<svg viewBox="0 0 280 160" width="280" height="160" xmlns="http://www.w3.org/2000/svg">';
-    svg += '<line x1="30" y1="140" x2="30" y2="10" stroke="#1d3347" stroke-width="1.5"/>';
-    svg += '<line x1="30" y1="140" x2="270" y2="140" stroke="#1d3347" stroke-width="1.5"/>';
-    svg += '<path d="M50,110 Q100,108 120,50 Q140,0 160,48 Q180,95 230,95" fill="none" stroke="#00e5ff" stroke-width="2.5"/>';
-    svg += '<text x="10" y="90" fill="#5a8aa0" font-size="9" writing-mode="tb">Energy</text>';
-    svg += '<text x="140" y="155" text-anchor="middle" fill="#5a8aa0" font-size="9">Reaction Progress</text>';
+  // ── TITRATION SETUP ──────────────────────────────────────────────────
+  if (type === 'titration_setup') {
+    var svg = S + ' viewBox="0 0 200 240" width="200" height="240">';
+    svg += '<rect width="200" height="240" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    // Burette
+    svg += '<rect x="88" y="10" width="24" height="8" rx="2" fill="#1d3347" stroke="#00e5ff"/>'; // clamp top
+    svg += '<rect x="94" y="18" width="12" height="100" rx="2" fill="none" stroke="#00e5ff" stroke-width="1.5"/>'; // burette tube
+    svg += '<rect x="94" y="18" width="12" height="40" rx="0" fill="#00e5ff" fill-opacity="0.2"/>'; // liquid in burette
+    svg += '<line x1="100" y1="118" x2="100" y2="128" stroke="#00e5ff" stroke-width="1.5"/>'; // nozzle
+    svg += '<circle cx="100" cy="118" r="3" fill="#5a8aa0"/>'; // tap
+    // Labels burette
+    svg += '<text x="112" y="25" fill="#5a8aa0" font-size="8">0</text>';
+    svg += '<text x="112" y="55" fill="#5a8aa0" font-size="8">10</text>';
+    svg += '<text x="112" y="85" fill="#5a8aa0" font-size="8">20</text>';
+    svg += '<text x="112" y="115" fill="#5a8aa0" font-size="8">30</text>';
+    svg += '<text x="60" y="70" fill="#00e5ff" font-size="9">Burette</text>';
+    // Conical flask
+    svg += '<polygon points="80,140 120,140 135,195 65,195" fill="none" stroke="#00e5ff" stroke-width="1.5"/>'; // flask body
+    svg += '<rect x="92" y="132" width="16" height="10" fill="none" stroke="#00e5ff" stroke-width="1.5"/>'; // flask neck
+    svg += '<polygon points="80,185 120,185 135,195 65,195" fill="#7fff6b" fill-opacity="0.15"/>'; // solution
+    svg += '<text x="100" y="175" text-anchor="middle" fill="#7fff6b" font-size="8">NaOH</text>';
+    svg += '<text x="100" y="215" text-anchor="middle" fill="#5a8aa0" font-size="9">Conical Flask</text>';
+    // Drop falling
+    svg += '<ellipse cx="100" cy="135" rx="2" ry="3" fill="#00e5ff" fill-opacity="0.6"/>';
     svg += '</svg>';
     return svg;
   }
 
+  // ── ELECTROLYSIS CELL ────────────────────────────────────────────────
+  if (type === 'electrolysis_cell') {
+    var electrolyte = diagram.electrolyte || 'electrolyte';
+    var svg = S + ' viewBox="0 0 240 180" width="240" height="180">';
+    svg += '<rect width="240" height="180" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    // Beaker
+    svg += '<path d="M30,40 L30,150 L210,150 L210,40" fill="none" stroke="#00e5ff" stroke-width="2"/>'; // beaker U
+    // Electrolyte liquid
+    svg += '<rect x="31" y="90" width="178" height="59" fill="#00e5ff" fill-opacity="0.08"/>'; 
+    svg += '<text x="120" y="125" text-anchor="middle" fill="#00e5ff" font-size="9">' + electrolyte + '</text>';
+    // Electrodes
+    svg += '<rect x="65" y="30" width="8" height="110" rx="2" fill="#5a8aa0" stroke="#888"/>'; // cathode
+    svg += '<rect x="167" y="30" width="8" height="110" rx="2" fill="#5a8aa0" stroke="#888"/>'; // anode
+    // Wires to battery
+    svg += '<line x1="69" y1="30" x2="69" y2="10" stroke="#aaa" stroke-width="1.5"/>';
+    svg += '<line x1="171" y1="30" x2="171" y2="10" stroke="#aaa" stroke-width="1.5"/>';
+    // Battery
+    svg += '<rect x="90" y="5" width="60" height="14" rx="3" fill="#1d3347" stroke="#ffd93d"/>'; 
+    svg += '<line x1="69" y1="10" x2="90" y2="12" stroke="#aaa" stroke-width="1.5"/>';
+    svg += '<line x1="171" y1="10" x2="150" y2="12" stroke="#aaa" stroke-width="1.5"/>';
+    svg += '<text x="120" y="16" text-anchor="middle" fill="#ffd93d" font-size="8">Battery</text>';
+    // Labels
+    svg += '<text x="69" y="158" text-anchor="middle" fill="#ff6b35" font-size="9">Cathode (−)</text>';
+    svg += '<text x="171" y="158" text-anchor="middle" fill="#7fff6b" font-size="9">Anode (+)</text>';
+    // Bubbles at cathode
+    svg += '<circle cx="63" cy="100" r="3" fill="none" stroke="#00e5ff" stroke-width="1"/>';
+    svg += '<circle cx="67" cy="88" r="2" fill="none" stroke="#00e5ff" stroke-width="1"/>';
+    // Bubbles at anode
+    svg += '<circle cx="175" cy="95" r="3" fill="none" stroke="#7fff6b" stroke-width="1"/>';
+    svg += '<circle cx="172" cy="82" r="2" fill="none" stroke="#7fff6b" stroke-width="1"/>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── REACTIVITY SERIES ────────────────────────────────────────────────
   if (type === 'reactivity_series') {
-    var metals = ['K','Na','Ca','Mg','Al','Zn','Fe','Pb','Cu','Ag'];
-    var svg = '<svg viewBox="0 0 200 220" width="200" height="220" xmlns="http://www.w3.org/2000/svg">';
-    svg += '<text x="100" y="15" text-anchor="middle" fill="#00e5ff" font-size="10" font-weight="bold">Reactivity Series</text>';
-    metals.forEach(function(m, i) {
-      var y = 28 + i * 19;
-      var shade = Math.round(255 - i * 20);
-      svg += '<rect x="40" y="' + (y-12) + '" width="120" height="16" rx="3" fill="#0a1520" stroke="#1d3347"/>';
-      svg += '<text x="100" y="' + y + '" text-anchor="middle" fill="#ddeeff" font-size="10">' + m + '</text>';
+    var metals = ['K','Na','Ca','Mg','Al','Zn','Fe','Pb','H','Cu','Ag','Au'];
+    var h = metals.length * 18 + 30;
+    var svg = S + ' viewBox="0 0 160 ' + h + '" width="160" height="' + h + '">';
+    svg += '<rect width="160" height="' + h + '" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="80" y="16" text-anchor="middle" fill="#00e5ff" font-size="10" font-weight="bold">Reactivity Series</text>';
+    svg += '<line x1="30" y1="22" x2="30" y2="' + (h-10) + '" stroke="#1d3347" stroke-width="1" marker-end="url(#arr)"/>';
+    // Arrow
+    svg += '<defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ff6b35"/></marker></defs>';
+    metals.forEach(function(m,idx) {
+      var y = 30 + idx*18;
+      var col = idx < 4 ? '#ff6b35' : idx < 8 ? '#ffd93d' : '#7fff6b';
+      svg += '<text x="50" y="' + y + '" fill="' + col + '" font-size="11" font-family="monospace">' + m + '</text>';
+      if (m === 'H') svg += '<text x="65" y="' + y + '" fill="#3a6070" font-size="8"> (non-metal)</text>';
     });
-    svg += '<text x="5" y="40" fill="#ff6b35" font-size="8">↑ Most</text>';
-    svg += '<text x="5" y="205" fill="#00e5a0" font-size="8">↓ Least</text>';
+    svg += '<text x="14" y="' + (h/2) + '" fill="#ff6b35" font-size="8" transform="rotate(-90 14 ' + (h/2) + ')">More reactive</text>';
     svg += '</svg>';
     return svg;
   }
 
-  // Generic placeholder for other diagram types
+  // ── RUSTING EXPERIMENT ───────────────────────────────────────────────
+  if (type === 'rusting_experiment') {
+    var tubes = diagram.tubes || ['water only','air only','boiled water + oil'];
+    var w = tubes.length * 90 + 20;
+    var svg = S + ' viewBox="0 0 ' + w + ' 160" width="' + w + '" height="160">';
+    svg += '<rect width="' + w + '" height="160" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="' + (w/2) + '" y="15" text-anchor="middle" fill="#00e5ff" font-size="10">Rusting Experiment</text>';
+    tubes.forEach(function(label, idx) {
+      var x = 20 + idx*90;
+      // Test tube
+      svg += '<path d="M' + (x+15) + ',25 L' + (x+15) + ',110 Q' + (x+15) + ',120 ' + (x+25) + ',120 Q' + (x+35) + ',120 ' + (x+35) + ',110 L' + (x+35) + ',25" fill="none" stroke="#5a8aa0" stroke-width="1.5"/>';
+      // Nail
+      svg += '<rect x="' + (x+23) + '" y="40" width="4" height="60" fill="#888" rx="1"/>';
+      // Show rust on first and last tube
+      if (idx !== 1) svg += '<rect x="' + (x+22) + '" y="60" width="6" height="20" fill="#ff6b35" fill-opacity="0.5" rx="1"/>';
+      // Water level in tube 0 and 2
+      if (idx !== 1) svg += '<rect x="' + (x+16) + '" y="90" width="19" height="29" fill="#00e5ff" fill-opacity="0.15"/>';
+      // Oil layer in tube 2
+      if (idx === 2) svg += '<rect x="' + (x+16) + '" y="82" width="19" height="10" fill="#ffd93d" fill-opacity="0.3"/>';
+      // Label
+      var words = label.split(' ');
+      words.forEach(function(w, wi) {
+        svg += '<text x="' + (x+25) + '" y="' + (132+wi*11) + '" text-anchor="middle" fill="#5a8aa0" font-size="7">' + w + '</text>';
+      });
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── BLAST FURNACE ────────────────────────────────────────────────────
+  if (type === 'blast_furnace') {
+    var svg = S + ' viewBox="0 0 200 240" width="200" height="240">';
+    svg += '<rect width="200" height="240" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    // Furnace shape
+    svg += '<polygon points="60,20 140,20 160,180 40,180" fill="none" stroke="#ff6b35" stroke-width="2"/>';
+    // Hot blast nozzles
+    svg += '<line x1="10" y1="150" x2="55" y2="150" stroke="#ffd93d" stroke-width="2" marker-end="url(#harr)"/>';
+    svg += '<line x1="190" y1="150" x2="145" y2="150" stroke="#ffd93d" stroke-width="2" marker-end="url(#harr)"/>';
+    svg += '<defs><marker id="harr" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ffd93d"/></marker></defs>';
+    // Labels inside
+    svg += '<text x="100" y="60" text-anchor="middle" fill="#5a8aa0" font-size="8">coke + ore</text>';
+    svg += '<text x="100" y="80" text-anchor="middle" fill="#5a8aa0" font-size="8">+ limestone</text>';
+    svg += '<text x="100" y="130" text-anchor="middle" fill="#ff6b35" font-size="8">1500°C</text>';
+    // Outputs
+    svg += '<line x1="100" y1="20" x2="100" y2="5" stroke="#888" stroke-width="2"/>';
+    svg += '<text x="100" y="3" text-anchor="middle" fill="#888" font-size="7">waste gases</text>';
+    svg += '<line x1="100" y1="180" x2="100" y2="200" stroke="#ff6b35" stroke-width="2"/>';
+    svg += '<text x="100" y="212" text-anchor="middle" fill="#ff6b35" font-size="8">molten iron</text>';
+    svg += '<line x1="145" y1="190" x2="165" y2="210" stroke="#888" stroke-width="1.5"/>';
+    svg += '<text x="165" y="220" text-anchor="middle" fill="#888" font-size="7">slag</text>';
+    // Hot blast labels
+    svg += '<text x="8" y="145" fill="#ffd93d" font-size="7">hot</text>';
+    svg += '<text x="8" y="155" fill="#ffd93d" font-size="7">blast</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── ENERGY PROFILE ───────────────────────────────────────────────────
+  if (type === 'energy_profile') {
+    var exo = (diagram.type2 || diagram.reaction_type || 'exothermic') === 'exothermic';
+    var svg = S + ' viewBox="0 0 240 140" width="240" height="140">';
+    svg += '<rect width="240" height="140" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="120" y="14" text-anchor="middle" fill="#00e5ff" font-size="10">' + (exo?'Exothermic':'Endothermic') + ' Reaction</text>';
+    // Axes
+    svg += '<line x1="25" y1="110" x2="225" y2="110" stroke="#1d3347" stroke-width="1"/>';
+    svg += '<line x1="25" y1="20" x2="25" y2="110" stroke="#1d3347" stroke-width="1"/>';
+    svg += '<text x="15" y="65" fill="#5a8aa0" font-size="8" transform="rotate(-90 15 65)">Energy</text>';
+    svg += '<text x="125" y="125" text-anchor="middle" fill="#5a8aa0" font-size="8">Progress of Reaction</text>';
+    // Profile path
+    if (exo) {
+      svg += '<path d="M35,70 Q80,70 100,30 Q120,30 125,30 Q145,30 160,85 L215,85" fill="none" stroke="#ff6b35" stroke-width="2"/>';
+      svg += '<line x1="35" y1="70" x2="35" y2="85" stroke="#ffd93d" stroke-width="1" stroke-dasharray="3,2"/>';
+      svg += '<line x1="215" y1="85" x2="215" y2="85" stroke="#ffd93d" stroke-width="1"/>';
+      svg += '<text x="190" y="75" fill="#7fff6b" font-size="8">ΔH < 0</text>';
+    } else {
+      svg += '<path d="M35,85 Q80,85 100,30 Q120,30 125,30 Q145,30 160,70 L215,70" fill="none" stroke="#00e5ff" stroke-width="2"/>';
+      svg += '<text x="190" y="65" fill="#ff6b35" font-size="8">ΔH > 0</text>';
+    }
+    // Activation energy arrow
+    svg += '<line x1="35" y1="' + (exo?70:85) + '" x2="112" y2="30" stroke="#ffd93d" stroke-width="1" stroke-dasharray="2,2"/>';
+    svg += '<text x="55" y="45" fill="#ffd93d" font-size="7">Ea</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── RATE GRAPH ───────────────────────────────────────────────────────
+  if (type === 'rate_graph') {
+    var reactions = diagram.reactions || ['reaction A','reaction B'];
+    var svg = S + ' viewBox="0 0 240 160" width="240" height="160">';
+    svg += '<rect width="240" height="160" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="120" y="14" text-anchor="middle" fill="#00e5ff" font-size="10">Rate of Reaction</text>';
+    svg += '<line x1="30" y1="20" x2="30" y2="130" stroke="#5a8aa0" stroke-width="1.5"/>';
+    svg += '<line x1="30" y1="130" x2="220" y2="130" stroke="#5a8aa0" stroke-width="1.5"/>';
+    svg += '<text x="18" y="75" fill="#5a8aa0" font-size="8" transform="rotate(-90 18 75)">Volume gas</text>';
+    svg += '<text x="125" y="148" text-anchor="middle" fill="#5a8aa0" font-size="8">Time (s)</text>';
+    var cols = ['#00e5ff','#ff6b35','#7fff6b','#ffd93d'];
+    reactions.slice(0,4).forEach(function(label, ri) {
+      var steepness = 4 - ri;
+      var finalY = 30 + ri * 12;
+      svg += '<path d="M30,130 Q' + (50+ri*10) + ',' + (130 - steepness*25) + ' ' + (90+ri*10) + ',' + finalY + ' L220,' + finalY + '" fill="none" stroke="' + cols[ri] + '" stroke-width="1.5"/>';
+      svg += '<text x="222" y="' + (finalY+4) + '" fill="' + cols[ri] + '" font-size="7">' + (ri+1) + '</text>';
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── STRUCTURAL FORMULA ───────────────────────────────────────────────
+  if (type === 'structural_formula') {
+    var mol = diagram.molecule || 'methane';
+    var formula = diagram.formula || 'CH₄';
+    var svg = S + ' viewBox="0 0 220 120" width="220" height="120">';
+    svg += '<rect width="220" height="120" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    // Draw propane as default C-C-C
+    if (mol === 'propane' || mol.includes('propan')) {
+      svg += '<text x="35" y="65" fill="#ff6b35" font-size="18" font-family="monospace">C</text>';
+      svg += '<text x="95" y="65" fill="#ff6b35" font-size="18" font-family="monospace">C</text>';
+      svg += '<text x="155" y="65" fill="#ff6b35" font-size="18" font-family="monospace">C</text>';
+      svg += '<line x1="50" y1="58" x2="93" y2="58" stroke="#5a8aa0" stroke-width="2"/>';
+      svg += '<line x1="110" y1="58" x2="153" y2="58" stroke="#5a8aa0" stroke-width="2"/>';
+      ['35','95','155'].forEach(function(cx){
+        var n = cx==='35'||cx==='155'?3:2;
+        for(var h=0;h<n;h++){
+          svg += '<text x="'+(parseInt(cx)-3+h*14)+'" y="88" fill="#00e5ff" font-size="10">H</text>';
+        }
+        svg += '<line x1="'+(parseInt(cx)+8)+'" y1="63" x2="'+(parseInt(cx)+8)+'" y2="75" stroke="#5a8aa0" stroke-width="1.5"/>';
+        svg += '<text x="'+(parseInt(cx)+4)+'" y="40" fill="#00e5ff" font-size="10">H</text>';
+        svg += '<line x1="'+(parseInt(cx)+8)+'" y1="52" x2="'+(parseInt(cx)+8)+'" y2="42" stroke="#5a8aa0" stroke-width="1.5"/>';
+      });
+    } else {
+      svg += '<text x="110" y="60" text-anchor="middle" fill="#00e5ff" font-size="18" font-family="monospace">' + formula + '</text>';
+    }
+    svg += '<text x="110" y="110" text-anchor="middle" fill="#5a8aa0" font-size="9">' + mol + ' (' + formula + ')</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── POLYMER ──────────────────────────────────────────────────────────
+  if (type === 'polymer') {
+    var monomer = diagram.monomer || 'ethene';
+    var polymer = diagram.polymer || 'poly(ethene)';
+    var svg = S + ' viewBox="0 0 260 120" width="260" height="120">';
+    svg += '<rect width="260" height="120" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    // Monomer: C=C
+    svg += '<text x="30" y="55" fill="#ff6b35" font-size="16" font-family="monospace">C</text>';
+    svg += '<line x1="44" y1="48" x2="58" y2="48" stroke="#5a8aa0" stroke-width="2"/>';
+    svg += '<line x1="44" y1="53" x2="58" y2="53" stroke="#5a8aa0" stroke-width="2"/>';
+    svg += '<text x="60" y="55" fill="#ff6b35" font-size="16" font-family="monospace">C</text>';
+    svg += '<text x="45" y="90" text-anchor="middle" fill="#5a8aa0" font-size="8">' + monomer + '</text>';
+    // Arrow
+    svg += '<text x="100" y="55" fill="#ffd93d" font-size="20">→</text>';
+    svg += '<text x="100" y="40" text-anchor="middle" fill="#3a6070" font-size="7">polymerisation</text>';
+    // Polymer: –C–C–
+    svg += '<text x="130" y="55" fill="#ff6b35" font-size="16" font-family="monospace">—C—C—</text>';
+    svg += '<text x="15" y="15" fill="#5a8aa0" font-size="8">n</text>';
+    svg += '<text x="180" y="90" text-anchor="middle" fill="#5a8aa0" font-size="8">' + polymer + '</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── CHROMATOGRAM ─────────────────────────────────────────────────────
+  if (type === 'chromatogram') {
+    var spots = diagram.spots || 3;
+    var svg = S + ' viewBox="0 0 180 200" width="180" height="200">';
+    svg += '<rect width="180" height="200" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    // Paper strip
+    svg += '<rect x="40" y="20" width="100" height="160" rx="2" fill="#1a2a18" stroke="#2a4a28"/>'; 
+    // Solvent front
+    svg += '<line x1="40" y1="30" x2="140" y2="30" stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,2"/>';
+    svg += '<text x="145" y="33" fill="#00e5ff" font-size="7">solvent front</text>';
+    // Baseline
+    svg += '<line x1="40" y1="165" x2="140" y2="165" stroke="#888" stroke-width="1"/>';
+    svg += '<text x="145" y="168" fill="#888" font-size="7">baseline</text>';
+    // Sample spots
+    var spotCols = ['#ff6b35','#7fff6b','#ffd93d','#00e5ff'];
+    var yPositions = [50,80,110,130];
+    var xBase = [70,90,110];
+    for (var sp=0; sp<Math.min(spots,3); sp++) {
+      for (var sc=0; sc<2; sc++) {
+        var numSpots = sc===0 ? 1 : Math.min(sp+1, 3);
+        for (var ns=0; ns<numSpots; ns++) {
+          svg += '<ellipse cx="' + (xBase[sc===0?1:ns]) + '" cy="' + yPositions[sp+ns%2] + '" rx="7" ry="4" fill="' + spotCols[(sp+ns)%4] + '" fill-opacity="0.7"/>';
+        }
+      }
+    }
+    svg += '<text x="72" y="185" fill="#5a8aa0" font-size="7">mixture</text>';
+    svg += '<text x="100" y="185" fill="#5a8aa0" font-size="7">pure</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── DISTILLATION APPARATUS ───────────────────────────────────────────
+  if (type === 'distillation_apparatus') {
+    var svg = S + ' viewBox="0 0 280 180" width="280" height="180">';
+    svg += '<rect width="280" height="180" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    // Flask
+    svg += '<circle cx="70" cy="120" r="35" fill="none" stroke="#00e5ff" stroke-width="1.5"/>';
+    svg += '<rect x="62" y="80" width="16" height="25" fill="none" stroke="#00e5ff" stroke-width="1.5"/>';
+    svg += '<circle cx="70" cy="130" r="20" fill="#00e5ff" fill-opacity="0.1"/>'; // liquid
+    // Heat source
+    svg += '<path d="M45,158 Q55,148 65,158 Q75,148 85,158 Q95,148 100,158" fill="none" stroke="#ff6b35" stroke-width="2"/>';
+    svg += '<text x="70" y="172" text-anchor="middle" fill="#ff6b35" font-size="8">heat</text>';
+    // Condenser
+    svg += '<line x1="78" y1="82" x2="175" y2="50" stroke="#00e5ff" stroke-width="1.5"/>'; // top tube
+    svg += '<line x1="82" y1="90" x2="179" y2="58" stroke="#00e5ff" stroke-width="1.5"/>'; // bottom tube
+    // Water in/out
+    svg += '<line x1="175" y1="58" x2="210" y2="68" stroke="#5a8aa0" stroke-width="1" stroke-dasharray="2"/>'; 
+    svg += '<text x="215" y="70" fill="#5a8aa0" font-size="7">water out</text>';
+    svg += '<line x1="175" y1="50" x2="210" y2="40" stroke="#5a8aa0" stroke-width="1" stroke-dasharray="2"/>'; 
+    svg += '<text x="215" y="42" fill="#5a8aa0" font-size="7">water in</text>';
+    // Beaker at end
+    svg += '<path d="M185,90 L185,140 L215,140 L215,90" fill="none" stroke="#5a8aa0" stroke-width="1.5"/>';
+    svg += '<rect x="186" y="120" width="28" height="19" fill="#00e5ff" fill-opacity="0.1"/>'; // distillate
+    // Thermometer
+    svg += '<line x1="70" y1="80" x2="90" y2="50" stroke="#888" stroke-width="1"/>';
+    svg += '<circle cx="90" cy="47" r="4" fill="#ff6b35"/>'; // bulb
+    svg += '<text x="95" y="45" fill="#888" font-size="7">thermometer</text>';
+    // Labels
+    svg += '<text x="70" y="155" text-anchor="middle" fill="#5a8aa0" font-size="7">flask</text>';
+    svg += '<text x="130" y="45" fill="#5a8aa0" font-size="7">condenser</text>';
+    svg += '<text x="200" y="155" text-anchor="middle" fill="#5a8aa0" font-size="7">distillate</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── STATE CHANGES ────────────────────────────────────────────────────
+  if (type === 'state_changes') {
+    var svg = S + ' viewBox="0 0 260 160" width="260" height="160">';
+    svg += '<rect width="260" height="160" rx="6" fill="#0a1520" stroke="#1d3347"/>';
+    // Three states
+    var states = [{label:'SOLID',x:40,y:90},{label:'LIQUID',x:130,y:90},{label:'GAS',x:220,y:90}];
+    states.forEach(function(st) {
+      svg += '<rect x="' + (st.x-28) + '" y="' + (st.y-18) + '" width="56" height="28" rx="6" fill="#132333" stroke="#1d3347"/>';
+      svg += '<text x="' + st.x + '" y="' + (st.y+5) + '" text-anchor="middle" fill="#00e5ff" font-size="10" font-weight="bold">' + st.label + '</text>';
+    });
+    // Arrows with labels
+    var arrows = [
+      {x1:72,y1:82,x2:100,y2:82,label:'melting',col:'#ff6b35',up:true},
+      {x1:100,y1:92,x2:72,y2:92,label:'freezing',col:'#00e5ff',up:false},
+      {x1:162,y1:82,x2:190,y2:82,label:'boiling/evap',col:'#ff6b35',up:true},
+      {x1:190,y1:92,x2:162,y2:92,label:'condensing',col:'#00e5ff',up:false},
+      {x1:68,y1:70,x2:192,y2:70,label:'sublimation',col:'#ffd93d',up:true},
+    ];
+    svg += '<defs><marker id="a1" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ff6b35"/></marker><marker id="a2" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#00e5ff"/></marker><marker id="a3" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ffd93d"/></marker></defs>';
+    arrows.forEach(function(ar,ai) {
+      var mid = ['#ff6b35','#00e5ff','#ff6b35','#00e5ff','#ffd93d'][ai];
+      var mId = ai<2?'a1':ai<4?'a2':'a3';
+      svg += '<line x1="' + ar.x1 + '" y1="' + ar.y1 + '" x2="' + ar.x2 + '" y2="' + ar.y2 + '" stroke="' + mid + '" stroke-width="1.5" marker-end="url(#' + mId + ')"/>';
+      var lx = (ar.x1+ar.x2)/2;
+      var ly = ar.up ? (ar.y1-5) : (ar.y1+12);
+      svg += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" fill="' + mid + '" font-size="7">' + ar.label + '</text>';
+    });
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── HABER PROCESS ────────────────────────────────────────────────────
+  if (type === 'haber_diagram') {
+    var svg = S + ' viewBox="0 0 280 160" width="280" height="160">';
+    svg += '<rect width="280" height="160" rx="8" fill="#0a1520" stroke="#1d3347"/>';
+    svg += '<text x="140" y="15" text-anchor="middle" fill="#00e5ff" font-size="11" font-weight="bold">Haber Process</text>';
+    // Inputs
+    svg += '<text x="10" y="65" fill="#ff6b35" font-size="9">N₂</text>';
+    svg += '<text x="10" y="85" fill="#00e5ff" font-size="9">H₂</text>';
+    svg += '<line x1="30" y1="63" x2="70" y2="63" stroke="#ff6b35" stroke-width="1.5" marker-end="url(#ha)"/>';
+    svg += '<line x1="30" y1="83" x2="70" y2="83" stroke="#00e5ff" stroke-width="1.5" marker-end="url(#ha)"/>';
+    svg += '<defs><marker id="ha" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#ffd93d"/></marker></defs>';
+    // Reactor
+    svg += '<rect x="70" y="45" width="80" height="60" rx="6" fill="#132333" stroke="#ffd93d" stroke-width="1.5"/>';
+    svg += '<text x="110" y="72" text-anchor="middle" fill="#ffd93d" font-size="9">Reactor</text>';
+    svg += '<text x="110" y="85" text-anchor="middle" fill="#5a8aa0" font-size="7">450°C, 200 atm</text>';
+    svg += '<text x="110" y="97" text-anchor="middle" fill="#5a8aa0" font-size="7">Fe catalyst</text>';
+    // Output arrow
+    svg += '<line x1="150" y1="75" x2="185" y2="75" stroke="#ffd93d" stroke-width="1.5" marker-end="url(#ha)"/>';
+    // Separator
+    svg += '<rect x="185" y="50" width="50" height="50" rx="4" fill="#132333" stroke="#1d3347"/>';
+    svg += '<text x="210" y="72" text-anchor="middle" fill="#5a8aa0" font-size="8">Cool &</text>';
+    svg += '<text x="210" y="84" text-anchor="middle" fill="#5a8aa0" font-size="8">separate</text>';
+    // NH3 output
+    svg += '<line x1="235" y1="75" x2="268" y2="75" stroke="#7fff6b" stroke-width="1.5" marker-end="url(#ha)"/>';
+    svg += '<text x="275" y="78" fill="#7fff6b" font-size="9">NH₃</text>';
+    // Recycling arrow
+    svg += '<path d="M210,100 Q210,130 110,130 Q70,130 70,100" fill="none" stroke="#5a8aa0" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#ha)"/>';
+    svg += '<text x="140" y="143" text-anchor="middle" fill="#3a6070" font-size="7">unreacted gases recycled</text>';
+    svg += '</svg>';
+    return svg;
+  }
+
+  // ── FALLBACK ─────────────────────────────────────────────────────────
   return '<svg viewBox="0 0 200 80" width="200" height="80" xmlns="http://www.w3.org/2000/svg">' +
     '<rect x="1" y="1" width="198" height="78" rx="6" fill="#0a1520" stroke="#1d3347"/>' +
     '<text x="100" y="35" text-anchor="middle" fill="#5a8aa0" font-size="11">[' + type + ']</text>' +
@@ -3633,301 +3931,6 @@ function pp_printById(id) {
 // WHITEBOARD MODULE
 var cb={canvas:null,ctx:null,drawing:false,tool:'pen',color:'#1a1a1a',size:3,bgWhite:true,history:[],redoStack:[],snapshot:null,startX:0,startY:0,student:null,topic:'',sessionKey:null,autoSaveTimer:null};
 
-function initClassboard(){
-  var isAdmin=window._fbUser&&window._fbUser.email===ADMIN_EMAIL;
-  document.getElementById('cb-teacher-view').style.display=isAdmin?'block':'none';
-  document.getElementById('cb-student-view').style.display=isAdmin?'none':'block';
-  if(isAdmin) cb_loadStudentDropdown(); else cb_loadStudentSessions();
-}
-
-function cb_loadStudentDropdown(){
-  var sel=document.getElementById('cb-student-sel'); if(!sel) return;
-  sel.innerHTML='<option value="">-- Loading... --</option>';
-  if(!window.loadAllStudents){sel.innerHTML='<option value="">-- Error --</option>';return;}
-  window.loadAllStudents().then(function(students){
-    sel.innerHTML='<option value="">-- Select student --</option>';
-    students.forEach(function(s){var o=document.createElement('option');o.value=s.uid;o.textContent=s.name||s.email;sel.appendChild(o);});
-  }).catch(function(){sel.innerHTML='<option value="">-- Could not load --</option>';});
-}
-
-function cb_startSession(){
-  var sel=document.getElementById('cb-student-sel');
-  var errEl=document.getElementById('cb-sel-err');
-  var topic=(document.getElementById('cb-topic-input').value||'').trim();
-  if(!sel||!sel.value){if(errEl){errEl.style.display='block';setTimeout(function(){errEl.style.display='none';},2500);}return;}
-  cb.student={uid:sel.value,name:sel.options[sel.selectedIndex].text};
-  cb.topic=topic||'General';
-  cb.sessionKey=cb.student.name.replace(/\s+/g,'-')+'_'+new Date().toISOString().split('T')[0];
-  var sb=document.getElementById('cb-student-badge');if(sb)sb.textContent=cb.student.name;
-  var tb=document.getElementById('cb-topic-badge');if(tb)tb.textContent=cb.topic;
-  var mt=document.getElementById('cb-meta');if(mt)mt.textContent='Auto-saves every 10s';
-  document.getElementById('cb-selector').style.display='none';
-  document.getElementById('cb-whiteboard').style.display='block';
-  document.getElementById('cb-sessions-panel').style.display='none';
-  cb_initCanvas();
-}
-
-function cb_changeStudent(){
-  cb_saveNow();
-  if(cb.autoSaveTimer){clearInterval(cb.autoSaveTimer);cb.autoSaveTimer=null;}
-  cb.student=null;
-  document.getElementById('cb-whiteboard').style.display='none';
-  document.getElementById('cb-selector').style.display='block';
-  cb_loadStudentDropdown();
-}
-
-function cb_initCanvas(){
-  cb.canvas=document.getElementById('cb-canvas');
-  if(!cb.canvas) return;
-  cb.ctx=cb.canvas.getContext('2d');
-  function size(){
-    var sc=document.getElementById('cb-scroll');
-    var W=sc?sc.offsetWidth:900; if(W<100)W=900;
-    var H=Math.round(W*1.4142);
-    cb.canvas.width=W; cb.canvas.height=H;
-    cb.canvas.style.width=W+'px'; cb.canvas.style.height=H+'px';
-    cb.ctx.fillStyle='#ffffff'; cb.ctx.fillRect(0,0,W,H);
-    cb.history=[cb.canvas.toDataURL()]; cb.redoStack=[];
-  }
-  size(); setTimeout(size,80);
-  cb.canvas.addEventListener('mousedown',cb_onDown);
-  cb.canvas.addEventListener('mousemove',cb_onMove);
-  cb.canvas.addEventListener('mouseup',cb_onUp);
-  cb.canvas.addEventListener('mouseleave',cb_onUp);
-  cb.canvas.addEventListener('touchstart',function(e){e.preventDefault();cb_onDown(cb_touch(e));},{passive:false});
-  cb.canvas.addEventListener('touchmove',function(e){if(cb.drawing){e.preventDefault();cb_onMove(cb_touch(e));}},{passive:false});
-  cb.canvas.addEventListener('touchend',function(e){e.preventDefault();cb_onUp();},{passive:false});
-  var ti=document.getElementById('cb-text-input');
-  if(ti){ti.addEventListener('keydown',function(e){if(e.key==='Enter'){cb_commitText();e.preventDefault();}if(e.key==='Escape')ti.style.display='none';});}
-  document.addEventListener('keydown',function(e){
-    if(!cb.student)return;
-    if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();cb_undo();}
-    if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();cb_redo();}
-    if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();cb_saveNow();}
-  });
-  if(cb.autoSaveTimer)clearInterval(cb.autoSaveTimer);
-  cb.autoSaveTimer=setInterval(function(){if(cb.student)cb_saveNow();},10000);
-}
-
-function cb_pos(e){
-  var r=cb.canvas.getBoundingClientRect();
-  var sc=document.getElementById('cb-scroll');
-  var st=sc?sc.scrollTop:0;
-  var sx=cb.canvas.width/r.width;
-  var sy=cb.canvas.height/(cb.canvas.height*r.width/cb.canvas.width);
-  return{x:Math.round((e.clientX-r.left)*sx),y:Math.round((e.clientY-r.top+st)*sy)};
-}
-function cb_touch(e){
-  var t=e.touches[0]||e.changedTouches[0];
-  var r=cb.canvas.getBoundingClientRect();
-  var sc=document.getElementById('cb-scroll');
-  var st=sc?sc.scrollTop:0;
-  return{clientX:t.clientX,clientY:t.clientY,offsetX:t.clientX-r.left,offsetY:t.clientY-r.top+st};
-}
-
-function cb_expand(y){
-  if(!cb.canvas||!cb.ctx)return;
-  if(y>cb.canvas.height-80){
-    var oldH=cb.canvas.height;
-    var imgData=cb.ctx.getImageData(0,0,cb.canvas.width,oldH);
-    var newH=oldH+Math.round(cb.canvas.width*1.4142);
-    cb.canvas.height=newH; cb.canvas.style.height=newH+'px';
-    cb.ctx.fillStyle='#ffffff'; cb.ctx.fillRect(0,0,cb.canvas.width,newH);
-    cb.ctx.putImageData(imgData,0,0);
-    cb.ctx.save(); cb.ctx.setLineDash([8,6]); cb.ctx.strokeStyle='rgba(0,229,255,0.18)'; cb.ctx.lineWidth=1;
-    cb.ctx.beginPath(); cb.ctx.moveTo(0,oldH); cb.ctx.lineTo(cb.canvas.width,oldH); cb.ctx.stroke(); cb.ctx.restore();
-    cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
-  }
-}
-
-function cb_onDown(e){
-  var p=cb_pos(e); cb.startX=p.x; cb.startY=p.y;
-  if(cb.tool==='text'){cb_placeText(p.x,p.y);return;}
-  cb.drawing=true; cb_expand(p.y);
-  cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
-  cb.ctx.lineCap='round'; cb.ctx.lineJoin='round';
-  if(['pen','marker','eraser'].indexOf(cb.tool)>=0){cb.ctx.beginPath();cb.ctx.moveTo(p.x,p.y);}
-}
-function cb_onMove(e){
-  if(!cb.drawing)return;
-  var p=cb_pos(e); cb_expand(p.y);
-  if(['line','rect','circle'].indexOf(cb.tool)>=0&&cb.snapshot)cb.snapshot=cb.ctx.getImageData(0,0,cb.canvas.width,cb.canvas.height);
-  cb_draw(p.x,p.y);
-}
-function cb_onUp(){
-  if(!cb.drawing)return; cb.drawing=false; cb.redoStack=[];
-  cb.history.push(cb.canvas.toDataURL()); if(cb.history.length>60)cb.history.shift();
-}
-
-function cb_draw(x,y){
-  var ctx=cb.ctx; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.globalAlpha=1;
-  if(cb.tool==='pen'){
-    ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size;
-    ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  } else if(cb.tool==='marker'){
-    ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size*4; ctx.globalAlpha=0.35;
-    ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  } else if(cb.tool==='eraser'){
-    ctx.globalCompositeOperation='source-over'; ctx.strokeStyle=cb.bgWhite?'#ffffff':'#1a1a2e'; ctx.lineWidth=cb.size*5;
-    ctx.lineTo(x,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y);
-  } else {
-    ctx.globalCompositeOperation='source-over'; ctx.putImageData(cb.snapshot,0,0);
-    ctx.globalAlpha=0.6; ctx.strokeStyle=cb.color; ctx.lineWidth=cb.size; ctx.beginPath();
-    if(cb.tool==='line'){ctx.moveTo(cb.startX,cb.startY);ctx.lineTo(x,y);}
-    else if(cb.tool==='rect'){ctx.rect(cb.startX,cb.startY,x-cb.startX,y-cb.startY);}
-    else if(cb.tool==='circle'){var rx=(x-cb.startX)/2,ry=(y-cb.startY)/2;ctx.ellipse(cb.startX+rx,cb.startY+ry,Math.abs(rx),Math.abs(ry),0,0,Math.PI*2);}
-    ctx.stroke(); ctx.globalAlpha=1;
-  }
-}
-
-function cb_placeText(x,y){
-  var ti=document.getElementById('cb-text-input'); if(!ti)return;
-  var sx=cb.canvas.offsetWidth/cb.canvas.width; var sy=cb.canvas.offsetHeight/cb.canvas.height;
-  ti.style.display='block'; ti.style.left=Math.round(x*sx)+'px'; ti.style.top=Math.round(y*sy)+'px';
-  ti.style.fontSize=(cb.size*4+12)+'px'; ti.dataset.x=x; ti.dataset.y=y; ti.value=''; ti.focus();
-}
-function cb_commitText(){
-  var ti=document.getElementById('cb-text-input'); if(!ti||!ti.value.trim()){if(ti)ti.style.display='none';return;}
-  cb.ctx.font=(cb.size*4+12)+'px sans-serif'; cb.ctx.fillStyle=cb.color; cb.ctx.globalAlpha=1;
-  cb.ctx.fillText(ti.value,+ti.dataset.x,+ti.dataset.y); ti.style.display='none';
-  cb.history.push(cb.canvas.toDataURL());
-}
-
-function cb_setTool(t){
-  cb.tool=t;
-  document.querySelectorAll('.cb-tool').forEach(function(b){b.classList.remove('on');});
-  var btn=document.getElementById('cb-tool-'+t); if(btn)btn.classList.add('on');
-  if(cb.canvas)cb.canvas.style.cursor=t==='eraser'?'cell':t==='text'?'text':'crosshair';
-}
-function cb_setColor(el){
-  cb.color=el.dataset.color;
-  document.querySelectorAll('.cb-swatch').forEach(function(b){b.classList.remove('on');});
-  el.classList.add('on');
-  var dot=document.getElementById('cb-dot');if(dot)dot.style.background=cb.color;
-  var cc=document.getElementById('cb-custom-color');if(cc)cc.value=cb.color;
-}
-function cb_setCustomColor(v){
-  cb.color=v;
-  document.querySelectorAll('.cb-swatch').forEach(function(b){b.classList.remove('on');});
-  var dot=document.getElementById('cb-dot');if(dot)dot.style.background=v;
-}
-function cb_setSize(v){
-  cb.size=+v; var lbl=document.getElementById('cb-size-val');if(lbl)lbl.textContent=v;
-  var sz=Math.max(4,Math.min(20,+v)); var dot=document.getElementById('cb-dot');
-  if(dot){dot.style.width=sz+'px';dot.style.height=sz+'px';dot.style.background=cb.color;}
-}
-function cb_toggleBg(){
-  cb.bgWhite=!cb.bgWhite; var btn=document.getElementById('cb-tool-bg');if(btn)btn.classList.toggle('on',!cb.bgWhite);
-  if(cb.ctx){cb.ctx.fillStyle=cb.bgWhite?'#ffffff':'#1a1a2e';cb.ctx.fillRect(0,0,cb.canvas.width,cb.canvas.height);}
-}
-function cb_undo(){
-  if(cb.history.length<=1)return; cb.redoStack.push(cb.history.pop());
-  var img=new Image();img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);};img.src=cb.history[cb.history.length-1];
-}
-function cb_redo(){
-  if(!cb.redoStack.length)return; var d=cb.redoStack.pop();cb.history.push(d);
-  var img=new Image();img.onload=function(){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0);};img.src=d;
-}
-function cb_clearCanvas(){
-  if(!confirm('Clear the whiteboard?'))return;
-  cb.ctx.fillStyle='#ffffff';cb.ctx.fillRect(0,0,cb.canvas.width,cb.canvas.height);
-  cb.history=[cb.canvas.toDataURL()];cb.redoStack=[];cb_saveNow();toast('Canvas cleared.');
-}
-
-function cb_saveNow(){
-  if(!cb.canvas||!window.FB||!window._fbUser||!cb.student)return;
-  var today=new Date().toISOString().split('T')[0];
-  window.FB.setDoc(window.FB.doc(window.FB.db,'whiteboards',cb.sessionKey),{
-    date:today,key:cb.sessionKey,dataURL:cb.canvas.toDataURL('image/jpeg',0.82),
-    savedBy:window._fbUser.email,studentUid:cb.student.uid,studentName:cb.student.name,
-    topic:cb.topic||'General',updatedAt:window.FB.serverTimestamp(),
-    label:new Date(today+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(cb.topic?' - '+cb.topic:'')
-  }).then(function(){
-    var ind=document.getElementById('cb-save-indicator');if(ind){ind.style.display='inline';setTimeout(function(){ind.style.display='none';},2000);}
-    var ls=document.getElementById('cb-last-saved');if(ls)ls.textContent='Saved '+new Date().toLocaleTimeString();
-  }).catch(function(e){console.warn('save:',e);});
-}
-
-function cb_showSessions(){
-  document.getElementById('cb-whiteboard').style.display='none';
-  document.getElementById('cb-sessions-panel').style.display='block';
-  cb_loadSessions(true);
-}
-function cb_hideSessions(){
-  document.getElementById('cb-sessions-panel').style.display='none';
-  document.getElementById('cb-whiteboard').style.display='block';
-}
-
-function cb_loadSessions(isAdmin){
-  var listId=isAdmin?'cb-sessions-list':'cb-student-sessions';
-  var list=document.getElementById(listId);if(!list)return;
-  list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">Loading...</div>';
-  if(!window.FB){list.innerHTML='<div style="color:var(--red)">Not connected.</div>';return;}
-  window.FB.getDocs(window.FB.collection(window.FB.db,'whiteboards')).then(function(snap){
-    var all=snap.docs.map(function(d){return d.data();});
-    var sessions;
-    if(isAdmin){
-      sessions=all.sort(function(a,b){return b.date.localeCompare(a.date);});
-    } else {
-      var myUid=window._fbUser?window._fbUser.uid:null;
-      sessions=all.filter(function(s){return s.studentUid===myUid;}).sort(function(a,b){return b.date.localeCompare(a.date);});
-    }
-    if(!sessions.length){list.innerHTML='<div style="color:var(--dim);font-size:.85rem;padding:.5rem">'+(isAdmin?'No sessions yet.':'No sessions yet - check back after class.')+'</div>';return;}
-    list.innerHTML='';
-    sessions.forEach(function(s){
-      var sKey=s.key||s.date;
-      var card=document.createElement('div'); card.className='cb-session-card';
-      var L=document.createElement('div'); L.style.flex='1';
-      var d=document.createElement('div'); d.className='cb-session-date'; d.textContent=s.label||s.date; L.appendChild(d);
-      if(isAdmin&&s.studentName){var n=document.createElement('div');n.style.cssText='font-size:.72rem;color:var(--cyan);margin-top:.1rem;font-weight:600';n.textContent=s.studentName;L.appendChild(n);}
-      var t=document.createElement('div'); t.className='cb-session-topic'; t.textContent=s.topic||'General'; L.appendChild(t);
-      var R=document.createElement('div'); R.style.cssText='display:flex;gap:.4rem;align-items:center';
-      var img=document.createElement('img'); img.className='cb-session-preview'; img.src=s.dataURL; img.alt='preview';
-      var vBtn=document.createElement('button'); vBtn.className='btn'; vBtn.textContent='View';
-      vBtn.onclick=(function(k,ia){return function(){cb_viewSession(k,ia);};})(sKey,isAdmin);
-      R.appendChild(img); R.appendChild(vBtn);
-      if(isAdmin){var dBtn=document.createElement('button');dBtn.className='btn';dBtn.style.color='var(--red)';dBtn.textContent='Del';dBtn.onclick=(function(k){return function(){cb_deleteSession(k);};})(sKey);R.appendChild(dBtn);}
-      card.appendChild(L); card.appendChild(R); list.appendChild(card);
-    });
-  }).catch(function(e){list.innerHTML='<div style="color:var(--red)">Error: '+e.message+'</div>';});
-}
-
-function cb_viewSession(key,isAdmin){
-  if(!window.FB)return;
-  window.FB.getDoc(window.FB.doc(window.FB.db,'whiteboards',key)).then(function(snap){
-    if(!snap.exists()){toast('Session not found.');return;}
-    var data=snap.data();
-    if(isAdmin){
-      if(!confirm('Load session onto whiteboard?'))return;
-      cb.sessionKey=key;
-      var img=new Image(); img.onload=function(){if(cb.ctx){cb.ctx.clearRect(0,0,cb.canvas.width,cb.canvas.height);cb.ctx.drawImage(img,0,0,cb.canvas.width,cb.canvas.height);cb.history=[cb.canvas.toDataURL()];}};
-      img.src=data.dataURL; cb_hideSessions(); toast('Session loaded.');
-    } else {
-      var sv=document.getElementById('cb-student-sessions');
-      var view=document.getElementById('cb-student-viewer');
-      if(sv)sv.parentElement.style.display='none'; if(view)view.style.display='block';
-      var ti=document.getElementById('cb-sv-title');if(ti)ti.textContent=data.label||data.date;
-      var me=document.getElementById('cb-sv-meta');if(me)me.textContent=(data.topic||'General')+' - Read only';
-      var vc=document.getElementById('cb-sv-canvas');
-      var W=vc?vc.parentElement.getBoundingClientRect().width:800;
-      vc.width=W; vc.height=Math.floor(W*1.4142);
-      var vCtx=vc.getContext('2d'); var img=new Image();
-      img.onload=function(){vCtx.drawImage(img,0,0,vc.width,vc.height);}; img.src=data.dataURL;
-    }
-  });
-}
-function cb_closeStudentViewer(){
-  var sv=document.getElementById('cb-student-sessions');
-  var view=document.getElementById('cb-student-viewer');
-  if(sv)sv.parentElement.style.display='block'; if(view)view.style.display='none';
-}
-function cb_deleteSession(key){
-  if(!confirm('Delete this session?'))return; if(!window.FB)return;
-  window.FB.deleteDoc(window.FB.doc(window.FB.db,'whiteboards',key))
-    .then(function(){toast('Deleted.');cb_loadSessions(true);})
-    .catch(function(){toast('Could not delete.');});
-}
-function cb_loadStudentSessions(){ cb_loadSessions(false); }
 
 function pp_print(showMS) {
   if (!pp_currentPaper) return;
