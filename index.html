@@ -882,7 +882,26 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
       <button class="btn green" onclick="td_exportCSV()">Export CSV</button>
       <button class="btn" onclick="td_refresh()">Refresh</button>
     </div>
-    <div class="sec-hd"><h2>Assign Homework</h2><div class="sec-line"></div></div>
+    <div class="sec-hd"><h2>Add Student</h2><div class="sec-line"></div></div>
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.5rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.65rem;align-items:end;flex-wrap:wrap">
+        <div>
+          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.35rem">Student Name</label>
+          <input id="td-new-name" type="text" placeholder="e.g. Priya Sharma" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem .75rem;border-radius:8px;font-family:var(--font)">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.35rem">Email</label>
+          <input id="td-new-email" type="email" placeholder="student@email.com" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem .75rem;border-radius:8px;font-family:var(--font)">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--dim);display:block;margin-bottom:.35rem">Password (temp)</label>
+          <input id="td-new-pass" type="text" placeholder="e.g. atom1234" style="width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem .75rem;border-radius:8px;font-family:var(--font)">
+        </div>
+        <button class="btn green" onclick="td_addStudent()">Add</button>
+      </div>
+      <div id="td-add-status" style="margin-top:.6rem;font-size:.8rem;min-height:1.2rem;"></div>
+    </div>
+        <div class="sec-hd"><h2>Assign Homework</h2><div class="sec-line"></div></div>
     <div style="background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:1rem">
       <div style="display:grid;grid-template-columns:1fr auto;gap:.65rem;align-items:end">
         <div>
@@ -4699,7 +4718,7 @@ const MOCK_STUDENTS=[
 let hwList=S.get('hwList',[]);
 function renderDashboard() {
   var pg = document.getElementById('page-teacher');
-  if (pg && pg.style.display === 'none') pg.style.display = 'block';
+  // Don't force display here — only show when nav tab is clicked
   var statsEl = document.getElementById('td-stats');
   var tbody   = document.getElementById('td-tbody');
   if (!statsEl) return;
@@ -4725,6 +4744,42 @@ function renderDashboard() {
     window._td_students = students;
     td_buildHWSelect();
   }).catch(function(e){ statsEl.innerHTML = '<div style="color:var(--red)">Error: '+e.message+'</div>'; });
+}
+function td_addStudent(){
+  var name=document.getElementById('td-new-name').value.trim();
+  var email=document.getElementById('td-new-email').value.trim();
+  var pass=document.getElementById('td-new-pass').value.trim();
+  var status=document.getElementById('td-add-status');
+  if(!name||!email||!pass){status.style.color='var(--red)';status.textContent='Please fill in all fields.';return;}
+  if(pass.length<6){status.style.color='var(--red)';status.textContent='Password must be at least 6 characters.';return;}
+  if(!window.FB){status.style.color='var(--red)';status.textContent='Firebase not connected.';return;}
+  status.style.color='var(--dim)';status.textContent='Creating account...';
+  // Create auth account
+  window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass)
+    .then(function(cred){
+      // Create Firestore profile
+      return window.FB.setDoc(window.FB.doc(window.FB.db,'users',cred.user.uid),{
+        email:email, name:name, xp:0, streak:0,
+        badges:[], quizHistory:[], topicVisits:{},
+        createdAt:window.FB.serverTimestamp(), addedByTeacher:true
+      });
+    })
+    .then(function(){
+      status.style.color='var(--green)';
+      status.textContent='✓ Student '+name+' ('+email+') added successfully!';
+      document.getElementById('td-new-name').value='';
+      document.getElementById('td-new-email').value='';
+      document.getElementById('td-new-pass').value='';
+      // Refresh the student list
+      setTimeout(function(){renderDashboard();},800);
+    })
+    .catch(function(e){
+      status.style.color='var(--red)';
+      var msg=e.code==='auth/email-already-in-use'?'This email is already registered.':
+               e.code==='auth/invalid-email'?'Invalid email address.':
+               e.message;
+      status.textContent='Error: '+msg;
+    });
 }
 function td_refresh() { renderDashboard(); }
 function td_exportCSV(){
