@@ -778,27 +778,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 <!-- GAME -->
 <div id="page-game" class="page">
   <div class="sec">
-    <div class="sec-hd"><h2>🎮 Equation Builder</h2><div class="sec-line"></div></div>
-    <p style="color:var(--dim);font-size:.83rem;margin-bottom:1rem;line-height:1.7">Balance chemical equations by selecting the correct coefficients. Earn XP for each correct answer!</p>
-    <div id="eq-game">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
-        <div><div class="eq-title">Balance This Equation</div><div class="eq-desc" id="game-desc">Drag or click to set coefficients</div></div>
-        <div style="font-family:var(--mono);font-size:.85rem;color:var(--yellow)">Score: <span id="game-score">0</span> | <span id="game-streak-disp">🔥0</span></div>
-      </div>
-      <div class="eq-display" id="eq-display"></div>
-      <div style="font-size:.76rem;color:var(--dim);margin-bottom:.5rem">Pick coefficient for highlighted slot:</div>
-      <div class="coeff-panel" id="coeff-panel"></div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-        <button class="btn green" onclick="checkEquation()">✓ Check Answer</button>
-        <button class="btn" onclick="gameHint()">💡 Hint</button>
-        <button class="btn orange" onclick="nextEquation()">Skip →</button>
-      </div>
-      <div id="game-feedback" style="margin-top:.65rem;font-size:.82rem;line-height:1.6"></div>
-    </div>
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.85rem">
-      <div style="font-size:.78rem;font-weight:600;color:var(--dim);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em">🏆 Leaderboard (This Session)</div>
-      <div id="leaderboard"></div>
-    </div>
+    <div id="game-hub"></div>
   </div>
 </div>
 
@@ -4537,91 +4517,563 @@ function submitExam(){
 }
 
 // ════════════ EQUATION BUILDER GAME ════════════
-const EQUATIONS=[
-  {id:0,desc:'Hydrogen burning in oxygen',left:[{sym:'H₂',col:'#88ccff'},{sym:'+',col:null},{sym:'O₂',col:'#ff8888'}],right:[{sym:'H₂O',col:'#88ffcc'}],blanks:[0,2,4],answer:[2,1,2],hint:'Count H and O atoms on both sides'},
-  {id:1,desc:'Magnesium burning in air',left:[{sym:'Mg',col:'#dddddd'},{sym:'+',col:null},{sym:'O₂',col:'#ff8888'}],right:[{sym:'MgO',col:'#aaffaa'}],blanks:[0,2,4],answer:[2,1,2],hint:'2 Mg need 1 O₂ to make 2 MgO'},
-  {id:2,desc:'Iron reacting with HCl',left:[{sym:'Fe',col:'#cc8844'},{sym:'+',col:null},{sym:'HCl',col:'#ffee88'}],right:[{sym:'FeCl₂',col:'#aaaaff'},{sym:'+',col:null},{sym:'H₂',col:'#88ccff'}],blanks:[0,2,5],answer:[1,2,1],hint:'Fe needs 2 HCl to make FeCl₂'},
-  {id:3,desc:'Zinc displacing copper',left:[{sym:'Zn',col:'#aaccaa'},{sym:'+',col:null},{sym:'CuSO₄',col:'#4488ff'}],right:[{sym:'ZnSO₄',col:'#cccccc'},{sym:'+',col:null},{sym:'Cu',col:'#ff8844'}],blanks:[0,2,5],answer:[1,1,1],hint:'1:1:1:1 — all coefficients are 1'},
-  {id:4,desc:'Sodium hydroxide + HCl',left:[{sym:'NaOH',col:'#88ffee'},{sym:'+',col:null},{sym:'HCl',col:'#ffee88'}],right:[{sym:'NaCl',col:'#ffffff'},{sym:'+',col:null},{sym:'H₂O',col:'#88ccff'}],blanks:[0,2,5],answer:[1,1,1],hint:'Simple 1:1 neutralisation'},
-  {id:5,desc:'Sulfuric acid + NaOH',left:[{sym:'H₂SO₄',col:'#ffcc44'},{sym:'+',col:null},{sym:'NaOH',col:'#88ffee'}],right:[{sym:'Na₂SO₄',col:'#cccccc'},{sym:'+',col:null},{sym:'H₂O',col:'#88ccff'}],blanks:[0,2,5],answer:[1,2,1],hint:'H₂SO₄ is diprotic — needs 2× NaOH'},
-  {id:6,desc:'Methane combustion',left:[{sym:'CH₄',col:'#ff8844'},{sym:'+',col:null},{sym:'O₂',col:'#ff8888'}],right:[{sym:'CO₂',col:'#aaaaaa'},{sym:'+',col:null},{sym:'H₂O',col:'#88ccff'}],blanks:[0,2,5],answer:[1,2,1],hint:'Balance C first, then H, then O'},
-  {id:7,desc:'Calcium carbonate + HCl',left:[{sym:'CaCO₃',col:'#ffffff'},{sym:'+',col:null},{sym:'HCl',col:'#ffee88'}],right:[{sym:'CaCl₂',col:'#ccccff'},{sym:'+',col:null},{sym:'H₂O',col:'#88ccff'},{sym:'+',col:null},{sym:'CO₂',col:'#aaaaaa'}],blanks:[0,2,6],answer:[1,2,1],hint:'2 HCl needed per CaCO₃'},
-];
-let curEq=0,selBlank=null,selCoeff=null,curCoeffs=[],gameStreakLocal=0;
-function initGame(){
-  curEq=Math.floor(Math.random()*EQUATIONS.length);
-  curCoeffs=new Array(EQUATIONS[curEq].blanks.length).fill(null);
-  selBlank=null;selCoeff=null;
-  renderEquation();
-  document.getElementById('game-score').textContent=gameScore;
-  document.getElementById('game-streak-disp').textContent='🔥'+gameStreakLocal;
-  renderLeaderboard();
-  document.getElementById('game-feedback').innerHTML='';
-}
-function renderEquation(){
-  const eq=EQUATIONS[curEq];
-  document.getElementById('game-desc').textContent=eq.desc;
-  const disp=document.getElementById('eq-display');disp.innerHTML='';
-  let blankIdx=0;
-  function renderSide(side){
-    side.forEach((part,i)=>{
-      if(part.col===null){const s=document.createElement('span');s.textContent=' '+part.sym+' ';s.style.color='var(--dim)';disp.appendChild(s);}
-      else{
-        const bi=eq.blanks.indexOf(i+(side===eq.right?eq.left.length:0));
-        if(bi>=0){
-          // coefficient blank
-          const blk=document.createElement('div');blk.className='eq-blank'+(selBlank===bi?' sel':'')+(curCoeffs[bi]!==null?' filled':'');
-          blk.textContent=curCoeffs[bi]!==null?curCoeffs[bi]:'?';
-          if(curCoeffs[bi]!==null)blk.style.borderColor='var(--cyan)';
-          blk.onclick=()=>{selBlank=bi;renderEquation();if(selCoeff!==null)applyCoeff();};
-          disp.appendChild(blk);
-          const at=document.createElement('div');at.className='eq-atom';at.style.background=part.col+'33';at.style.borderColor=part.col+'66';at.style.color=part.col;at.textContent=part.sym;
-          disp.appendChild(at);
-        } else {
-          const at=document.createElement('div');at.className='eq-atom';at.style.background=part.col+'33';at.style.borderColor=part.col+'66';at.style.color=part.col;at.textContent=part.sym;
-          disp.appendChild(at);
-        }
-      }
-    });
-  }
-  renderSide(eq.left);
-  const arr=document.createElement('span');arr.textContent=' → ';arr.style.cssText='color:var(--dim);font-size:1.1rem;padding:0 .25rem';disp.appendChild(arr);
-  renderSide(eq.right);
+// ════════════ GAME ENGINE v2 ════════════
+// 5 game types across 5 levels — IGCSE exam preparation
 
-  // Coefficient buttons
-  const cp=document.getElementById('coeff-panel');cp.innerHTML='';
-  [1,2,3,4,5,6,7,8].forEach(n=>{
-    const b=document.createElement('button');b.className='coeff-btn'+(selCoeff===n?' sel':'');
-    b.textContent=n;
-    b.onclick=()=>{selCoeff=n;document.querySelectorAll('.coeff-btn').forEach(bb=>bb.classList.remove('sel'));b.classList.add('sel');if(selBlank!==null)applyCoeff();else renderEquation();};
-    cp.appendChild(b);
+var G = {
+  level: parseInt(S.get('g_level','1'))||1,
+  unlockedLevel: parseInt(S.get('g_unlocked','1'))||1,
+  xpEarned: 0,
+  streak: 0,
+  currentGame: null,
+  currentType: null,
+  score: 0,
+  questionsAnswered: 0,
+  questionsCorrect: 0,
+  levelPassScore: 70, // % needed to unlock next level
+};
+
+// ── LEVEL DEFINITIONS ─────────────────────────────────────────────────────
+var GAME_LEVELS = [
+  {
+    level: 1,
+    name: 'Atom Awakening',
+    icon: '⚛️',
+    col: '#00e5ff',
+    desc: 'Basic recall — elements, symbols, states of matter',
+    games: ['mcq','flashcard'],
+    xpReward: 50,
+    passMark: 60,
+    questionCount: 10,
+  },
+  {
+    level: 2,
+    name: 'Bond Builder',
+    icon: '🔗',
+    col: '#7fff6b',
+    desc: 'Understanding — bonding, equations, reactions',
+    games: ['mcq','equation','flashcard'],
+    xpReward: 100,
+    passMark: 65,
+    questionCount: 12,
+  },
+  {
+    level: 3,
+    name: 'Reaction Master',
+    icon: '⚗️',
+    col: '#ffd93d',
+    desc: 'Application — predict products, identify reactions',
+    games: ['mcq','equation','predict'],
+    xpReward: 150,
+    passMark: 70,
+    questionCount: 15,
+  },
+  {
+    level: 4,
+    name: 'Analyst',
+    icon: '🔬',
+    col: '#ff6b35',
+    desc: 'Analysis — data interpretation, graph reading, calculations',
+    games: ['mcq','calculate','predict'],
+    xpReward: 200,
+    passMark: 75,
+    questionCount: 15,
+  },
+  {
+    level: 5,
+    name: 'IGCSE Champion',
+    icon: '🏆',
+    col: '#ff4444',
+    desc: 'Exam-style — multi-step, extended response, past paper style',
+    games: ['mcq','calculate','extended'],
+    xpReward: 300,
+    passMark: 80,
+    questionCount: 20,
+  },
+];
+
+// ── QUESTION BANKS ────────────────────────────────────────────────────────
+var GAME_QUESTIONS = {
+
+  // LEVEL 1 — Basic Recall
+  L1: [
+    {type:'mcq',q:'What is the symbol for sodium?',opts:['So','Na','Sn','S'],a:1,explain:'Na comes from the Latin "Natrium"'},
+    {type:'mcq',q:'What is the charge of an electron?',opts:['+1','0','-1','+2'],a:2,explain:'Electrons are negatively charged (-1)'},
+    {type:'mcq',q:'Which state of matter has no fixed shape or volume?',opts:['Solid','Liquid','Gas','Plasma'],a:2,explain:'Gas has no fixed shape or volume — particles move freely'},
+    {type:'mcq',q:'How many protons does carbon have?',opts:['4','6','12','8'],a:1,explain:'Carbon has atomic number 6 = 6 protons'},
+    {type:'mcq',q:'What is the formula for water?',opts:['HO','H₂O','H₂O₂','HO₂'],a:1,explain:'Water = 2 hydrogen + 1 oxygen = H₂O'},
+    {type:'mcq',q:'Which element is a noble gas?',opts:['Nitrogen','Oxygen','Argon','Fluorine'],a:2,explain:'Argon (Ar) is in Group 0 — noble gases with full outer shells'},
+    {type:'mcq',q:'What does the atomic number represent?',opts:['Number of neutrons','Number of protons','Atomic mass','Number of electrons in outer shell'],a:1,explain:'Atomic number = number of protons in the nucleus'},
+    {type:'mcq',q:'Which particle has no charge?',opts:['Proton','Electron','Neutron','Ion'],a:2,explain:'Neutrons are neutral — no charge'},
+    {type:'mcq',q:'What is the symbol for gold?',opts:['Go','Gd','Ag','Au'],a:3,explain:'Au comes from "Aurum" in Latin'},
+    {type:'mcq',q:'A liquid turning to gas is called?',opts:['Condensation','Freezing','Evaporation','Sublimation'],a:2,explain:'Evaporation/boiling = liquid → gas'},
+    {type:'mcq',q:'What colour does litmus turn in acid?',opts:['Blue','Green','Red','Purple'],a:2,explain:'Acids turn blue litmus red'},
+    {type:'mcq',q:'Which of these is a mixture?',opts:['Water','Salt','Air','Carbon dioxide'],a:2,explain:'Air is a mixture of N₂, O₂, CO₂ and other gases'},
+    {type:'mcq',q:'What is the formula for carbon dioxide?',opts:['CO','CO₂','C₂O','CO₃'],a:1,explain:'CO₂ = 1 carbon + 2 oxygen atoms'},
+    {type:'mcq',q:'Shell 1 can hold a maximum of how many electrons?',opts:['1','2','8','18'],a:1,explain:'First shell holds maximum 2 electrons'},
+    {type:'mcq',q:'Which is the most abundant gas in air?',opts:['Oxygen','Carbon dioxide','Nitrogen','Argon'],a:2,explain:'Nitrogen makes up ~78% of air'},
+  ],
+
+  // LEVEL 2 — Understanding
+  L2: [
+    {type:'mcq',q:'Which type of bonding involves sharing of electrons?',opts:['Ionic','Metallic','Covalent','Hydrogen'],a:2,explain:'Covalent bonds form when atoms SHARE electron pairs'},
+    {type:'mcq',q:'NaCl is formed by which type of bonding?',opts:['Covalent','Metallic','Ionic','Van der Waals'],a:2,explain:'NaCl = Na⁺ and Cl⁻ held by electrostatic attraction = ionic'},
+    {type:'mcq',q:'What happens to pH when an acid is diluted?',opts:['Decreases','Stays same','Increases toward 7','Goes above 7'],a:2,explain:'Diluting acid reduces H⁺ concentration, pH increases toward 7'},
+    {type:'mcq',q:'Which gas is produced when zinc reacts with HCl?',opts:['Oxygen','Chlorine','Hydrogen','CO₂'],a:2,explain:'Zn + 2HCl → ZnCl₂ + H₂↑'},
+    {type:'mcq',q:'What is the product of acid + carbonate?',opts:['Salt + Water','Salt + H₂','Salt + Water + CO₂','Water + CO₂'],a:2,explain:'Acid + carbonate → salt + water + CO₂'},
+    {type:'mcq',q:'In electrolysis, what forms at the cathode?',opts:['The metal or H₂','The non-metal','O₂ always','Cl₂ always'],a:0,explain:'Cathode is negative — positive ions (cations) are discharged here'},
+    {type:'mcq',q:'What is the general formula of alkanes?',opts:['CₙH₂ₙ','CₙH₂ₙ₊₂','CₙH₂ₙ₋₂','CₙHₙ'],a:1,explain:'Alkanes: saturated, CₙH₂ₙ₊₂ (methane CH₄, ethane C₂H₆...)'},
+    {type:'mcq',q:'Which particle is transferred in ionic bonding?',opts:['Proton','Neutron','Electron','Nucleus'],a:2,explain:'In ionic bonding electrons are TRANSFERRED (unlike covalent = shared)'},
+    {type:'mcq',q:'Rusting requires which two things?',opts:['Heat and light','Oxygen and water','CO₂ and water','Acid and oxygen'],a:1,explain:'Iron rusts only when BOTH O₂ and H₂O are present'},
+    {type:'mcq',q:'What type of reaction is: CH₄ + 2O₂ → CO₂ + 2H₂O?',opts:['Decomposition','Displacement','Combustion','Neutralisation'],a:2,explain:'Burning of a hydrocarbon in oxygen = combustion reaction'},
+    {type:'mcq',q:'What is oxidation in terms of electrons?',opts:['Gain of electrons','Loss of electrons','Gain of oxygen only','Loss of hydrogen only'],a:1,explain:'OIL RIG: Oxidation Is Loss (of electrons)'},
+    {type:'mcq',q:'A catalyst changes the rate of reaction by:',opts:['Being used up','Lowering activation energy','Raising temperature','Adding more reactants'],a:1,explain:'Catalysts provide an alternative pathway with lower activation energy'},
+    {type:'equation',q:'Balance: H₂ + O₂ → H₂O',left:'_H₂ + _O₂',right:'_H₂O',answer:[2,1,2],hint:'Count H: need 4H on right → 2H₂O, then balance O'},
+    {type:'equation',q:'Balance: Mg + O₂ → MgO',left:'_Mg + _O₂',right:'_MgO',answer:[2,1,2],hint:'O₂ gives 2 O atoms, so need 2 MgO'},
+    {type:'equation',q:'Balance: Fe + HCl → FeCl₂ + H₂',left:'_Fe + _HCl',right:'_FeCl₂ + _H₂',answer:[1,2,1,1],hint:'FeCl₂ needs 2 Cl, so 2 HCl'},
+  ],
+
+  // LEVEL 3 — Application
+  L3: [
+    {type:'mcq',q:'Cl₂ is bubbled into KBr solution. What happens?',opts:['No reaction','Br₂ is displaced — orange colour','KCl precipitate forms','H₂ gas is produced'],a:1,explain:'Cl₂ more reactive than Br₂ → displaces Br⁻ → Br₂ (orange)'},
+    {type:'mcq',q:'What is the test for CO₂?',opts:['Squeaky pop','Turns limewater milky','Relights a glowing splint','Blue litmus turns red'],a:1,explain:'CO₂ + Ca(OH)₂ → CaCO₃ (white precipitate) + H₂O = limewater goes milky'},
+    {type:'mcq',q:'Adding NaOH to FeCl₃ produces:',opts:['Green precipitate','Blue precipitate','Rust-brown precipitate','White precipitate'],a:2,explain:'Fe³⁺ + 3OH⁻ → Fe(OH)₃ (rust-brown precipitate) = test for Fe³⁺'},
+    {type:'mcq',q:'Which factor does NOT affect the rate of reaction?',opts:['Temperature','Concentration','Colour of solution','Surface area'],a:2,explain:'Colour alone does not affect rate — temperature, concentration, surface area, catalyst all do'},
+    {type:'predict',q:'What products form when sodium reacts with water?',opts:['NaOH + H₂','NaH + O₂','Na₂O + H₂O','NaOH + O₂'],a:0,equation:'2Na + 2H₂O → 2NaOH + H₂↑',explain:'Na reacts vigorously with water — produces NaOH (alkaline) and H₂ gas'},
+    {type:'predict',q:'CuSO₄ + Fe → ?',opts:['No reaction','FeSO₄ + Cu (copper deposits)','FeO + CuS','Cu + FeCl₂'],a:1,equation:'Fe + CuSO₄ → FeSO₄ + Cu',explain:'Fe more reactive than Cu — displaces Cu²⁺. Blue fades, pink Cu deposits on iron'},
+    {type:'predict',q:'What forms when HCl reacts with CaCO₃?',opts:['CaCl₂ + H₂O','CaCl₂ + H₂O + CO₂','CaO + HCO₃','Ca + CO₂ + HCl'],a:1,equation:'2HCl + CaCO₃ → CaCl₂ + H₂O + CO₂',explain:'Acid + carbonate always gives salt + water + CO₂'},
+    {type:'mcq',q:'Why does increasing temperature increase reaction rate?',opts:['Particles get bigger','More particles with energy ≥ activation energy','Activation energy decreases','Concentration increases'],a:1,explain:'Higher T = more particles have E ≥ Ea = more successful collisions per second'},
+    {type:'mcq',q:'Diamond is hard because:',opts:['It is a metal','Each C forms 4 strong covalent bonds in giant lattice','Weak van der Waals forces','It has delocalised electrons'],a:1,explain:'Giant covalent lattice — each C bonded to 4 others, all strong covalent bonds'},
+    {type:'predict',q:'AgNO₃ + NaCl → ?',opts:['AgCl↓ (white ppt) + NaNO₃','AgNaCl + NO₃','Ag + NaCl + NO₃','No reaction'],a:0,equation:'AgNO₃ + NaCl → AgCl↓ + NaNO₃',explain:'White AgCl precipitate = test for Cl⁻ ions. Add dilute HNO₃ first.'},
+    {type:'equation',q:'Balance: Na + H₂O → NaOH + H₂',left:'_Na + _H₂O',right:'_NaOH + _H₂',answer:[2,2,2,1],hint:'H₂ needs 2H on right side — balance Na first'},
+    {type:'equation',q:'Balance: Al + O₂ → Al₂O₃',left:'_Al + _O₂',right:'_Al₂O₃',answer:[4,3,2],hint:'Al₂O₃ has 3O — need 3/2 O₂ or × 2 everything'},
+    {type:'mcq',q:'The Haber process makes:',opts:['H₂SO₄','HNO₃','NH₃','NaOH'],a:2,explain:'N₂ + 3H₂ ⇌ 2NH₃ at 450°C, 200 atm, Fe catalyst = Haber Process'},
+    {type:'mcq',q:'Graphite conducts electricity because:',opts:['It is a metal','It has ionic bonds','It has delocalised electrons between layers','It dissolves in water'],a:2,explain:'Each C in graphite bonds to 3 others → 1 delocalised e⁻ per C → conducts'},
+    {type:'mcq',q:'Which ion makes solution acidic?',opts:['OH⁻','H⁺','Na⁺','Cl⁻'],a:1,explain:'H⁺ (or H₃O⁺) ions make a solution acidic — pH < 7'},
+  ],
+
+  // LEVEL 4 — Analysis
+  L4: [
+    {type:'calculate',q:'Calculate moles in 9g of water (H₂O, Mr=18)',unit:'mol',answer:0.5,tolerance:0.05,working:'n = m ÷ Mr = 9 ÷ 18 = 0.5 mol',explain:'Moles = mass ÷ molar mass'},
+    {type:'calculate',q:'What mass of NaCl (Mr=58.5) contains 0.2 mol?',unit:'g',answer:11.7,tolerance:0.5,working:'m = n × Mr = 0.2 × 58.5 = 11.7 g',explain:'Mass = moles × molar mass'},
+    {type:'calculate',q:'Find % yield: theoretical yield 20g, actual yield 15g',unit:'%',answer:75,tolerance:1,working:'% yield = 15/20 × 100 = 75%',explain:'% Yield = (actual ÷ theoretical) × 100'},
+    {type:'mcq',q:'A graph shows: as [HCl] increases, rate increases linearly. What does this tell you?',opts:['Temperature is the limiting factor','Rate is directly proportional to concentration','Catalyst is present','Activation energy is zero'],a:1,explain:'Linear increase = directly proportional relationship — classic concentration-rate graph'},
+    {type:'mcq',q:'A student heats CaCO₃ and measures mass loss. The graph levels off. This is because:',opts:['All CaCO₃ has decomposed','Temperature dropped','CO₂ dissolves back','Reaction reverses'],a:0,explain:'Mass loss stops = all CaCO₃ decomposed → no more CO₂ produced'},
+    {type:'calculate',q:'Find atom economy: CH₄ + 2O₂ → CO₂ + 2H₂O. Mr(CO₂)=44, Mr of all products=44+36=80',unit:'%',answer:55,tolerance:2,working:'atom economy = 44/80 × 100 = 55%',explain:'Atom economy = (desired product Mr / all products Mr) × 100'},
+    {type:'mcq',q:'In a titration, 25cm³ of 0.1 mol/dm³ NaOH neutralises HCl. Moles of NaOH used?',opts:['0.0025 mol','0.025 mol','0.25 mol','2.5 mol'],a:0,explain:'n = C × V = 0.1 × (25/1000) = 0.0025 mol'},
+    {type:'mcq',q:'Le Chatelier: N₂+3H₂⇌2NH₃ (exothermic). Increase temperature — equilibrium shifts:',opts:['Right — more NH₃','Left — less NH₃','No change','Rate decreases only'],a:1,explain:'Increasing T favours endothermic direction (reverse) — equilibrium shifts LEFT, less NH₃'},
+    {type:'mcq',q:'Which graph shows a zero-order reaction (rate vs concentration)?',opts:['Straight line through origin','Horizontal straight line','Curve','Exponential'],a:1,explain:'Zero-order: rate independent of concentration → horizontal line on rate-conc graph'},
+    {type:'calculate',q:'pH of a solution = 3. What is [H⁺] in mol/dm³?',unit:'mol/dm³',answer:0.001,tolerance:0.0001,working:'[H⁺] = 10^(-pH) = 10^(-3) = 0.001 mol/dm³',explain:'pH = -log[H⁺], so [H⁺] = 10^(-pH)'},
+    {type:'mcq',q:'In electrolysis of dilute H₂SO₄, what forms at anode?',opts:['H₂','SO₄²⁻','O₂','SO₂'],a:2,explain:'Anode = positive. OH⁻ discharged preferentially → 4OH⁻ → 2H₂O + O₂'},
+    {type:'predict',q:'Identify: unknown gas produced at cathode (electrolysis of NaCl), gives squeaky pop with lit splint',opts:['Cl₂','O₂','H₂','Na'],a:2,equation:'2H⁺ + 2e⁻ → H₂',explain:'Squeaky pop = H₂. Cathode discharges H⁺ preferentially over Na⁺'},
+    {type:'mcq',q:'An exothermic reaction has ΔH = -120 kJ/mol. Energy to break bonds was 800 kJ. Energy released forming bonds?',opts:['680 kJ','800 kJ','920 kJ','120 kJ'],a:2,explain:'ΔH = bonds broken - bonds formed → -120 = 800 - x → x = 920 kJ'},
+    {type:'calculate',q:'% purity: 25g sample contains 22g pure CuSO₄. What is % purity?',unit:'%',answer:88,tolerance:1,working:'% purity = 22/25 × 100 = 88%',explain:'% purity = (mass of pure substance / total mass) × 100'},
+    {type:'mcq',q:'A chromatogram shows 3 spots for mixture M and 1 spot each for X,Y,Z. Two of M\'s spots match X and Z. What does M contain?',opts:['X only','Y and Z','X and Z','X, Y and Z'],a:2,explain:'Rf values match X and Z → M contains X and Z (not Y)'},
+  ],
+
+  // LEVEL 5 — IGCSE Exam Style
+  L5: [
+    {type:'extended',q:'Explain why sodium chloride (NaCl) has a high melting point but does not conduct electricity when solid.',marks:4,
+     keyPoints:['Giant ionic lattice structure','Strong electrostatic forces between Na⁺ and Cl⁻ ions','Requires lots of energy to overcome these forces','In solid: ions are fixed in position, cannot move','Electrical conductivity requires mobile charge carriers','Solid ions cannot move → no conductivity'],
+     model:'NaCl forms a giant ionic lattice with strong electrostatic forces between Na⁺ and Cl⁻ ions. Large amounts of energy are needed to overcome these forces → high melting point. In the solid state, ions are fixed in their lattice positions and cannot move. Since electrical conductivity requires mobile charge carriers, solid NaCl does not conduct. (When molten or dissolved, ions are free to move → conducts.)'},
+    {type:'extended',q:'A student investigates the effect of surface area on the rate of reaction between marble chips (CaCO₃) and HCl. Describe how to make the experiment a fair test and explain the results.',marks:5,
+     keyPoints:['Control variables: same mass of CaCO₃, same concentration/volume of HCl, same temperature','Change only: chip size (surface area)','Measure: volume of CO₂ produced or mass lost over time','Larger chips = slower rate initially','Powder = fastest rate','More surface area = more particles exposed = more frequent collisions','Rate decreases over time as HCl is used up'],
+     model:'Fair test: use same mass CaCO₃, same volume and concentration of HCl, same temperature. Only vary chip size. Measure CO₂ volume collected over time. Results: powder reacts fastest because greater surface area exposes more CaCO₃ particles to HCl, increasing collision frequency. Rate decreases as HCl concentration falls.'},
+    {type:'calculate',q:'In the Haber process: N₂ + 3H₂ ⇌ 2NH₃. Calculate moles of NH₃ produced from 28g N₂ (Mr=28). Then find mass of NH₃ (Mr=17).',unit:'g',answer:34,tolerance:1,working:'n(N₂)=28/28=1mol → n(NH₃)=2×1=2mol → m=2×17=34g',explain:'Mole ratio N₂:NH₃ = 1:2. 1 mol N₂ → 2 mol NH₃ = 34g'},
+    {type:'mcq',q:'[IGCSE 2023 style] A student adds excess zinc to 50cm³ of 2mol/dm³ HCl. Which change would increase the VOLUME of H₂ produced?',opts:['Use more zinc','Increase temperature','Use more concentrated HCl','Use smaller zinc pieces'],a:2,explain:'Volume of H₂ depends on moles of HCl (limiting reagent). More concentrated HCl = more moles = more H₂. Temperature/zinc pieces affect rate not volume. More zinc has no effect (already excess).'},
+    {type:'extended',q:'Compare the structures of diamond and graphite. Explain how their structures account for their different properties.',marks:6,
+     keyPoints:['Diamond: each C bonded to 4 others, tetrahedral, giant covalent lattice','Graphite: each C bonded to 3 in hexagonal layers','Diamond: no free electrons → electrical insulator','Graphite: 1 delocalised e⁻ per C → electrical conductor','Diamond: all 4 bonds used → very hard, highest hardness','Graphite: weak van der Waals between layers → layers slide → soft/lubricant','Both: very high melting points due to strong covalent bonds'],
+     model:'Diamond: tetrahedral giant covalent lattice, each C bonded to 4 others. All bonds strong covalent → hardest natural substance. No delocalised electrons → insulator. Graphite: hexagonal layers, each C bonds to 3 → 1 delocalised e⁻ per atom → conducts electricity. Weak van der Waals between layers → layers slide easily → used as lubricant. Both have very high melting points.'},
+    {type:'calculate',q:'Find the empirical formula of a compound: 40% C, 6.7% H, 53.3% O by mass (Ar: C=12, H=1, O=16)',unit:'formula',answer:0,isFormula:true,formulaAnswer:'CH2O',working:'C:40/12=3.33 | H:6.7/1=6.7 | O:53.3/16=3.33 | ÷3.33: C=1, H=2, O=1 → CH₂O',explain:'Divide each % by Ar, then divide by smallest value to get ratio'},
+    {type:'mcq',q:'[Analysis] The Rf value of a spot in chromatography is 0.6. The solvent front moved 15cm. How far did the spot travel?',opts:['6cm','9cm','10cm','0.6cm'],a:1,explain:'Rf = distance spot / distance solvent. 0.6 = d/15 → d = 0.6 × 15 = 9cm'},
+    {type:'mcq',q:'[Multi-step] 0.1mol HCl reacts with excess Na₂CO₃. How many moles of CO₂ are produced? (2HCl + Na₂CO₃ → 2NaCl + H₂O + CO₂)',opts:['0.1mol','0.05mol','0.2mol','0.025mol'],a:1,explain:'Ratio HCl:CO₂ = 2:1. 0.1 mol HCl → 0.1/2 = 0.05 mol CO₂'},
+    {type:'extended',q:'Describe and explain what happens when bromine water is added to (a) hexane and (b) hexene. Include equations.',marks:4,
+     keyPoints:['Hexane: no reaction with bromine water','Hexane is saturated (only C-C single bonds)','Hexene: decolourises bromine water (orange → colourless)','Hexene has C=C double bond (unsaturated)','Addition reaction: C=C + Br₂ → C(Br)-C(Br)','Test for unsaturation'],
+     model:'(a) Hexane is saturated (only single C-C bonds) — no reaction with bromine water. Orange colour remains. (b) Hexene has a C=C double bond — addition reaction occurs. Br₂ adds across the double bond: C₆H₁₂ + Br₂ → C₆H₁₂Br₂. Orange bromine water decolourises to colourless. This is the test for unsaturation/C=C bonds.'},
+    {type:'calculate',q:'Electrolysis of CuSO₄ with copper electrodes. At cathode: Cu²⁺+2e⁻→Cu. How many grams of Cu deposited by 0.5mol electrons? (Ar Cu=64)',unit:'g',answer:16,tolerance:0.5,working:'0.5mol e⁻ → 0.25mol Cu (ratio 2:1) → mass = 0.25×64 = 16g',explain:'2 moles electrons needed per mole Cu. 0.5 mol e⁻ → 0.25 mol Cu → 16g'},
+    {type:'mcq',q:'[Evaluation] A student gets 85% yield of NaCl from HCl + NaOH. Give TWO reasons why yield < 100%',opts:['Measurement errors only','Transfer losses and measurement errors','Reaction does not occur','Temperature was too high'],a:1,explain:'Practical yield losses: product lost during transfer, filtering, evaporation. Also measurement errors in volumes.'},
+  ],
+};
+
+// ── GAME STATE ────────────────────────────────────────────────────────────
+var gSession = {
+  level: 1,
+  questions: [],
+  currentQ: 0,
+  correct: 0,
+  answers: [],
+  gameType: 'mcq',
+  started: false,
+  finished: false,
+};
+
+// ── RENDER GAME HUB ───────────────────────────────────────────────────────
+function renderGameHub(){
+  var hub = document.getElementById('game-hub');
+  if(!hub) return;
+  var unlocked = G.unlockedLevel;
+  var html2 = '<div style="margin-bottom:1.5rem">';
+  html2 += '<h2 style="font-family:var(--head);font-size:1.4rem;font-weight:700;margin-bottom:.35rem">🎮 Chemistry Challenge</h2>';
+  html2 += '<p style="color:var(--dim);font-size:.85rem">Complete levels to unlock harder challenges. Reach Level 5 to be exam-ready!</p>';
+  html2 += '</div>';
+
+  // Progress bar
+  var prog = Math.round((unlocked-1)/5*100);
+  html2 += '<div style="margin-bottom:1.5rem">';
+  html2 += '<div style="display:flex;justify-content:space-between;margin-bottom:.35rem"><span style="font-size:.8rem;color:var(--dim)">Overall Progress</span><span style="font-size:.8rem;color:#00e5ff">'+prog+'% unlocked</span></div>';
+  html2 += '<div style="background:var(--s2);border-radius:20px;height:8px"><div style="background:linear-gradient(90deg,#00e5ff,#7fff6b);width:'+prog+'%;height:8px;border-radius:20px;transition:width .5s"></div></div>';
+  html2 += '</div>';
+
+  // Level cards
+  html2 += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem">';
+  GAME_LEVELS.forEach(function(lv){
+    var isUnlocked = lv.level <= unlocked;
+    var isCompleted = lv.level < unlocked;
+    var isCurrent = lv.level === unlocked;
+    var savedScore = parseInt(S.get('g_score_'+lv.level,'0'))||0;
+    var col = isUnlocked ? lv.col : '#333';
+    var borderCol = isCompleted ? '#7fff6b' : isCurrent ? lv.col : '#1d3347';
+
+    html2 += '<div onclick="'+(isUnlocked?'startLevel('+lv.level+')':'')+'" style="background:var(--s1);border:2px solid '+borderCol+';border-radius:14px;padding:1.1rem;cursor:'+(isUnlocked?'pointer':'default')+';opacity:'+(isUnlocked?'1':'0.45')+';transition:transform .15s,box-shadow .15s" '+(isUnlocked?'':'')+' >';
+    html2 += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">';
+    html2 += '<span style="font-size:1.6rem">'+lv.icon+'</span>';
+    html2 += '<span style="background:'+(isCompleted?'#7fff6b22':isCurrent?lv.col+'22':'#1d3347')+';color:'+(isCompleted?'#7fff6b':isCurrent?lv.col:'#5a8aa0')+';font-size:.72rem;padding:.2rem .6rem;border-radius:20px;font-weight:600">'+(isCompleted?'✓ Cleared':isCurrent?'← Play Now':'🔒 Locked')+'</span>';
+    html2 += '</div>';
+    html2 += '<div style="font-family:var(--head);font-weight:700;font-size:1rem;color:'+col+';margin-bottom:.2rem">Level '+lv.level+': '+lv.name+'</div>';
+    html2 += '<div style="font-size:.8rem;color:var(--dim);margin-bottom:.65rem;line-height:1.5">'+lv.desc+'</div>';
+    if(isUnlocked){
+      html2 += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html2 += '<span style="font-size:.75rem;color:#5a8aa0">'+lv.questionCount+' questions | Pass: '+lv.passMark+'%</span>';
+      if(savedScore>0) html2 += '<span style="font-size:.8rem;color:'+lv.col+';font-weight:600">Best: '+savedScore+'%</span>';
+      html2 += '</div>';
+    }
+    html2 += '<div style="margin-top:.5rem;font-size:.72rem;color:#5a8aa0">🏆 +'+lv.xpReward+' XP on pass</div>';
+    html2 += '</div>';
+  });
+  html2 += '</div>';
+
+  // Tips
+  html2 += '<div style="background:var(--s2);border-radius:10px;padding:1rem;border-left:3px solid #ffd93d">';
+  html2 += '<div style="font-weight:600;color:#ffd93d;margin-bottom:.4rem">💡 How it works</div>';
+  html2 += '<div style="font-size:.82rem;color:var(--dim);line-height:1.7">Each level has multiple question types: MCQ, equation balancing, predict the product, calculations and extended responses. Score '+G.levelPassScore+'%+ to unlock the next level. Level 5 is full IGCSE exam style.</div>';
+  html2 += '</div>';
+
+  hub.innerHTML = html2;
+}
+
+// ── START LEVEL ───────────────────────────────────────────────────────────
+function startLevel(lvNum){
+  var lv = GAME_LEVELS[lvNum-1];
+  var qBank = GAME_QUESTIONS['L'+lvNum] || [];
+  // Shuffle and pick questionCount questions
+  var shuffled = qBank.slice().sort(function(){return Math.random()-0.5;});
+  var picked = shuffled.slice(0, lv.questionCount);
+
+  gSession = {
+    level: lvNum,
+    levelData: lv,
+    questions: picked,
+    currentQ: 0,
+    correct: 0,
+    answers: [],
+    started: true,
+    finished: false,
+    startTime: Date.now(),
+  };
+
+  renderGameQuestion();
+}
+
+// ── RENDER QUESTION ───────────────────────────────────────────────────────
+function renderGameQuestion(){
+  var hub = document.getElementById('game-hub');
+  if(!hub) return;
+  var q = gSession.questions[gSession.currentQ];
+  var lv = gSession.levelData;
+  var progress = Math.round((gSession.currentQ/gSession.questions.length)*100);
+
+  var html2 = '';
+
+  // Header
+  html2 += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">';
+  html2 += '<div><span style="font-size:1rem">'+lv.icon+'</span> <span style="font-family:var(--head);font-weight:700;color:'+lv.col+'">Level '+lv.level+': '+lv.name+'</span></div>';
+  html2 += '<div style="font-size:.8rem;color:var(--dim)">'+gSession.currentQ+' / '+gSession.questions.length+' | ✓ '+gSession.correct+' correct</div>';
+  html2 += '</div>';
+
+  // Progress bar
+  html2 += '<div style="background:var(--s2);border-radius:20px;height:6px;margin-bottom:1.25rem">';
+  html2 += '<div style="background:'+lv.col+';width:'+progress+'%;height:6px;border-radius:20px;transition:width .4s"></div>';
+  html2 += '</div>';
+
+  // Question type badge
+  var typeBadge = {mcq:'Multiple Choice',equation:'Balance the Equation',predict:'Predict the Product',calculate:'Calculation',extended:'Extended Response'}[q.type]||q.type;
+  html2 += '<div style="display:inline-block;background:'+lv.col+'22;color:'+lv.col+';font-size:.72rem;font-weight:700;padding:.2rem .7rem;border-radius:20px;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em">'+typeBadge+'</div>';
+
+  // Question
+  html2 += '<div style="font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:1.25rem;line-height:1.6;background:var(--s1);padding:1rem;border-radius:10px;border-left:3px solid '+lv.col+'">'+q.q+'</div>';
+
+  // Question type specific UI
+  if(q.type==='mcq'||q.type==='predict'){
+    html2 += '<div id="g-opts" style="display:grid;gap:.5rem;margin-bottom:1rem">';
+    q.opts.forEach(function(opt,i){
+      html2 += '<button onclick="submitGameAnswer('+i+')" style="text-align:left;padding:.75rem 1rem;background:var(--s1);border:1.5px solid var(--border);border-radius:10px;color:var(--text);cursor:pointer;font-size:.9rem;font-family:var(--font);transition:all .15s" ><span style="color:'+lv.col+';font-weight:700;margin-right:.6rem">'+['A','B','C','D'][i]+'.</span>'+opt+'</button>';
+    });
+    html2 += '</div>';
+    if(q.equation) html2 += '<div style="font-size:.8rem;color:var(--dim);margin-bottom:.75rem;font-family:var(--mono)">'+q.equation+'</div>';
+  } else if(q.type==='equation'){
+    html2 += '<div style="background:var(--s2);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:var(--mono);font-size:.95rem">';
+    html2 += '<div style="color:var(--dim);font-size:.75rem;margin-bottom:.5rem">Fill in the blanks (coefficients):</div>';
+    html2 += '<div id="g-eq-display" style="font-size:1rem;color:var(--text);margin-bottom:.75rem">'+renderEqDisplay(q)+'</div>';
+    html2 += '<div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.75rem">';
+    [1,2,3,4,5,6,8,10].forEach(function(n){
+      html2 += '<button onclick="setEqCoeff('+n+')" style="width:40px;height:40px;background:var(--s1);border:1.5px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;font-size:.9rem;font-family:var(--mono);font-weight:600">'+n+'</button>';
+    });
+    html2 += '</div>';
+    html2 += '</div>';
+    // Init coefficients
+    html2 += '<script>window._gEqCoeffs=new Array('+q.answer.length+').fill(null);window._gEqBlank=0;</script>';
+    html2 += '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">';
+    html2 += '<button onclick="checkEqAnswer()" class="btn green">✓ Check</button>';
+    html2 += '<button onclick="showGameHint()" class="btn">💡 Hint</button>';
+    html2 += '</div>';
+    html2 += '<div id="g-hint" style="display:none;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:8px;padding:.6rem;font-size:.8rem;color:#ffd93d;margin-bottom:.75rem">'+q.hint+'</div>';
+  } else if(q.type==='calculate'){
+    html2 += '<div style="background:var(--s2);border-radius:10px;padding:1rem;margin-bottom:1rem">';
+    if(!q.isFormula){
+      html2 += '<div style="font-size:.8rem;color:var(--dim);margin-bottom:.5rem">Your answer:</div>';
+      html2 += '<div style="display:flex;gap:.5rem;align-items:center">';
+      html2 += '<input id="g-calc-inp" type="text" placeholder="Enter answer..." style="flex:1;background:var(--s1);border:1.5px solid var(--border);color:var(--text);padding:.6rem 1rem;border-radius:8px;font-size:1rem;font-family:var(--mono)">';
+      html2 += '<span style="color:var(--dim);font-size:.85rem">'+q.unit+'</span>';
+      html2 += '</div>';
+    } else {
+      html2 += '<div style="font-size:.8rem;color:var(--dim);margin-bottom:.5rem">Empirical formula (e.g. CH2O):</div>';
+      html2 += '<input id="g-calc-inp" type="text" placeholder="e.g. CH2O" style="width:100%;background:var(--s1);border:1.5px solid var(--border);color:var(--text);padding:.6rem 1rem;border-radius:8px;font-size:1rem;font-family:var(--mono)">';
+    }
+    html2 += '</div>';
+    html2 += '<div style="font-size:.78rem;color:var(--dim);margin-bottom:.75rem">💡 Show working: '+q.working+'</div>';
+    html2 += '<button onclick="checkCalcAnswer()" class="btn green">Submit Answer</button>';
+  } else if(q.type==='extended'){
+    html2 += '<div style="background:var(--s2);border-radius:10px;padding:1rem;margin-bottom:1rem">';
+    html2 += '<div style="font-size:.8rem;color:var(--dim);margin-bottom:.4rem">Key points to include ['+q.marks+' marks]:</div>';
+    html2 += '<div style="font-size:.8rem;color:var(--dim);line-height:1.7;font-style:italic">Tick which points you can explain:</div>';
+    html2 += '<div id="g-ext-checks" style="margin-top:.6rem;display:grid;gap:.4rem">';
+    q.keyPoints.forEach(function(pt,i){
+      html2 += '<label style="display:flex;align-items:flex-start;gap:.5rem;cursor:pointer;font-size:.85rem;color:var(--text)">';
+      html2 += '<input type="checkbox" id="g-ext-'+i+'" style="margin-top:.2rem;accent-color:'+lv.col+'"> '+pt;
+      html2 += '</label>';
+    });
+    html2 += '</div>';
+    html2 += '</div>';
+    html2 += '<div style="font-size:.75rem;color:var(--dim);margin-bottom:.75rem">Check all points you know, then see the model answer</div>';
+    html2 += '<button onclick="checkExtendedAnswer()" class="btn green">Show Model Answer & Continue</button>';
+  }
+
+  html2 += '<div id="g-feedback" style="margin-top:.75rem;min-height:1.5rem"></div>';
+  hub.innerHTML = html2;
+
+  // Init eq coefficients if needed
+  if(q.type==='equation'){
+    window._gEqCoeffs = new Array(q.answer.length).fill(null);
+    window._gEqBlank = 0;
+  }
+}
+
+function renderEqDisplay(q){
+  var blanks = q.answer;
+  var coefIdx = 0;
+  var parts = q.left.split(' ');
+  var result = '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:.4rem">';
+  function renderPart(part){
+    if(part==='+'||part==='→') return '<span style="color:var(--dim);padding:0 .2rem">'+part+'</span>';
+    var val = (window._gEqCoeffs && window._gEqCoeffs[coefIdx]!==null) ? window._gEqCoeffs[coefIdx] : '?';
+    var isActive = window._gEqBlank === coefIdx;
+    var box = '<span onclick="window._gEqBlank='+coefIdx+';updateEqDisplay()" style="display:inline-block;min-width:28px;padding:.2rem .4rem;background:'+(isActive?'rgba(0,229,255,.2)':'var(--s2)')+';border:1.5px solid '+(isActive?'#00e5ff':'var(--border)')+';border-radius:6px;text-align:center;cursor:pointer;color:'+(isActive?'#00e5ff':'var(--text)')+'">'+val+'</span>';
+    coefIdx++;
+    return box+'<span style="color:var(--text)">'+part+'</span>';
+  }
+  var allParts = q.left.split(' ');
+  allParts.push('→');
+  var rightParts = q.right.split(' ');
+  rightParts.forEach(function(p){allParts.push(p);});
+  allParts.forEach(function(p){result+=renderPart(p);});
+  result += '</div>';
+  return result;
+}
+
+function setEqCoeff(n){
+  if(!window._gEqCoeffs) return;
+  window._gEqCoeffs[window._gEqBlank] = n;
+  var q = gSession.questions[gSession.currentQ];
+  if(window._gEqBlank < q.answer.length-1) window._gEqBlank++;
+  updateEqDisplay();
+}
+
+function updateEqDisplay(){
+  var q = gSession.questions[gSession.currentQ];
+  var disp = document.getElementById('g-eq-display');
+  if(disp) disp.innerHTML = renderEqDisplay(q);
+}
+
+function showGameHint(){var h=document.getElementById('g-hint');if(h)h.style.display='block';}
+function checkEqAnswer(){
+  var q = gSession.questions[gSession.currentQ];
+  var correct = window._gEqCoeffs && q.answer.every(function(a,i){return window._gEqCoeffs[i]===a;});
+  showGameFeedback(correct, q.explain || q.hint, correct ? null : 'Correct: '+q.answer.join(', '));
+  gSession.answers.push(correct?1:0);
+  if(correct) gSession.correct++;
+  setTimeout(function(){nextGameQuestion();}, correct?1500:2500);
+}
+
+function checkCalcAnswer(){
+  var q = gSession.questions[gSession.currentQ];
+  var inp = document.getElementById('g-calc-inp');
+  if(!inp) return;
+  var val = inp.value.trim();
+  var correct = false;
+  if(q.isFormula){
+    correct = val.toLowerCase().replace(/s/g,'') === q.formulaAnswer.toLowerCase();
+  } else {
+    var num = parseFloat(val);
+    correct = !isNaN(num) && Math.abs(num - q.answer) <= q.tolerance;
+  }
+  showGameFeedback(correct, q.explain, correct?null:'Working: '+q.working);
+  gSession.answers.push(correct?1:0);
+  if(correct) gSession.correct++;
+  setTimeout(function(){nextGameQuestion();}, correct?1800:3000);
+}
+
+function checkExtendedAnswer(){
+  var q = gSession.questions[gSession.currentQ];
+  var checked = 0;
+  q.keyPoints.forEach(function(pt,i){
+    var cb = document.getElementById('g-ext-'+i);
+    if(cb && cb.checked) checked++;
+  });
+  var pct = checked/q.keyPoints.length;
+  var correct = pct >= 0.5; // know at least half the points
+  var fb = document.getElementById('g-feedback');
+  if(fb){
+    fb.innerHTML = '<div style="background:var(--s1);border-radius:10px;padding:1rem;border-left:3px solid '+(correct?'#7fff6b':'#ffd93d')+'">';
+    fb.innerHTML += '<div style="font-weight:600;color:'+(correct?'#7fff6b':'#ffd93d')+';margin-bottom:.5rem">'+(correct?'✓ Good knowledge! '+checked+'/'+q.keyPoints.length+' points':'⚠ You knew '+checked+'/'+q.keyPoints.length+' points — review the model answer')+'</div>';
+    fb.innerHTML += '<div style="font-size:.82rem;color:var(--dim);font-weight:600;margin-bottom:.3rem">Model Answer:</div>';
+    fb.innerHTML += '<div style="font-size:.82rem;color:var(--text);line-height:1.7">'+q.model+'</div>';
+    fb.innerHTML += '</div>';
+    fb.innerHTML += '<button onclick="nextGameQuestion()" class="btn green" style="margin-top:.75rem">Next Question →</button>';
+  }
+  gSession.answers.push(correct?1:0);
+  if(correct) gSession.correct++;
+}
+
+function showGameFeedback(correct, explain, extra){
+  var fb = document.getElementById('g-feedback');
+  if(!fb) return;
+  var col = correct ? '#7fff6b' : '#ff4444';
+  fb.innerHTML = '<div style="padding:.6rem .9rem;border-radius:8px;border-left:3px solid '+col+';background:'+col+'11;font-size:.85rem">';
+  fb.innerHTML += '<span style="font-weight:700;color:'+col+'">'+(correct?'✓ Correct!':'✗ Incorrect')+'</span>';
+  if(explain) fb.innerHTML += ' <span style="color:var(--dim)">'+explain+'</span>';
+  if(extra) fb.innerHTML += '<div style="margin-top:.3rem;color:#ffd93d;font-size:.8rem">'+extra+'</div>';
+  fb.innerHTML += '</div>';
+  // Also update option colours for MCQ
+  var opts = document.querySelectorAll('#g-opts button');
+  var q = gSession.questions[gSession.currentQ];
+  opts.forEach(function(btn,i){
+    btn.disabled = true;
+    if(i===q.a) btn.style.borderColor = '#7fff6b';
+    else btn.style.opacity = '0.4';
   });
 }
-function applyCoeff(){if(selBlank===null||selCoeff===null)return;curCoeffs[selBlank]=selCoeff;renderEquation();}
-function checkEquation(){
-  const eq=EQUATIONS[curEq];
-  if(curCoeffs.some(c=>c===null)){document.getElementById('game-feedback').innerHTML='<span style="color:var(--yellow)">⚠ Fill all blanks first!</span>';return;}
-  const correct=curCoeffs.every((c,i)=>c===eq.answer[i]);
-  if(correct){
-    gameScore+=10+gameStreakLocal*2;gameStreakLocal++;S.set('gameScore',gameScore);
-    document.getElementById('game-score').textContent=gameScore;
-    document.getElementById('game-streak-disp').textContent='🔥'+gameStreakLocal;
-    document.getElementById('game-feedback').innerHTML=`<span style="color:var(--green)">✓ Correct! +${10+gameStreakLocal*2} points</span>`;
-    addXP(15,'Equation balanced!');checkBadges();
-    setTimeout(()=>nextEquation(),1200);
+
+function submitGameAnswer(i){
+  var q = gSession.questions[gSession.currentQ];
+  var correct = i === q.a;
+  showGameFeedback(correct, q.explain);
+  gSession.answers.push(correct?1:0);
+  if(correct) gSession.correct++;
+  setTimeout(function(){nextGameQuestion();}, correct?1500:2500);
+}
+
+function nextGameQuestion(){
+  gSession.currentQ++;
+  if(gSession.currentQ >= gSession.questions.length){
+    finishGameLevel();
   } else {
-    gameStreakLocal=0;document.getElementById('game-streak-disp').textContent='🔥0';
-    const correct_str=eq.answer.map((c,i)=>`blank ${i+1}=${c}`).join(', ');
-    document.getElementById('game-feedback').innerHTML=`<span style="color:var(--red)">✗ Not balanced. Correct: ${correct_str}</span>`;
+    renderGameQuestion();
   }
 }
-function gameHint(){const eq=EQUATIONS[curEq];document.getElementById('game-feedback').innerHTML=`<span style="color:var(--yellow)">💡 ${eq.hint}</span>`;}
-function nextEquation(){curEq=(curEq+1)%EQUATIONS.length;curCoeffs=new Array(EQUATIONS[curEq].blanks.length).fill(null);selBlank=null;selCoeff=null;renderEquation();document.getElementById('game-feedback').innerHTML='';}
-function renderLeaderboard(){
-  const el=document.getElementById('leaderboard');
-  const entries=S.get('leaderboard',[{name:'You',score:gameScore}]);
-  el.innerHTML=entries.sort((a,b)=>b.score-a.score).map((e,i)=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.45rem .5rem;border-radius:7px;${i===0?'background:rgba(255,217,61,.08)':''}"><span style="font-family:var(--mono);font-size:.78rem;color:var(--dim);min-width:20px">#${i+1}</span><span style="flex:1;font-size:.82rem">${e.name}</span><span style="font-family:var(--mono);font-size:.82rem;color:var(--cyan)">${e.score}</span></div>`).join('')||'<div style="color:var(--dim);font-size:.8rem">Play to set a score!</div>';
+
+// ── FINISH LEVEL ──────────────────────────────────────────────────────────
+function finishGameLevel(){
+  var lv = gSession.levelData;
+  var total = gSession.questions.length;
+  var correct = gSession.correct;
+  var pct = Math.round(correct/total*100);
+  var passed = pct >= lv.passMark;
+  var timeTaken = Math.round((Date.now()-gSession.startTime)/1000);
+
+  // Save best score
+  var prevBest = parseInt(S.get('g_score_'+lv.level,'0'))||0;
+  if(pct > prevBest) S.set('g_score_'+lv.level, pct);
+
+  // Unlock next level
+  if(passed && lv.level >= G.unlockedLevel){
+    G.unlockedLevel = Math.min(lv.level+1, 5+1);
+    S.set('g_unlocked', G.unlockedLevel);
+    if(lv.level < 5) addXP(lv.xpReward, 'Level '+lv.level+' cleared!');
+  }
+
+  var hub = document.getElementById('game-hub');
+  if(!hub) return;
+  var col = passed ? '#7fff6b' : '#ff4444';
+
+  var html2 = '<div style="text-align:center;padding:2rem 1rem">';
+  html2 += '<div style="font-size:3rem;margin-bottom:.75rem">'+(passed?'🎉':'😤')+'</div>';
+  html2 += '<div style="font-family:var(--head);font-size:1.6rem;font-weight:800;color:'+col+';margin-bottom:.35rem">'+(passed?'Level Cleared!':'Not Quite...')+'</div>';
+  html2 += '<div style="font-size:1rem;color:var(--dim);margin-bottom:1.5rem">'+(passed?'Great work! '+lv.name+' completed':'You need '+lv.passMark+'% to pass. Keep practising!')+'</div>';
+
+  // Score ring
+  html2 += '<div style="display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:140px;height:140px;border-radius:50%;border:6px solid '+col+';margin-bottom:1.5rem">';
+  html2 += '<div style="font-family:var(--head);font-size:2.2rem;font-weight:800;color:'+col+'">'+pct+'%</div>';
+  html2 += '<div style="font-size:.75rem;color:var(--dim)">'+correct+'/'+total+' correct</div>';
+  html2 += '</div>';
+
+  // Stats row
+  html2 += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem;max-width:400px;margin-left:auto;margin-right:auto">';
+  var stats = [['✓ Correct',correct,'#7fff6b'],['✗ Wrong',total-correct,'#ff4444'],['⏱ Time',timeTaken+'s','#ffd93d']];
+  stats.forEach(function(s){
+    html2 += '<div style="background:var(--s1);border-radius:10px;padding:.75rem;border:1px solid var(--border)">';
+    html2 += '<div style="font-size:1.2rem;font-weight:700;color:'+s[2]+'">'+s[1]+'</div>';
+    html2 += '<div style="font-size:.72rem;color:var(--dim)">'+s[0]+'</div>';
+    html2 += '</div>';
+  });
+  html2 += '</div>';
+
+  if(passed && lv.level < 5){
+    html2 += '<div style="background:rgba(127,255,107,.1);border:1px solid rgba(127,255,107,.3);border-radius:10px;padding:.75rem;margin-bottom:1rem;font-size:.85rem;color:#7fff6b">🔓 Level '+(lv.level+1)+': '+GAME_LEVELS[lv.level].name+' unlocked!</div>';
+  }
+  if(passed && lv.level === 5){
+    html2 += '<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:10px;padding:.75rem;margin-bottom:1rem;font-size:.9rem;color:#ffd93d">🏆 You have completed ALL levels! You are IGCSE exam ready!</div>';
+  }
+
+  html2 += '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">';
+  html2 += '<button onclick="startLevel('+lv.level+')" class="btn">↺ Retry Level</button>';
+  if(passed && lv.level < 5) html2 += '<button onclick="startLevel('+(lv.level+1)+')" class="btn green">Level '+(lv.level+1)+' →</button>';
+  html2 += '<button onclick="renderGameHub()" class="btn">🏠 All Levels</button>';
+  html2 += '</div>';
+  html2 += '</div>';
+
+  hub.innerHTML = html2;
 }
+
+// Old game stubs (keep goPage working)
+function initGame(){ renderGameHub(); }
+function renderEquation(){}
+function renderSide(){}
+function applyCoeff(){}
+function checkEquation(){}
+function gameHint(){}
+function nextEquation(){}
+function renderLeaderboard(){}
+
 
 // ════════════ GLOSSARY ════════════
 const GLOSSARY=[
