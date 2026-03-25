@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#04080d">
 <title>Atom Edge — IGCSE Chemistry Lab</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -14,7 +14,7 @@
   --border:#1d3347;--border2:#234055;
   --cyan:#00e5ff;--orange:#ff6b35;--green:#00e5a0;--yellow:#ffd93d;--purple:#b388ff;--red:#ff4757;
   --text:#ddeeff;--dim:#5a8aa0;--dim2:#3a6070;
-  --font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;--head:'Syne',sans-serif;
+  --font:'Nunito',sans-serif;--mono:'Fira Code',monospace;--head:'Poppins',sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 .light{
@@ -62,7 +62,7 @@ nav::-webkit-scrollbar{display:none}
 
 /* ── HERO ── */
 .hero{text-align:center;padding:2.5rem 1rem 1.5rem}
-.hero h1{font-family:var(--head);font-size:clamp(1.8rem,5vw,3.5rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:.7rem}
+.hero h1{font-family:var(--head);font-size:clamp(1.8rem,5vw,3.5rem);font-weight:800;line-height:1.08;letter-spacing:0;margin-bottom:.7rem}
 .hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--cyan) 0%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .hero p{color:var(--dim);font-size:.9rem;max-width:440px;margin:0 auto 1.5rem;line-height:1.75}
 .hero-stats{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:.5rem}
@@ -560,8 +560,8 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 <div id="auth-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);padding:1.5rem">
   <div style="width:100%;max-width:400px">
     <div style="text-align:center;margin-bottom:2rem">
-      <div style="font-family:var(--head);font-size:2rem;font-weight:800;color:var(--cyan);margin-bottom:.4rem">&#9883;&#65039; Atom Edge</div>
-      <div style="font-size:.85rem;color:var(--dim)">IGCSE Chemistry Platform</div>
+      <div style="font-family:var(--head);font-size:2rem;font-weight:700;color:var(--cyan);margin-bottom:.4rem;letter-spacing:-.01em">&#9883;&#65039; Atom Edge</div>
+      <div style="font-size:1rem;color:var(--dim);line-height:1.4;max-width:320px;margin:0 auto">Chemistry Comes Alive in Your Browser With Atom Edge</div>
     </div>
     <div style="background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:1.75rem">
       <!-- Tabs -->
@@ -3192,7 +3192,7 @@ function renderPH(c){
     dg.addColorStop(0,col+'99');dg.addColorStop(1,col+'11');
     ctx.beginPath();ctx.arc(W/2,195,90,0,Math.PI*2);ctx.fillStyle=dg;ctx.fill();
     ctx.strokeStyle=col+'55';ctx.lineWidth=2;ctx.stroke();ctx.lineWidth=1;
-    ctx.fillStyle=col;ctx.font='bold 30px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('pH '+pH,W/2,193);
+    ctx.fillStyle=col;ctx.font='bold 30px Poppins,sans-serif';ctx.textAlign='center';ctx.fillText('pH '+pH,W/2,193);
     ctx.fillStyle='rgba(255,255,255,.7)';ctx.font='14px var(--font)';ctx.fillText(s.n,W/2,217);
     ctx.fillStyle='rgba(255,255,255,.45)';ctx.font='11px var(--font)';ctx.fillText(pH<7?'Acidic':pH>7?'Alkaline':'Neutral',W/2,234);
     ctx.fillStyle='rgba(255,80,80,.65)';ctx.font='10px monospace';ctx.fillText('[H⁺] = 10⁻'+pH+' mol/L',sx+10,285);
@@ -3330,12 +3330,12 @@ function renderAtom(c){
     const ng=ctx.createRadialGradient(cx,cy,0,cx,cy,nr);
     ng.addColorStop(0,'rgba(255,140,60,.95)');ng.addColorStop(.7,'rgba(220,60,20,.6)');ng.addColorStop(1,'rgba(180,20,0,.1)');
     ctx.beginPath();ctx.arc(cx,cy,nr,0,Math.PI*2);ctx.fillStyle=ng;ctx.fill();
-    ctx.fillStyle='#fff';ctx.font=`bold ${Math.min(13,nr*.55)}px Syne,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#fff';ctx.font=`bold ${Math.min(13,nr*.55)}px Poppins,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
     ctx.fillText(`${cur.p}p ${cur.ne}n`,cx,cy);ctx.textBaseline='alphabetic';
     // Info panel
     const ix=W*.72,iy=40;
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(ix,iy,200,220);ctx.strokeStyle='var(--border)';ctx.strokeRect(ix,iy,200,220);
-    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='left';ctx.fillText('Atomic Data',ix+10,iy+22);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Poppins,sans-serif';ctx.textAlign='left';ctx.fillText('Atomic Data',ix+10,iy+22);
     ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='11px monospace';
     ctx.fillText('Symbol:  '+cur.n,ix+10,iy+50);
     ctx.fillText('Protons: '+cur.p,ix+10,iy+68);
@@ -3565,7 +3565,7 @@ function renderReactivity(c){
     // Metal
     if(react){ctx.fillStyle=m.col+'bb';ctx.fillRect(210,250-40,80,40);ctx.strokeStyle=m.col+'77';ctx.lineWidth=1.5;ctx.strokeRect(210,250-40,80,40);ctx.lineWidth=1;}
     else{ctx.fillStyle=m.col+'bb';ctx.fillRect(210,70,80,40);ctx.strokeStyle=m.col+'77';ctx.strokeRect(210,70,80,40);ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='10px var(--font)';ctx.textAlign='center';ctx.fillText('Drop → ',145,90);}
-    ctx.fillStyle=m.col;ctx.font='bold 15px Syne,sans-serif';ctx.textAlign='center';ctx.fillText(m.n,250,56);
+    ctx.fillStyle=m.col;ctx.font='bold 15px Poppins,sans-serif';ctx.textAlign='center';ctx.fillText(m.n,250,56);
     // Bubbles
     if(react&&m.rate>0){if(Math.random()<.15*m.rate)bubbles.push({x:200+Math.random()*100,y:250,vy:-(0.8+Math.random()*1.5)});}
     bubbles=bubbles.filter(b=>{b.y+=b.vy;b.x+=(Math.random()-.5)*.5;if(b.y<125)return false;ctx.beginPath();ctx.arc(b.x,b.y,2.5,0,Math.PI*2);ctx.fillStyle='rgba(220,255,220,.65)';ctx.fill();return true;});
@@ -3575,7 +3575,7 @@ function renderReactivity(c){
     // Reactivity Series right panel
     const rx=440,ry=140;
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(rx,ry,320,160);ctx.strokeStyle='var(--border)';ctx.strokeRect(rx,ry,320,160);
-    ctx.fillStyle='var(--cyan)';ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='left';ctx.fillText('Reactivity Series (most→least)',rx+8,ry+18);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 11px Poppins,sans-serif';ctx.textAlign='left';ctx.fillText('Reactivity Series (most→least)',rx+8,ry+18);
     metals.forEach((mt,i)=>{const my=ry+32+i*(120/metals.length*1.25);const isSel=i===sel;ctx.fillStyle=isSel?mt.col:'rgba(255,255,255,.4)';ctx.font=isSel?'bold 11px monospace':'10px monospace';ctx.fillText(`${i+1}. ${mt.n}`,rx+10,my+(isSel?4:3));});
     ctx.textAlign='left';
     _raf=requestAnimationFrame(loop);
@@ -3618,7 +3618,7 @@ function renderTrends(c){
     // Group dividers
     [2,10].forEach(gi=>{const x=gx+gi*(gw/els.length)+bw/2;ctx.strokeStyle='rgba(255,255,255,.1)';ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(x,gy);ctx.lineTo(x,gy+gh);ctx.stroke();ctx.setLineDash([]);});
     ctx.fillStyle='rgba(255,255,255,.25)';ctx.font='9px monospace';ctx.textAlign='center';ctx.fillText('Period 1',gx+gw/18,gy-3);ctx.fillText('Period 2',gx+gw*0.33,gy-3);ctx.fillText('Period 3',gx+gw*.73,gy-3);
-    ctx.fillStyle=tr.col;ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='left';ctx.fillText(tr.l,gx,gy+gh+28);
+    ctx.fillStyle=tr.col;ctx.font='bold 12px Poppins,sans-serif';ctx.textAlign='left';ctx.fillText(tr.l,gx,gy+gh+28);
     ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='10px var(--font)';ctx.fillText(tr.note,gx,gy+gh+44);
     ctx.textAlign='left';
     _raf=requestAnimationFrame(loop);
@@ -3675,12 +3675,12 @@ function renderCovalent(c){
       const col=eCols[a.el]||'#888';g.addColorStop(0,col);g.addColorStop(1,col+'33');
       ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
       ctx.strokeStyle='rgba(255,255,255,.15)';ctx.stroke();
-      ctx.fillStyle=a.el==='C'?'#bbb':'rgba(0,0,0,.75)';ctx.font=`bold ${a.el==='H'?11:13}px Syne,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a.el,a.x,a.y);ctx.textBaseline='alphabetic';
+      ctx.fillStyle=a.el==='C'?'#bbb':'rgba(0,0,0,.75)';ctx.font=`bold ${a.el==='H'?11:13}px Poppins,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(a.el,a.x,a.y);ctx.textBaseline='alphabetic';
     });
     // Info
     const ix=W*.6,iy=40;
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(ix,iy,220,170);ctx.strokeStyle='var(--border)';ctx.strokeRect(ix,iy,220,170);
-    ctx.fillStyle='var(--cyan)';ctx.font='bold 13px Syne,sans-serif';ctx.textAlign='left';ctx.fillText(mol.n,ix+10,iy+22);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 13px Poppins,sans-serif';ctx.textAlign='left';ctx.fillText(mol.n,ix+10,iy+22);
     ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px monospace';
     ctx.fillText('Bond order: '+mol.bonds,ix+10,iy+48);
     ctx.fillText('Type: '+(mol.bonds===1?'Single':mol.bonds===2?'Double':'Triple'),ix+10,iy+66);
@@ -3718,7 +3718,7 @@ function renderIonic(c){
       const dx=190,dy=160,dr=50;
       const dg=ctx.createRadialGradient(dx,dy,0,dx,dy,dr);dg.addColorStop(0,pr.d.col);dg.addColorStop(1,pr.d.col+'33');
       ctx.beginPath();ctx.arc(dx,dy,dr,0,Math.PI*2);ctx.fillStyle=dg;ctx.fill();
-      ctx.fillStyle='rgba(0,0,0,.75)';ctx.font='bold 15px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(pr.d.el,dx,dy);ctx.textBaseline='alphabetic';
+      ctx.fillStyle='rgba(0,0,0,.75)';ctx.font='bold 15px Poppins,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(pr.d.el,dx,dy);ctx.textBaseline='alphabetic';
       ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText(xfr?pr.d.el+'⁺':'neutral',dx,dy+dr+14);
       // Outer electrons
       const oe=pr.d.give;
@@ -3745,7 +3745,7 @@ function renderIonic(c){
         const col=isPos?pr.d.col:pr.a.col;
         const g=ctx.createRadialGradient(x,y,0,x,y,18);g.addColorStop(0,col);g.addColorStop(1,col+'33');
         ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
-        ctx.fillStyle='rgba(0,0,0,.75)';ctx.font='bold 9px Syne,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillStyle='rgba(0,0,0,.75)';ctx.font='bold 9px Poppins,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
         ctx.fillText(isPos?pr.d.el+'⁺':pr.a.el+'⁻',x,y);ctx.textBaseline='alphabetic';
       }
       ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='11px var(--font)';ctx.textAlign='center';ctx.fillText(`${pr.n} ionic lattice — alternating + and − ions`,W/2,H-12);
@@ -3788,7 +3788,7 @@ function renderEquil(c){
     const eq=Math.abs(f-r2)<1;
     ctx.fillStyle=eq?'rgba(0,229,160,.8)':'rgba(255,217,61,.8)';ctx.font='22px monospace';ctx.textAlign='center';ctx.fillText('⇌',265,150);
     ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='11px monospace';ctx.fillText('A + B  ⇌  C',265,170);
-    if(eq){ctx.fillStyle='rgba(0,229,160,.8)';ctx.font='bold 12px Syne,sans-serif';ctx.fillText('⚖ Equilibrium',265,200);}
+    if(eq){ctx.fillStyle='rgba(0,229,160,.8)';ctx.font='bold 12px Poppins,sans-serif';ctx.fillText('⚖ Equilibrium',265,200);}
     // Graph
     const gx=500,gy=25,gw=280,gh=240;
     ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(gx,gy,gw,gh);ctx.strokeStyle='var(--border)';ctx.strokeRect(gx,gy,gw,gh);
@@ -3840,7 +3840,7 @@ function renderDisplace(c){
     const vx=450,vy=60;
     ctx.fillStyle=ex.react?'rgba(0,229,160,.12)':'rgba(255,71,87,.12)';ctx.fillRect(vx,vy,240,180);
     ctx.strokeStyle=ex.react?'rgba(0,229,160,.4)':'rgba(255,71,87,.4)';ctx.strokeRect(vx,vy,240,180);
-    ctx.fillStyle=ex.react?'rgba(0,229,160,.85)':'rgba(255,71,87,.85)';ctx.font='bold 13px Syne,sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=ex.react?'rgba(0,229,160,.85)':'rgba(255,71,87,.85)';ctx.font='bold 13px Poppins,sans-serif';ctx.textAlign='center';
     ctx.fillText(ex.react?'✓ REACTION OCCURS':'✗ NO REACTION',vx+120,vy+26);
     ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='10px monospace';ctx.fillText(ex.eq,vx+120,vy+52);
     ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='10px var(--font)';
@@ -3901,7 +3901,7 @@ function renderCrystal(c){
     ctx.beginPath();ctx.arc(cpx,cpy,5,0,Math.PI*2);ctx.fillStyle='var(--orange)';ctx.fill();
     ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='10px monospace';ctx.fillText('Solubility curve',gx+5,gy-5);
     ctx.fillStyle='rgba(100,200,255,.6)';ctx.fillText(`Crystals: ${crystals.length}`,gx+5,gy+gh+14);
-    if(temp<crystalT){ctx.fillStyle='rgba(100,200,255,.8)';ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('❄ Crystallisation occurring!',240,285);}
+    if(temp<crystalT){ctx.fillStyle='rgba(100,200,255,.8)';ctx.font='bold 11px Poppins,sans-serif';ctx.textAlign='center';ctx.fillText('❄ Crystallisation occurring!',240,285);}
     ctx.textAlign='left';
     _raf=requestAnimationFrame(loop);
   }
@@ -3948,7 +3948,7 @@ function renderRates(c){
     ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='10px monospace';ctx.textAlign='left';ctx.fillText('Products formed vs time',gx+5,gy-5);
     ctx.fillStyle='rgba(0,229,255,.7)';ctx.fillText(`Reactions: ${rxns} | Speed ×${spd.toFixed(1)}`,gx+5,gy+gh+15);
     const ae=Math.max(5,50-temp*.3-(cat?20:0));ctx.fillStyle='rgba(255,200,50,.6)';ctx.fillText(`Activation energy ≈ ${Math.round(ae)} kJ/mol`,gx+5,gy+gh+30);
-    ctx.fillStyle=`rgb(${Math.round(50+200*(temp-10)/70)},${Math.round(200-150*(temp-10)/70)},80)`;ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='center';ctx.fillText(`🌡 ${temp}°C`,200,295);
+    ctx.fillStyle=`rgb(${Math.round(50+200*(temp-10)/70)},${Math.round(200-150*(temp-10)/70)},80)`;ctx.font='bold 12px Poppins,sans-serif';ctx.textAlign='center';ctx.fillText(`🌡 ${temp}°C`,200,295);
     ctx.textAlign='left';
     _raf=requestAnimationFrame(loop);
   }
@@ -3996,7 +3996,7 @@ function renderCombust(c){
     // Info panel
     const ix=350,iy=30;
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(ix,iy,340,220);ctx.strokeStyle='var(--border)';ctx.strokeRect(ix,iy,340,220);
-    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Syne,sans-serif';ctx.textAlign='left';ctx.fillText('Complete Combustion:',ix+10,iy+22);
+    ctx.fillStyle='var(--cyan)';ctx.font='bold 12px Poppins,sans-serif';ctx.textAlign='left';ctx.fillText('Complete Combustion:',ix+10,iy+22);
     ctx.fillStyle='rgba(255,255,255,.65)';ctx.font='10px monospace';ctx.fillText(f.eq,ix+10,iy+42);
     ctx.fillStyle='rgba(255,200,50,.7)';ctx.fillText('ΔH = −'+f.dH+' kJ/mol',ix+10,iy+60);
     ctx.fillStyle=O2<.5?'rgba(255,100,50,.8)':'rgba(0,229,160,.7)';ctx.font='11px var(--font)';
@@ -4043,7 +4043,7 @@ function renderDistil(c){
       const active=coll.includes(i);
       ctx.strokeStyle=active?f.col+'aa':'rgba(100,100,100,.3)';ctx.lineWidth=active?2.5:1;
       ctx.beginPath();ctx.moveTo(cx+cw,fy);ctx.lineTo(cx+cw+55,fy);ctx.stroke();ctx.lineWidth=1;
-      ctx.fillStyle=active?f.col:'rgba(150,150,150,.35)';ctx.font=active?'bold 10px Syne,sans-serif':'10px var(--font)';ctx.textAlign='left';
+      ctx.fillStyle=active?f.col:'rgba(150,150,150,.35)';ctx.font=active?'bold 10px Poppins,sans-serif':'10px var(--font)';ctx.textAlign='left';
       ctx.fillText(f.n,cx+cw+60,fy+4);
       ctx.fillStyle='rgba(255,255,255,.28)';ctx.font='9px var(--font)';ctx.fillText('bp ~'+f.bp+'°C | '+f.use,cx+cw+60,fy+16);
       // Drip animation
@@ -4056,7 +4056,7 @@ function renderDistil(c){
     // Temp display
     ctx.fillStyle='rgba(255,200,50,.8)';ctx.font='bold 13px monospace';ctx.fillText('T: '+Math.round(temp)+'°C',cx-10,18);
     const cur=fracs.filter(f=>temp>=f.bp).slice(-1)[0];
-    if(cur){ctx.fillStyle=cur.col;ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='center';ctx.fillText('Now collecting: '+cur.n,cx+cw/2,350);}
+    if(cur){ctx.fillStyle=cur.col;ctx.font='bold 11px Poppins,sans-serif';ctx.textAlign='center';ctx.fillText('Now collecting: '+cur.n,cx+cw/2,350);}
     ctx.textAlign='left';
     _raf=requestAnimationFrame(loop);
   }
