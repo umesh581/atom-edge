@@ -1268,62 +1268,87 @@ function renderDiffusion(el){
 // 20. ISOTOPES
 function renderIsotopes(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Isotopes</b> are atoms of the same element with the same number of protons but <em>different</em> numbers of neutrons.';el.appendChild(info);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 320');svg.setAttribute('width','100%');svg.setAttribute('height','320');el.appendChild(svg);
-  var isotopes=[
-    {name:'Carbon-12',symbol:'¹²C',protons:6,neutrons:6,electrons:6,abundance:'98.9%',col:'#00e5ff'},
-    {name:'Carbon-13',symbol:'¹³C',protons:6,neutrons:7,electrons:6,abundance:'1.1%',col:'#7fff6b'},
-    {name:'Carbon-14',symbol:'¹⁴C',protons:6,neutrons:8,electrons:6,abundance:'trace',col:'#ffd93d'},
-  ];
-  function drawAtom(svg,cx,cy,r,protons,neutrons,col){
-    // Nucleus
-    var nucR=protons*2.5+8;
-    for(var p=0;p<Math.min(protons,8);p++){
-      var a=(2*Math.PI*p/Math.min(protons,8));
-      var nx=cx+Math.cos(a)*nucR*0.5,ny=cy+Math.sin(a)*nucR*0.5;
-      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('cx',nx);c.setAttribute('cy',ny);c.setAttribute('r',5);c.setAttribute('fill','#ff6b35');svg.appendChild(c);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Isotopes</b> — same element, same protons, different neutrons. Same chemical properties, different mass.';
+  el.appendChild(info);
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  var isotopes=[{name:'Carbon-12',p:6,n:6,col:'#00e5ff',abundance:'98.9%'},{name:'Carbon-13',p:6,n:7,col:'#7fff6b',abundance:'1.1%'},{name:'Carbon-14',p:6,n:8,col:'#ffd93d',abundance:'trace'}];
+  var sel=0;
+  isotopes.forEach(function(iso,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=iso.name;
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
+  });
+  el.appendChild(ctrl);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=320;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=320,t=0;
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    var iso=isotopes[sel];
+    var cx=W/2,cy=H/2-10;
+    // Pulsing nucleus glow
+    var glowR=30+Math.sin(t*3)*4;
+    var g=ctx.createRadialGradient(cx,cy,0,cx,cy,glowR+20);
+    g.addColorStop(0,iso.col+'88');g.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(cx,cy,glowR+20,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    // Draw protons and neutrons in nucleus
+    var nucR=28;
+    for(var p=0;p<iso.p;p++){
+      var a=(2*Math.PI*p/iso.p)+t*0.5;
+      var nx=cx+Math.cos(a)*nucR*0.6,ny=cy+Math.sin(a)*nucR*0.6;
+      var pg=ctx.createRadialGradient(nx-2,ny-2,1,nx,ny,6);
+      pg.addColorStop(0,'#ff8844');pg.addColorStop(1,'#cc3300');
+      ctx.beginPath();ctx.arc(nx,ny,6,0,Math.PI*2);ctx.fillStyle=pg;ctx.fill();
     }
-    for(var n=0;n<Math.min(neutrons,9);n++){
-      var a=(2*Math.PI*n/Math.min(neutrons,9))+0.3;
-      var nx=cx+Math.cos(a)*nucR*0.5+3,ny=cy+Math.sin(a)*nucR*0.5+3;
-      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('cx',nx);c.setAttribute('cy',ny);c.setAttribute('r',5);c.setAttribute('fill','#888');svg.appendChild(c);
+    for(var n=0;n<iso.n;n++){
+      var a=(2*Math.PI*n/iso.n)+t*0.5+0.3;
+      var nx=cx+Math.cos(a)*(nucR*0.6+5),ny=cy+Math.sin(a)*(nucR*0.6+5);
+      var ng2=ctx.createRadialGradient(nx-2,ny-2,1,nx,ny,6);
+      ng2.addColorStop(0,'#aaa');ng2.addColorStop(1,'#444');
+      ctx.beginPath();ctx.arc(nx,ny,6,0,Math.PI*2);ctx.fillStyle=ng2;ctx.fill();
     }
-    // Shells
+    // Electron shells - 2 shells for carbon (2,4)
     var shells=[2,4];
+    var shellR=[70,120];
     shells.forEach(function(count,si){
-      var sr=r*(si+1)*0.45+20;
-      var circ=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      circ.setAttribute('cx',cx);circ.setAttribute('cy',cy);circ.setAttribute('r',sr);
-      circ.setAttribute('fill','none');circ.setAttribute('stroke','#1d3347');circ.setAttribute('stroke-dasharray','4,3');svg.appendChild(circ);
+      // Dashed orbit
+      ctx.beginPath();ctx.arc(cx,cy,shellR[si],0,Math.PI*2);
+      ctx.strokeStyle=iso.col+'44';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+      // Electrons
       for(var e=0;e<count;e++){
-        var ea=(2*Math.PI*e/count)-Math.PI/2;
-        var ec=document.createElementNS('http://www.w3.org/2000/svg','circle');
-        ec.setAttribute('cx',cx+sr*Math.cos(ea));ec.setAttribute('cy',cy+sr*Math.sin(ea));ec.setAttribute('r',4);ec.setAttribute('fill',col);svg.appendChild(ec);
+        var a=(2*Math.PI*e/count)+t*(1.5-si*0.6);
+        var ex=cx+shellR[si]*Math.cos(a),ey=cy+shellR[si]*Math.sin(a);
+        var eg=ctx.createRadialGradient(ex-1,ey-1,0,ex,ey,5);
+        eg.addColorStop(0,iso.col);eg.addColorStop(1,iso.col+'44');
+        ctx.beginPath();ctx.arc(ex,ey,5,0,Math.PI*2);ctx.fillStyle=eg;ctx.fill();
+        // Trail
+        for(var tr=1;tr<4;tr++){
+          var ta=(2*Math.PI*e/count)+t*(1.5-si*0.6)-tr*0.12;
+          var tex=cx+shellR[si]*Math.cos(ta),tey=cy+shellR[si]*Math.sin(ta);
+          ctx.beginPath();ctx.arc(tex,tey,3*(1-tr/5),0,Math.PI*2);
+          ctx.fillStyle=iso.col+Math.floor((1-tr/4)*80).toString(16).padStart(2,'0');ctx.fill();
+        }
       }
     });
+    // Labels
+    ctx.textAlign='center';
+    ctx.fillStyle=iso.col;ctx.font='bold 18px monospace';ctx.fillText(iso.name,cx,30);
+    ctx.fillStyle='#5a8aa0';ctx.font='12px sans-serif';
+    ctx.fillText('Protons: '+iso.p,cx-180,70);
+    ctx.fillText('Neutrons: '+iso.n,cx-180,90);
+    ctx.fillText('Electrons: '+iso.p,cx-180,110);
+    ctx.fillText('Abundance: '+iso.abundance,cx-180,130);
+    // Legend
+    ctx.fillStyle='#ff6b35';ctx.fillText('● Proton',cx+180,70);
+    ctx.fillStyle='#888';ctx.fillText('● Neutron',cx+180,90);
+    ctx.fillStyle=iso.col;ctx.fillText('● Electron',cx+180,110);
+    ctx.fillStyle='#5a8aa0';ctx.font='11px sans-serif';
+    ctx.fillText('Same protons (6) = same element | Different neutrons = different isotope',cx,300);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
   }
-  isotopes.forEach(function(iso,i){
-    var cx=117+i*233,cy=140;
-    // Box
-    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('x',cx-100);rect.setAttribute('y',20);rect.setAttribute('width',200);rect.setAttribute('height',280);
-    rect.setAttribute('rx',10);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',iso.col);rect.setAttribute('stroke-width','1.5');svg.appendChild(rect);
-    // Name
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',cx);t.setAttribute('y',45);t.setAttribute('text-anchor','middle');t.setAttribute('fill',iso.col);t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=iso.name;svg.appendChild(t);
-    drawAtom(svg,cx,cy+20,60,iso.protons,iso.neutrons,iso.col);
-    // Stats
-    var stats=[['Protons',iso.protons,'#ff6b35'],['Neutrons',iso.neutrons,'#888'],['Electrons',iso.electrons,iso.col],['Abundance',iso.abundance,'#ffd93d']];
-    stats.forEach(function(s,si){
-      var t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t1.setAttribute('x',cx-80);t1.setAttribute('y',235+si*17);t1.setAttribute('fill',s[2]);t1.setAttribute('font-size','11');t1.textContent=s[0]+': '+s[1];svg.appendChild(t1);
-    });
-  });
-  // Same element label
-  var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-  t.setAttribute('x',350);t.setAttribute('y',310);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#5a8aa0');t.setAttribute('font-size','11');t.textContent='Same element (6 protons) — different mass numbers — isotopes of Carbon';svg.appendChild(t);
+  loop();
 }
 
 // 21. GROUP 1 METALS
@@ -1379,60 +1404,73 @@ function renderGroup1(el){
 // 22. GROUP 7 HALOGENS
 function renderGroup7(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Group 7 (Halogens)</b>: Reactivity <em>decreases</em> down the group. A more reactive halogen displaces a less reactive one from its salt solution.';el.appendChild(info);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 340');svg.setAttribute('width','100%');svg.setAttribute('height','340');el.appendChild(svg);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Group 7 Halogens</b> — reactivity decreases down the group. A more reactive halogen displaces a less reactive one.';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=320;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=320,t=0;
   var halogens=[
-    {name:'Fluorine (F₂)',state:'pale yellow gas',col:'#ffffaa',reactivity:4,bp:'-188°C',use:'Toothpaste'},
-    {name:'Chlorine (Cl₂)',state:'yellow-green gas',col:'#aaff88',reactivity:3,bp:'-34°C',use:'Water treatment'},
-    {name:'Bromine (Br₂)',state:'red-brown liquid',col:'#cc4400',reactivity:2,bp:'59°C',use:'Photography'},
-    {name:'Iodine (I₂)',state:'grey-black solid',col:'#440044',reactivity:1,bp:'184°C',use:'Antiseptic'},
+    {name:'Fluorine F₂',state:'gas',col:'#eeeebb',col2:'rgba(220,220,100,0.3)',bp:'-188°C',react:'Most reactive',bubbles:[]},
+    {name:'Chlorine Cl₂',state:'gas',col:'#aaff88',col2:'rgba(100,200,80,0.25)',bp:'-34°C',react:'Very reactive',bubbles:[]},
+    {name:'Bromine Br₂',state:'liquid',col:'#cc4400',col2:'rgba(180,60,0,0.4)',bp:'59°C',react:'Moderately reactive',bubbles:[]},
+    {name:'Iodine I₂',state:'solid/vapour',col:'#884488',col2:'rgba(100,40,100,0.35)',bp:'184°C',react:'Least reactive',bubbles:[]},
   ];
-  // Draw table
-  var headers=['Halogen','State','Boiling Pt','Use','Reactivity'];
-  var colX=[10,150,310,410,550];
-  // Header
-  var headRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-  headRect.setAttribute('x',5);headRect.setAttribute('y',5);headRect.setAttribute('width',690);headRect.setAttribute('height',28);headRect.setAttribute('fill','#132333');svg.appendChild(headRect);
-  headers.forEach(function(h,i){
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',colX[i]+5);t.setAttribute('y',23);t.setAttribute('fill','#00e5ff');t.setAttribute('font-size','11');t.setAttribute('font-weight','bold');t.textContent=h;svg.appendChild(t);
+  // Init bubbles for gases
+  halogens.forEach(function(h,i){
+    if(h.state==='gas'||h.state==='liquid'){
+      for(var b=0;b<8;b++) h.bubbles.push({x:Math.random()*80-40,y:Math.random()*80,vy:-0.3-Math.random()*0.4*(i===0?2:1),r:2+Math.random()*3});
+    }
   });
-  halogens.forEach(function(hal,i){
-    var y=40+i*45;
-    var bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    bg.setAttribute('x',5);bg.setAttribute('y',y-5);bg.setAttribute('width',690);bg.setAttribute('height',40);
-    bg.setAttribute('fill',i%2===0?'#0d1a24':'#0a1520');svg.appendChild(bg);
-    // Color swatch
-    var sw=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    sw.setAttribute('x',colX[0]+5);sw.setAttribute('y',y+2);sw.setAttribute('width',16);sw.setAttribute('height',16);
-    sw.setAttribute('fill',hal.col);sw.setAttribute('rx',3);svg.appendChild(sw);
-    var texts=[[hal.name,colX[0]+26],[hal.state,colX[1]],[hal.bp,colX[2]],[hal.use,colX[3]]];
-    texts.forEach(function(tx){
-      var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',tx[1]+5);t.setAttribute('y',y+14);t.setAttribute('fill','#e8f4f8');t.setAttribute('font-size','10');t.textContent=tx[0];svg.appendChild(t);
+  var jarW=130,jarH=180,gap=(W-halogens.length*jarW)/(halogens.length+1);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    halogens.forEach(function(h,i){
+      var x=gap+i*(jarW+gap),y=60;
+      // Jar outline
+      ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(x+10,y);ctx.lineTo(x+10,y+jarH);ctx.arcTo(x+10,y+jarH+15,x+jarW-10,y+jarH+15,10);ctx.arcTo(x+jarW-10,y+jarH+15,x+jarW-10,y+jarH,10);ctx.lineTo(x+jarW-10,y);ctx.stroke();
+      // Content
+      var fillY=h.state==='solid'?y+jarH-50:y+20;
+      ctx.fillStyle=h.col2;ctx.fillRect(x+11,fillY,jarW-21,y+jarH-fillY);
+      // Vapour wisps for all
+      for(var w=0;w<3;w++){
+        var wx=x+30+w*30,wy=y+20+Math.sin(t*2+w+i)*10;
+        ctx.beginPath();ctx.arc(wx,wy,8+Math.sin(t+w)*3,0,Math.PI*2);
+        ctx.fillStyle=h.col+'22';ctx.fill();
+      }
+      // Bubbles/particles
+      h.bubbles.forEach(function(b){
+        b.y+=b.vy;b.x+=Math.sin(t*3+b.y*0.1)*0.3;
+        if(b.y<-10)b.y=jarH-10;
+        ctx.beginPath();ctx.arc(x+jarW/2+b.x,y+b.y,b.r,0,Math.PI*2);
+        ctx.fillStyle=h.col+'99';ctx.fill();
+      });
+      // Reactivity bar (animated)
+      var barH=Math.max(0,(4-i)*30+Math.sin(t+i)*3);
+      ctx.fillStyle='#1d3347';ctx.fillRect(x+10,y+jarH+20,jarW-20,8);
+      ctx.fillStyle=h.col;ctx.fillRect(x+10,y+jarH+20,(jarW-20)*barH/120,8);
+      // Labels
+      ctx.fillStyle=h.col;ctx.textAlign='center';ctx.font='bold 11px monospace';ctx.fillText(h.name,x+jarW/2,y-8);
+      ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';
+      ctx.fillText(h.state,x+jarW/2,y+jarH+42);
+      ctx.fillText(h.bp,x+jarW/2,y+jarH+54);
+      // Arrow showing decreasing reactivity
+      if(i<3){
+        ctx.fillStyle='#ff4444';ctx.font='14px sans-serif';
+        ctx.fillText('→',x+jarW+gap/2-8,y+jarH/2);
+      }
     });
-    // Reactivity bar
-    var barW=hal.reactivity*25;
-    var br=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    br.setAttribute('x',colX[4]+5);br.setAttribute('y',y+2);br.setAttribute('width',barW);br.setAttribute('height',14);
-    br.setAttribute('fill',hal.col);br.setAttribute('rx',3);svg.appendChild(br);
-  });
-  // Displacement diagram
-  var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-  t.setAttribute('x',350);t.setAttribute('y',230);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#00e5ff');t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent='Displacement Reactions';svg.appendChild(t);
-  var reactions=[
-    {eq:'Cl₂ + 2KBr → 2KCl + Br₂',result:'Orange/brown colour appears',works:true},
-    {eq:'Br₂ + 2KI → 2KBr + I₂',result:'Brown/black colour appears',works:true},
-    {eq:'I₂ + 2KCl → No reaction',result:'No change observed',works:false},
-  ];
-  reactions.forEach(function(rx,i){
-    var y=250+i*28;
-    var col=rx.works?'#7fff6b':'#ff4444';
-    var t1=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t1.setAttribute('x',30);t1.setAttribute('y',y);t1.setAttribute('fill',col);t1.setAttribute('font-size','11');t1.setAttribute('font-family','monospace');t1.textContent=(rx.works?'✓ ':'✗ ')+rx.eq;svg.appendChild(t1);
-    var t2=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t2.setAttribute('x',30);t2.setAttribute('y',y+13);t2.setAttribute('fill','#5a8aa0');t2.setAttribute('font-size','9');t2.textContent='  → '+rx.result;svg.appendChild(t2);
-  });
+    ctx.fillStyle='#ff4444';ctx.textAlign='left';ctx.font='10px sans-serif';
+    ctx.fillText('← More reactive',20,H-15);
+    ctx.fillStyle='#7fff6b';ctx.textAlign='right';ctx.fillText('Less reactive →',W-20,H-15);
+    // Displacement reaction hint
+    ctx.fillStyle='#ffd93d';ctx.textAlign='center';ctx.font='11px sans-serif';
+    ctx.fillText('Cl₂ + 2KBr → 2KCl + Br₂  |  Br₂ + 2KI → 2KBr + I₂  |  I₂ + KCl → No reaction',W/2,H-30);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
 }
 
 // 23. METALLIC BONDING
@@ -1573,61 +1611,69 @@ function renderDotCross(el){
 // 25. MOLE CALCULATIONS
 function renderMoles(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>The Mole:</b> 1 mole = 6.02×10²³ particles (Avogadro\'s number). Moles = Mass ÷ Molar Mass';el.appendChild(info);
-  var container=document.createElement('div');container.style.cssText='padding:1rem;background:var(--s1);border-radius:12px;';
-  // Triangle diagram
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 200');svg.setAttribute('width','100%');svg.setAttribute('height','200');
-  // Triangle
-  var poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-  poly.setAttribute('points','350,20 180,170 520,170');poly.setAttribute('fill','none');poly.setAttribute('stroke','#00e5ff');poly.setAttribute('stroke-width','2');svg.appendChild(poly);
-  // Dividing line
-  var line=document.createElementNS('http://www.w3.org/2000/svg','line');
-  line.setAttribute('x1','180');line.setAttribute('y1','170');line.setAttribute('x2','520');line.setAttribute('y2','170');svg.setAttribute('y1','170');
-  var hLine=document.createElementNS('http://www.w3.org/2000/svg','line');
-  hLine.setAttribute('x1','265');hLine.setAttribute('y1','95');hLine.setAttribute('x2','435');hLine.setAttribute('y2','95');
-  hLine.setAttribute('stroke','#00e5ff');hLine.setAttribute('stroke-width','2');svg.appendChild(hLine);
-  var vLine=document.createElementNS('http://www.w3.org/2000/svg','line');
-  vLine.setAttribute('x1','350');vLine.setAttribute('y1','95');vLine.setAttribute('x2','350');vLine.setAttribute('y2','170');
-  vLine.setAttribute('stroke','#00e5ff');vLine.setAttribute('stroke-width','2');svg.appendChild(vLine);
-  var labels=[{t:'MASS (g)',x:350,y:60,col:'#ffd93d'},{t:'MOLES (n)',x:265,y:140,col:'#7fff6b'},{t:'MOLAR MASS (g/mol)',x:430,y:140,col:'#ff6b35'}];
-  labels.forEach(function(l){
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',l.x);t.setAttribute('y',l.y);t.setAttribute('text-anchor','middle');t.setAttribute('fill',l.col);t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=l.t;svg.appendChild(t);
-  });
-  container.appendChild(svg);
-  // Calculator
-  var calc=document.createElement('div');calc.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem;';
-  var fields=['Mass (g)','Moles (n)','Molar Mass (g/mol)'];
-  var inputs=[];
-  fields.forEach(function(f,i){
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>The Mole:</b> 1 mole = 6.02×10²³ particles. Moles = Mass ÷ Molar Mass. Cover the unknown to find the formula.';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=200;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=200,t=0;
+  // Avogadro particles
+  var particles=[];
+  for(var i=0;i<60;i++) particles.push({x:Math.random()*200+10,y:Math.random()*160+20,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5,col:['#00e5ff','#ff6b35','#7fff6b','#ffd93d'][Math.floor(Math.random()*4)],r:2+Math.random()*2});
+  function drawTri(){
+    ctx.strokeStyle='#00e5ff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(350,20);ctx.lineTo(230,155);ctx.lineTo(470,155);ctx.closePath();ctx.stroke();
+    ctx.strokeStyle='#00e5ff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(230,87);ctx.lineTo(470,87);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(350,87);ctx.lineTo(350,155);ctx.stroke();
+    var labels=[{t:'MASS (g)',x:350,y:62,col:'#ffd93d'},{t:'n (mol)',x:275,y:130,col:'#7fff6b'},{t:'Molar Mass',x:425,y:130,col:'#ff6b35'}];
+    labels.forEach(function(l){
+      ctx.fillStyle=l.col;ctx.textAlign='center';ctx.font='bold 13px sans-serif';
+      // Pulsing
+      ctx.save();var scale=1+Math.sin(t*2+labels.indexOf(l))*0.04;
+      ctx.translate(l.x,l.y);ctx.scale(scale,scale);ctx.fillText(l.t,0,0);ctx.restore();
+    });
+    ctx.fillStyle='#5a8aa0';ctx.textAlign='center';ctx.font='10px sans-serif';
+    ctx.fillText('Cover the unknown — remaining two show the formula',350,178);
+    ctx.fillText('n = m ÷ M  |  m = n × M  |  M = m ÷ n',350,193);
+  }
+  // Calc panel
+  var calcDiv=document.createElement('div');calcDiv.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.5rem;padding:.75rem;background:var(--s1);border-radius:10px;align-items:end;';
+  var fields=[{l:'Mass (g)',id:'m'},{l:'Moles (mol)',id:'n'},{l:'Molar Mass (g/mol)',id:'mm'}];
+  var inputs={};
+  fields.forEach(function(f){
     var wrap=document.createElement('div');
-    var label=document.createElement('label');label.textContent=f;label.style.cssText='font-size:.8rem;color:var(--dim);display:block;margin-bottom:.3rem;';
+    var lbl=document.createElement('label');lbl.style.cssText='font-size:.75rem;color:var(--dim);display:block;';lbl.textContent=f.l;
     var inp=document.createElement('input');inp.type='number';inp.placeholder='?';
-    inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:8px;font-size:1rem;';
-    inputs.push(inp);wrap.appendChild(label);wrap.appendChild(inp);calc.appendChild(wrap);
+    inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.4rem;border-radius:6px;';
+    inputs[f.id]=inp;wrap.appendChild(lbl);wrap.appendChild(inp);calcDiv.appendChild(wrap);
   });
-  var result=document.createElement('div');result.style.cssText='margin-top:1rem;padding:.75rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:1rem;min-height:2.5rem;';
-  var calcBtn=document.createElement('button');calcBtn.className='btn green';calcBtn.textContent='Calculate';
+  var res=document.createElement('div');res.style.cssText='padding:.5rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:.85rem;min-height:2.5rem;display:flex;align-items:center;';
+  res.textContent='Enter 2 values';
+  var calcBtn=document.createElement('button');calcBtn.className='btn green';calcBtn.style.gridColumn='span 4';calcBtn.textContent='Calculate';
   calcBtn.onclick=function(){
-    var mass=parseFloat(inputs[0].value),moles=parseFloat(inputs[1].value),mm=parseFloat(inputs[2].value);
-    var filled=[!isNaN(mass),!isNaN(moles),!isNaN(mm)];
-    if(filled[0]&&filled[2]&&!filled[1]){result.textContent='Moles = '+mass+' ÷ '+mm+' = '+(mass/mm).toFixed(4)+' mol';}
-    else if(filled[1]&&filled[2]&&!filled[0]){result.textContent='Mass = '+moles+' × '+mm+' = '+(moles*mm).toFixed(4)+' g';}
-    else if(filled[0]&&filled[1]&&!filled[2]){result.textContent='Molar Mass = '+mass+' ÷ '+moles+' = '+(mass/moles).toFixed(4)+' g/mol';}
-    else{result.textContent='Enter exactly TWO values to calculate the third.';}
+    var m=parseFloat(inputs.m.value),n=parseFloat(inputs.n.value),mm=parseFloat(inputs.mm.value);
+    if(!isNaN(m)&&!isNaN(mm)&&isNaN(n)) res.textContent='n = '+m+' ÷ '+mm+' = '+(m/mm).toFixed(4)+' mol';
+    else if(!isNaN(n)&&!isNaN(mm)&&isNaN(m)) res.textContent='m = '+n+' × '+mm+' = '+(n*mm).toFixed(4)+' g';
+    else if(!isNaN(m)&&!isNaN(n)&&isNaN(mm)) res.textContent='M = '+m+' ÷ '+n+' = '+(m/n).toFixed(4)+' g/mol';
+    else res.textContent='Enter exactly 2 values';
   };
-  container.appendChild(calc);container.appendChild(calcBtn);container.appendChild(result);
-  // Common molar masses
-  var commonEl=document.createElement('div');commonEl.style.cssText='margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem;';
-  var common=[['H₂O',18],['CO₂',44],['NaCl',58.5],['CaCO₃',100],['H₂SO₄',98],['HCl',36.5],['NaOH',40],['NH₃',17]];
-  common.forEach(function(c){
-    var tag=document.createElement('span');tag.style.cssText='background:var(--s2);border:1px solid var(--border);padding:.25rem .6rem;border-radius:20px;font-size:.8rem;cursor:pointer;color:#00e5ff;';
-    tag.textContent=c[0]+' = '+c[1]+' g/mol';
-    tag.onclick=function(){inputs[2].value=c[1];};
-    commonEl.appendChild(tag);
-  });
-  container.appendChild(commonEl);
-  el.appendChild(container);
+  calcDiv.appendChild(res);calcDiv.appendChild(calcBtn);el.appendChild(calcDiv);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    // Avogadro particles on left
+    particles.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<10||p.x>210)p.vx*=-1;if(p.y<15||p.y>185)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col;ctx.fill();
+    });
+    ctx.fillStyle='#ffd93d';ctx.textAlign='center';ctx.font='bold 10px sans-serif';ctx.fillText('6.02×10²³',110,H-8);
+    ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText('1 mole of particles',110,H+4);
+    drawTri();
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
 }
 
 // 26. LIMITING REAGENT
@@ -1752,67 +1798,84 @@ function renderElectroplating(el){
 // 28. BOND ENERGIES
 function renderBondEnergy(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Bond Energies:</b> Energy is <em>required</em> to break bonds (endothermic) and <em>released</em> when bonds form (exothermic). ΔH = Energy in − Energy out';el.appendChild(info);
-  var container=document.createElement('div');container.style.cssText='padding:1rem;';
-  // Reaction selector
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Bond Energy:</b> Breaking bonds = energy IN (endothermic). Forming bonds = energy OUT (exothermic). ΔH = Energy in − Energy out.';
+  el.appendChild(info);
   var reactions=[
-    {name:'H₂ + Cl₂ → 2HCl',broken:[{bond:'H-H',e:436},{bond:'Cl-Cl',e:243}],formed:[{bond:'H-Cl×2',e:862}]},
-    {name:'CH₄ + 2O₂ → CO₂ + 2H₂O',broken:[{bond:'C-H×4',e:1652},{bond:'O=O×2',e:996}],formed:[{bond:'C=O×2',e:1486},{bond:'O-H×4',e:1856}]},
-    {name:'N₂ + 3H₂ → 2NH₃',broken:[{bond:'N≡N',e:945},{bond:'H-H×3',e:1308}],formed:[{bond:'N-H×6',e:2322}]},
+    {name:'H₂ + Cl₂ → 2HCl',broken:[{b:'H-H',e:436},{b:'Cl-Cl',e:243}],formed:[{b:'2×H-Cl',e:862}],exo:true},
+    {name:'CH₄ + 2O₂ → CO₂ + 2H₂O',broken:[{b:'4×C-H',e:1652},{b:'2×O=O',e:996}],formed:[{b:'2×C=O',e:1486},{b:'4×O-H',e:1856}],exo:true},
+    {name:'N₂ + 3H₂ → 2NH₃',broken:[{b:'N≡N',e:945},{b:'3×H-H',e:1308}],formed:[{b:'6×N-H',e:2322}],exo:true},
   ];
   var sel=0;
   var ctrl=document.createElement('div');ctrl.className='controls';
   reactions.forEach(function(r,i){
-    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=r.name;
-    b.onclick=function(){sel=i;draw();ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=r.name.split('→')[0].trim();
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
     ctrl.appendChild(b);
   });
-  container.appendChild(ctrl);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 240');svg.setAttribute('width','100%');svg.setAttribute('height','240');
-  container.appendChild(svg);
-  function draw(){
-    while(svg.firstChild)svg.removeChild(svg.firstChild);
+  el.appendChild(ctrl);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=280;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=280,t=0;
+  var energyIn=0,energyOut=0,phase=0; // phase: 0=breaking, 1=forming
+  function calcEnergy(r){energyIn=r.broken.reduce(function(a,b){return a+b.e;},0);energyOut=r.formed.reduce(function(a,b){return a+b.e;},0);}
+  calcEnergy(reactions[sel]);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
     var r=reactions[sel];
-    var energyIn=r.broken.reduce(function(a,b){return a+b.e;},0);
-    var energyOut=r.formed.reduce(function(a,b){return a+b.e;},0);
+    calcEnergy(r);
     var dH=energyIn-energyOut;
     var isExo=dH<0;
-    // Title
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',350);t.setAttribute('y',20);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#e8f4f8');t.setAttribute('font-size','13');t.setAttribute('font-weight','bold');t.textContent=r.name;svg.appendChild(t);
-    // Bonds broken column
-    var brkT=document.createElementNS('http://www.w3.org/2000/svg','text');
-    brkT.setAttribute('x',100);brkT.setAttribute('y',45);brkT.setAttribute('text-anchor','middle');brkT.setAttribute('fill','#ff6b35');brkT.setAttribute('font-size','11');brkT.setAttribute('font-weight','bold');brkT.textContent='Bonds BROKEN (energy IN)';svg.appendChild(brkT);
-    var y=65;
-    r.broken.forEach(function(b){
-      var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',100);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#ff8844');t.setAttribute('font-size','11');t.textContent=b.bond+': +'+b.e+' kJ/mol';svg.appendChild(t);y+=20;
+    ctx.textAlign='center';
+    ctx.fillStyle='#e8f4f8';ctx.font='bold 13px sans-serif';ctx.fillText(r.name,W/2,22);
+    // Animated energy bars
+    var progress=Math.min((t%6)/3,1);
+    if(t%6>3)progress=1;
+    // Bonds broken (left)
+    ctx.fillStyle='#ff6b35';ctx.font='bold 11px sans-serif';ctx.fillText('Bonds BROKEN',175,45);
+    ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText('(energy absorbed)',175,57);
+    r.broken.forEach(function(b,i){
+      var bw=Math.min(progress,1)*(b.e/2500)*240;
+      ctx.fillStyle='#1d3347';ctx.fillRect(30,70+i*30,240,18);
+      ctx.fillStyle='#ff6b35';ctx.fillRect(30,70+i*30,bw,18);
+      ctx.fillStyle='#e8f4f8';ctx.textAlign='left';ctx.font='10px sans-serif';ctx.fillText(b.b+': +'+b.e+' kJ',30,65+i*30);
     });
-    var totalBrkT=document.createElementNS('http://www.w3.org/2000/svg','text');
-    totalBrkT.setAttribute('x',100);totalBrkT.setAttribute('y',y+5);totalBrkT.setAttribute('text-anchor','middle');totalBrkT.setAttribute('fill','#ff6b35');totalBrkT.setAttribute('font-size','12');totalBrkT.setAttribute('font-weight','bold');totalBrkT.textContent='Total IN: +'+energyIn+' kJ/mol';svg.appendChild(totalBrkT);
-    // Bonds formed column
-    var frmT=document.createElementNS('http://www.w3.org/2000/svg','text');
-    frmT.setAttribute('x',580);frmT.setAttribute('y',45);frmT.setAttribute('text-anchor','middle');frmT.setAttribute('fill','#7fff6b');frmT.setAttribute('font-size','11');frmT.setAttribute('font-weight','bold');frmT.textContent='Bonds FORMED (energy OUT)';svg.appendChild(frmT);
-    y=65;
-    r.formed.forEach(function(b){
-      var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',580);t.setAttribute('y',y);t.setAttribute('text-anchor','middle');t.setAttribute('fill','#88ff88');t.setAttribute('font-size','11');t.textContent=b.bond+': −'+b.e+' kJ/mol';svg.appendChild(t);y+=20;
+    var totalInW=(progress)*(energyIn/2500)*240;
+    ctx.fillStyle='#1d3347';ctx.fillRect(30,70+r.broken.length*30+10,240,20);
+    ctx.fillStyle='#ff4444';ctx.fillRect(30,70+r.broken.length*30+10,totalInW,20);
+    ctx.fillStyle='#ff6b35';ctx.textAlign='left';ctx.font='bold 11px sans-serif';ctx.fillText('Total IN: +'+energyIn+' kJ',30,70+r.broken.length*30+8);
+    // Bonds formed (right)
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='bold 11px sans-serif';ctx.fillText('Bonds FORMED',525,45);
+    ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText('(energy released)',525,57);
+    r.formed.forEach(function(b,i){
+      var bw=Math.min(progress,1)*(b.e/2500)*240;
+      ctx.fillStyle='#1d3347';ctx.fillRect(430,70+i*30,240,18);
+      ctx.fillStyle='#7fff6b';ctx.fillRect(430,70+i*30,bw,18);
+      ctx.fillStyle='#e8f4f8';ctx.textAlign='left';ctx.font='10px sans-serif';ctx.fillText(b.b+': -'+b.e+' kJ',430,65+i*30);
     });
-    var totalFrmT=document.createElementNS('http://www.w3.org/2000/svg','text');
-    totalFrmT.setAttribute('x',580);totalFrmT.setAttribute('y',y+5);totalFrmT.setAttribute('text-anchor','middle');totalFrmT.setAttribute('fill','#7fff6b');totalFrmT.setAttribute('font-size','12');totalFrmT.setAttribute('font-weight','bold');totalFrmT.textContent='Total OUT: −'+energyOut+' kJ/mol';svg.appendChild(totalFrmT);
-    // ΔH result
+    var totalOutW=(progress)*(energyOut/2500)*240;
+    ctx.fillStyle='#1d3347';ctx.fillRect(430,70+r.formed.length*30+10,240,20);
+    ctx.fillStyle='#44bb44';ctx.fillRect(430,70+r.formed.length*30+10,totalOutW,20);
+    ctx.fillStyle='#7fff6b';ctx.textAlign='left';ctx.font='bold 11px sans-serif';ctx.fillText('Total OUT: -'+energyOut+' kJ',430,70+r.formed.length*30+8);
+    // ΔH result with pulsing
     var dhCol=isExo?'#7fff6b':'#ff6b35';
-    var dhRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    dhRect.setAttribute('x',250);dhRect.setAttribute('y',180);dhRect.setAttribute('width',200);dhRect.setAttribute('height',50);
-    dhRect.setAttribute('rx',8);dhRect.setAttribute('fill','#132333');dhRect.setAttribute('stroke',dhCol);dhRect.setAttribute('stroke-width','2');svg.appendChild(dhRect);
-    var dhT=document.createElementNS('http://www.w3.org/2000/svg','text');
-    dhT.setAttribute('x',350);dhT.setAttribute('y',202);dhT.setAttribute('text-anchor','middle');dhT.setAttribute('fill',dhCol);dhT.setAttribute('font-size','13');dhT.setAttribute('font-weight','bold');dhT.textContent='ΔH = '+(dH>0?'+':'')+dH+' kJ/mol';svg.appendChild(dhT);
-    var dhT2=document.createElementNS('http://www.w3.org/2000/svg','text');
-    dhT2.setAttribute('x',350);dhT2.setAttribute('y',222);dhT2.setAttribute('text-anchor','middle');dhT2.setAttribute('fill',dhCol);dhT2.setAttribute('font-size','11');dhT2.textContent=isExo?'EXOTHERMIC ▼':'ENDOTHERMIC ▲';svg.appendChild(dhT2);
-    // Arrow between columns
-    var arr=document.createElementNS('http://www.w3.org/2000/svg','text');
-    arr.setAttribute('x',350);arr.setAttribute('y',100);arr.setAttribute('text-anchor','middle');arr.setAttribute('fill','#5a8aa0');arr.setAttribute('font-size','24');arr.textContent='⇄';svg.appendChild(arr);
+    var pulse=1+Math.sin(t*3)*0.03;
+    ctx.save();ctx.translate(W/2,230);ctx.scale(pulse,pulse);
+    ctx.fillStyle='#132333';ctx.fillRect(-110,-20,220,40);ctx.strokeStyle=dhCol;ctx.lineWidth=2;ctx.strokeRect(-110,-20,220,40);
+    ctx.fillStyle=dhCol;ctx.font='bold 15px sans-serif';ctx.textAlign='center';
+    ctx.fillText('ΔH = '+(dH>0?'+':'')+dH+' kJ/mol',0,0);
+    ctx.font='11px sans-serif';ctx.fillText(isExo?'EXOTHERMIC ▼ Heat released':'ENDOTHERMIC ▲ Heat absorbed',0,17);
+    ctx.restore();
+    // Lightning bolts breaking bonds animation
+    if(Math.random()<0.05){
+      var lx=50+Math.random()*250,ly=80+Math.random()*60;
+      ctx.strokeStyle='#ffd93d';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+8,ly+10);ctx.lineTo(lx-3,ly+10);ctx.lineTo(lx+5,ly+20);ctx.stroke();
+    }
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
   }
-  draw();
-  el.appendChild(container);
+  loop();
 }
 
 // 29. ELECTROLYSIS OF BRINE
@@ -1939,133 +2002,197 @@ function renderGreenhouse(el){
 // 31. WATER PURIFICATION
 function renderWaterPurification(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Water Purification:</b> Sedimentation → Filtration → Chlorination. This removes solids, bacteria, and makes water safe to drink.';el.appendChild(info);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Water Purification:</b> Sedimentation → Filtration → Chlorination → Safe water. Each stage removes different impurities.';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300,t=0;
+  // Particles moving through stages
+  var particles=[];
   var stages=[
-    {name:'1. Sedimentation',desc:'Large solids settle to bottom by gravity',icon:'⬇️',col:'#8B6914',detail:'Aluminium sulfate (alum) is added to cause small particles to clump together (flocculation) and sink.'},
-    {name:'2. Filtration',desc:'Water passes through sand and gravel layers',icon:'🔍',col:'#5a8aa0',detail:'Multi-layer filter: gravel (large particles), coarse sand, fine sand. Removes suspended particles.'},
-    {name:'3. Chlorination',desc:'Chlorine added to kill bacteria & microbes',icon:'🧪',col:'#7fff6b',detail:'Cl₂ dissolves in water to form HClO (hypochlorous acid) which kills bacteria. pH is also adjusted.'},
-    {name:'4. Safe Water',desc:'Clean, safe drinking water',icon:'💧',col:'#00e5ff',detail:'Water is tested for pH (6.5-8.5), turbidity, and bacteria counts before being distributed.'},
+    {name:'Raw Water',x:20,w:130,col:'rgba(100,80,40,0.4)',textCol:'#aa8844'},
+    {name:'Sedimentation',x:165,w:130,col:'rgba(80,60,30,0.3)',textCol:'#ffd93d'},
+    {name:'Filtration',x:310,w:130,col:'rgba(40,60,80,0.3)',textCol:'#00e5ff'},
+    {name:'Chlorination',x:455,w:130,col:'rgba(30,80,40,0.2)',textCol:'#7fff6b'},
+    {name:'Safe Water',x:600,w:90,col:'rgba(0,50,100,0.15)',textCol:'#00e5ff'},
   ];
-  var sel=0;
-  var ctrl=document.createElement('div');ctrl.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem;';
-  stages.forEach(function(s,i){
-    var b=document.createElement('button');
-    b.style.cssText='padding:.5rem;background:'+(i===0?s.col:'var(--s1)')+';border:1px solid '+(i===0?s.col:'var(--border)')+';border-radius:8px;color:var(--text);cursor:pointer;font-size:.8rem;text-align:center;';
-    b.innerHTML=s.icon+'<br>'+s.name.split('.')[1];
-    b.onclick=function(){
-      sel=i;
-      ctrl.querySelectorAll('button').forEach(function(x,j){
-        x.style.background=j===i?stages[j].col:'var(--s1)';
-        x.style.borderColor=j===i?stages[j].col:'var(--border)';
-      });
-      updateInfo();
-    };
-    ctrl.appendChild(b);
-  });
-  el.appendChild(ctrl);
-  var infoDiv=document.createElement('div');infoDiv.style.cssText='padding:1.25rem;background:var(--s1);border-radius:12px;border-left:4px solid var(--accent);';
-  var cv=document.createElement('canvas');cv.width=700;cv.height=200;
-  el.appendChild(infoDiv);el.appendChild(cv);
-  var ctx=cv.getContext('2d'),W=700,H=200;
-  function updateInfo(){
-    var s=stages[sel];
-    infoDiv.style.borderColor=s.col;
-    infoDiv.innerHTML='<div style="font-weight:bold;color:'+s.col+';margin-bottom:.5rem">'+s.name+'</div>'+
-      '<div style="color:var(--text);margin-bottom:.5rem">'+s.desc+'</div>'+
-      '<div style="color:var(--dim);font-size:.85rem">'+s.detail+'</div>';
+  // Particle types: dirt, bacteria, clean
+  for(var i=0;i<60;i++){
+    var type=i<25?'dirt':i<40?'bacteria':'clean';
+    particles.push({
+      x:Math.random()*120+25,y:60+Math.random()*180,
+      vx:0.4+Math.random()*0.3,vy:(Math.random()-0.5)*0.4,
+      type:type,r:type==='dirt'?4:type==='bacteria'?3:2,
+      alive:true,stage:0
+    });
   }
-  updateInfo();
-  function draw(){
+  function getParticleCol(p){
+    if(!p.alive)return null;
+    if(p.type==='dirt')return'#aa7722';
+    if(p.type==='bacteria')return'#ff4444';
+    return'#00aaff';
+  }
+  function loop(){
     ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
-    // Draw flow diagram
+    t+=0.016;
+    // Draw stage tanks
     stages.forEach(function(s,i){
-      var x=30+i*168,w=140,h=120,y=40;
-      // Tank
-      ctx.strokeStyle=i===sel?s.col:'#1d3347';ctx.lineWidth=i===sel?2.5:1.5;
-      ctx.fillStyle='rgba(0,0,0,0.3)';
-      ctx.beginPath();ctx.roundRect(x,y,w,h,6);ctx.fill();ctx.stroke();
-      // Fill based on stage
-      if(i===0){ctx.fillStyle='rgba(139,105,20,0.3)';ctx.fillRect(x+2,y+40,w-4,h-42);}
-      else if(i===1){
-        ctx.fillStyle='rgba(150,150,100,0.4)';ctx.fillRect(x+2,y+60,w-4,30);
-        ctx.fillStyle='rgba(200,200,150,0.4)';ctx.fillRect(x+2,y+90,w-4,h-92);
-        ctx.fillStyle='rgba(90,138,160,0.2)';ctx.fillRect(x+2,y+2,w-4,60);
-      }
-      else if(i===2){ctx.fillStyle='rgba(127,255,107,0.15)';ctx.fillRect(x+2,y+2,w-4,h-4);}
-      else{ctx.fillStyle='rgba(0,229,255,0.15)';ctx.fillRect(x+2,y+2,w-4,h-4);}
-      // Icon + name
-      ctx.fillStyle=i===sel?s.col:'#5a8aa0';ctx.textAlign='center';ctx.font='11px sans-serif';
-      ctx.fillText(s.name,x+w/2,y-8);
-      ctx.font='20px sans-serif';ctx.fillText(s.icon,x+w/2,y+h/2);
-      // Arrow
-      if(i<3){
-        ctx.fillStyle='#5a8aa0';ctx.font='18px sans-serif';ctx.fillText('→',x+w+5,y+h/2+7);
+      ctx.fillStyle=s.col;ctx.fillRect(s.x,50,s.w,200);
+      ctx.strokeStyle='#1d3347';ctx.lineWidth=1.5;ctx.strokeRect(s.x,50,s.w,200);
+      ctx.fillStyle=s.textCol;ctx.textAlign='center';ctx.font='bold 10px sans-serif';
+      ctx.fillText(s.name,s.x+s.w/2,42);
+      // Flow arrow between stages
+      if(i<4){
+        var ax=s.x+s.w;
+        ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(ax,150);ctx.lineTo(ax+15,150);ctx.stroke();
+        ctx.fillStyle='#5a8aa0';ctx.beginPath();ctx.moveTo(ax+15,145);ctx.lineTo(ax+15,155);ctx.lineTo(ax+22,150);ctx.fill();
       }
     });
+    // Filter mesh in stage 3
+    ctx.strokeStyle='rgba(0,180,255,0.3)';ctx.lineWidth=1;
+    for(var fy=55;fy<245;fy+=12){ctx.beginPath();ctx.moveTo(310,fy);ctx.lineTo(440,fy);ctx.stroke();}
+    // Chlorine bubbles in stage 4
+    if(Math.random()<0.1) particles.push({x:460+Math.random()*120,y:240,vx:0.2,vy:-0.8-Math.random(),type:'chlorine',r:3+Math.random()*2,alive:true,stage:3});
+    // Update and draw particles
+    particles=particles.filter(function(p){return p.x<W+10;});
+    particles.forEach(function(p){
+      if(!p.alive)return;
+      p.x+=p.vx;p.y+=p.vy;
+      // Bounce vertically in tanks
+      if(p.y<55)p.vy=Math.abs(p.vy);
+      if(p.y>245)p.vy=-Math.abs(p.vy);
+      // Kill dirt in sedimentation (stage 1)
+      if(p.type==='dirt'&&p.x>165&&p.x<295&&Math.random()<0.008){p.alive=false;return;}
+      // Kill bacteria in chlorination (stage 3)
+      if(p.type==='bacteria'&&p.x>455&&Math.random()<0.015){p.alive=false;return;}
+      var col=getParticleCol(p);
+      if(!col)return;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=col;ctx.fill();
+      if(p.type==='bacteria'){
+        // Wiggle
+        ctx.beginPath();ctx.arc(p.x+Math.sin(t*5+p.y)*2,p.y,p.r*0.5,0,Math.PI*2);
+        ctx.fillStyle='#ff666688';ctx.fill();
+      }
+    });
+    // Add fresh dirty particles from left
+    if(t%1<0.02){
+      ['dirt','dirt','bacteria'].forEach(function(type){
+        particles.push({x:25,y:60+Math.random()*180,vx:0.4+Math.random()*0.3,vy:(Math.random()-0.5)*0.4,type:type,r:type==='dirt'?4:3,alive:true,stage:0});
+      });
+    }
+    // Legend
+    ctx.fillStyle='#aa7722';ctx.font='10px sans-serif';ctx.textAlign='left';ctx.fillText('● Dirt/solids',20,H-20);
+    ctx.fillStyle='#ff4444';ctx.fillText('● Bacteria',120,H-20);
+    ctx.fillStyle='#00aaff';ctx.fillText('● Clean water',220,H-20);
+    ctx.fillStyle='#7fff6b';ctx.fillText('Cl₂: kills microbes →',320,H-20);
     ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
   }
-  draw();
+  loop();
 }
 
 // 32. ALKANES
 function renderAlkanes(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Alkanes</b> are saturated hydrocarbons with the general formula CₙH₂ₙ₊₂. They contain only C-C single bonds. Used as fuels.';el.appendChild(info);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Alkanes</b> CₙH₂ₙ₊₂ — saturated hydrocarbons. Only C-C single bonds. Longer chain = higher boiling point.';
+  el.appendChild(info);
   var alkanes=[
-    {name:'Methane',formula:'CH₄',n:1,bp:-161,state:'gas',use:'Natural gas'},
-    {name:'Ethane',formula:'C₂H₆',n:2,bp:-89,state:'gas',use:'Fuel'},
-    {name:'Propane',formula:'C₃H₈',n:3,bp:-42,state:'gas',use:'LPG'},
-    {name:'Butane',formula:'C₄H₁₀',n:4,bp:-1,state:'gas',use:'Lighters'},
-    {name:'Pentane',formula:'C₅H₁₂',n:5,bp:36,state:'liquid',use:'Solvent'},
-    {name:'Octane',formula:'C₈H₁₈',n:8,bp:126,state:'liquid',use:'Petrol'},
+    {name:'Methane CH₄',n:1,bp:-161,state:'gas',use:'Natural gas / fuel'},
+    {name:'Ethane C₂H₆',n:2,bp:-89,state:'gas',use:'Fuel'},
+    {name:'Propane C₃H₈',n:3,bp:-42,state:'gas',use:'LPG / camping gas'},
+    {name:'Butane C₄H₁₀',n:4,bp:-1,state:'gas',use:'Lighters / BBQ'},
+    {name:'Pentane C₅H₁₂',n:5,bp:36,state:'liquid',use:'Solvent'},
+    {name:'Octane C₈H₁₈',n:8,bp:126,state:'liquid',use:'Petrol'},
   ];
   var sel=0;
-  var ctrl=document.createElement('div');ctrl.style.cssText='display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem;';
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  ctrl.style.cssText='display:flex;flex-wrap:wrap;gap:.3rem;';
   alkanes.forEach(function(a,i){
-    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');
-    b.textContent=a.name;
-    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';drawSel();};
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=a.name.split(' ')[0];
+    b.onclick=function(){sel=i;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
     ctrl.appendChild(b);
   });
   el.appendChild(ctrl);
-  var cv=document.createElement('canvas');cv.width=700;cv.height=280;el.appendChild(cv);
-  var ctx=cv.getContext('2d'),W=700,H=280;
-  function drawAtom(x,y,label,col,r){
-    ctx.beginPath();ctx.arc(x,y,r||18,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.stroke();
-    ctx.fillStyle='#fff';ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.fillText(label,x,y+4);
-  }
-  function drawBond(x1,y1,x2,y2){
-    ctx.strokeStyle='#5a8aa0';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-  }
-  function drawSel(){
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300,t=0;
+  function loop(){
     ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
     var a=alkanes[sel];
-    var n=a.n;
-    var cx=W/2-(n-1)*50, cy=140;
-    // Draw backbone C atoms and bonds
+    var n=a.n,spacing=Math.min(80,500/Math.max(n,1));
+    var startX=W/2-(n-1)*spacing/2;
+    var cy=H/2;
+    // Animate a gentle bob
+    var bob=Math.sin(t)*5;
+    // Draw bonds first
+    for(var i=0;i<n-1;i++){
+      var x1=startX+i*spacing,x2=startX+(i+1)*spacing;
+      ctx.strokeStyle='#5a8aa0';ctx.lineWidth=4;
+      ctx.beginPath();ctx.moveTo(x1+20,cy+bob);ctx.lineTo(x2-20,cy+bob);ctx.stroke();
+    }
+    // Draw C atoms and H atoms
     for(var i=0;i<n;i++){
-      var x=cx+i*100;
-      // H atoms up and down
-      drawBond(x,cy,x,cy-50);drawAtom(x,cy-60,'H','#ff6b35',14);
-      drawBond(x,cy,x,cy+50);drawAtom(x,cy+60,'H','#ff6b35',14);
-      if(i===0){drawBond(x,cy,x-50,cy);drawAtom(x-62,cy,'H','#ff6b35',14);}
-      if(i===n-1){drawBond(x,cy,x+50,cy);drawAtom(x+62,cy,'H','#ff6b35',14);}
-      if(i<n-1){drawBond(x+18,cy,x+82,cy);}
-      drawAtom(x,cy,'C','#444',22);
+      var cx2=startX+i*spacing,cy2=cy+bob;
+      var hCount=i===0||i===n-1?3:2;
+      // H atoms up
+      for(var h=0;h<(hCount>2?2:1);h++){
+        var hx=cx2+(h===0?-12:12)*(hCount>2?0.5:1);
+        var hy=cy2-45;
+        ctx.strokeStyle='#88aacc';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(cx2,cy2-18);ctx.lineTo(hx,hy+12);ctx.stroke();
+        var hg=ctx.createRadialGradient(hx,hy,0,hx,hy,13);
+        hg.addColorStop(0,'#5588bb');hg.addColorStop(1,'#223355');
+        ctx.beginPath();ctx.arc(hx,hy,13,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
+        ctx.fillStyle='#aaddff';ctx.textAlign='center';ctx.font='bold 10px monospace';ctx.fillText('H',hx,hy+4);
+      }
+      // H atoms down
+      for(var h=0;h<(i===0||i===n-1?1:1);h++){
+        var hx2=cx2,hy2=cy2+45;
+        ctx.strokeStyle='#88aacc';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(cx2,cy2+18);ctx.lineTo(hx2,hy2-12);ctx.stroke();
+        var hg2=ctx.createRadialGradient(hx2,hy2,0,hx2,hy2,13);
+        hg2.addColorStop(0,'#5588bb');hg2.addColorStop(1,'#223355');
+        ctx.beginPath();ctx.arc(hx2,hy2,13,0,Math.PI*2);ctx.fillStyle=hg2;ctx.fill();
+        ctx.fillStyle='#aaddff';ctx.textAlign='center';ctx.font='bold 10px monospace';ctx.fillText('H',hx2,hy2+4);
+      }
+      // End H atoms (left/right)
+      if(i===0){
+        ctx.strokeStyle='#88aacc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx2-18,cy2);ctx.lineTo(cx2-45,cy2);ctx.stroke();
+        var hg3=ctx.createRadialGradient(cx2-50,cy2,0,cx2-50,cy2,13);hg3.addColorStop(0,'#5588bb');hg3.addColorStop(1,'#223355');
+        ctx.beginPath();ctx.arc(cx2-50,cy2,13,0,Math.PI*2);ctx.fillStyle=hg3;ctx.fill();
+        ctx.fillStyle='#aaddff';ctx.font='bold 10px monospace';ctx.fillText('H',cx2-50,cy2+4);
+      }
+      if(i===n-1){
+        ctx.strokeStyle='#88aacc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx2+18,cy2);ctx.lineTo(cx2+45,cy2);ctx.stroke();
+        var hg4=ctx.createRadialGradient(cx2+50,cy2,0,cx2+50,cy2,13);hg4.addColorStop(0,'#5588bb');hg4.addColorStop(1,'#223355');
+        ctx.beginPath();ctx.arc(cx2+50,cy2,13,0,Math.PI*2);ctx.fillStyle=hg4;ctx.fill();
+        ctx.fillStyle='#aaddff';ctx.font='bold 10px monospace';ctx.fillText('H',cx2+50,cy2+4);
+      }
+      // C atom (on top)
+      var cg=ctx.createRadialGradient(cx2-5,cy2-5,2,cx2,cy2,20);
+      cg.addColorStop(0,'#666');cg.addColorStop(1,'#222');
+      ctx.beginPath();ctx.arc(cx2,cy2,20,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+      ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#ddd';ctx.textAlign='center';ctx.font='bold 12px monospace';ctx.fillText('C',cx2,cy2+4);
     }
     // Info panel
-    ctx.fillStyle='#e8f4f8';ctx.textAlign='center';ctx.font='bold 14px sans-serif';
-    ctx.fillText(a.name+' ('+a.formula+')',W/2,25);
-    var props=[['Formula',a.formula],['Boiling Point',a.bp+'°C'],['State at RT',a.state],['Use',a.use],['H atoms',2*a.n+2]];
-    props.forEach(function(p,i){
-      ctx.fillStyle='#5a8aa0';ctx.font='11px sans-serif';ctx.fillText(p[0]+': ',W/2-40,H-60+i*14);
-      ctx.fillStyle='#00e5ff';ctx.textAlign='left';ctx.fillText(p[1],W/2+40,H-60+i*14);
-      ctx.textAlign='center';
+    ctx.fillStyle='#e8f4f8';ctx.textAlign='center';ctx.font='bold 14px sans-serif';ctx.fillText(a.name,W/2,22);
+    var props=[['Formula','C'+a.n+'H'+(2*a.n+2)],['Boiling Pt',a.bp+'°C'],['State at RT',a.state],['Use',a.use]];
+    props.forEach(function(p,pi){
+      ctx.fillStyle='#5a8aa0';ctx.textAlign='right';ctx.font='11px sans-serif';ctx.fillText(p[0]+':',W-220,260+pi*14);
+      ctx.fillStyle='#00e5ff';ctx.textAlign='left';ctx.fillText(p[1],W-215,260+pi*14);
     });
+    // Homologous series bar
+    ctx.fillStyle='#1d3347';ctx.fillRect(30,265,200,12);
+    ctx.fillStyle='#b388ff';ctx.fillRect(30,265,Math.min(a.bp+200,200)*200/326,12);
+    ctx.fillStyle='#5a8aa0';ctx.textAlign='left';ctx.font='9px sans-serif';ctx.fillText('Boiling point trend ↑ as chain length ↑',30,258);
     ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
   }
-  drawSel();
+  loop();
 }
 
 // 33. ALKENES & ADDITION REACTIONS
@@ -2348,47 +2475,71 @@ function renderHaber(el){
 // 37. CONTACT PROCESS
 function renderContactProcess(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Contact Process</b> makes sulfuric acid (H₂SO₄):<br>Step 1: S + O₂ → SO₂  |  Step 2: 2SO₂ + O₂ ⇌ 2SO₃ (450°C, V₂O₅)  |  Step 3: SO₃ + H₂O → H₂SO₄';el.appendChild(info);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 280');svg.setAttribute('width','100%');svg.setAttribute('height','280');el.appendChild(svg);
-  var steps=[
-    {n:1,title:'Burn Sulfur',eq:'S + O₂ → SO₂',temp:'~1000°C',col:'#ff6b35',x:60},
-    {n:2,title:'Catalytic Oxidation',eq:'2SO₂ + O₂ ⇌ 2SO₃',temp:'450°C, V₂O₅',col:'#ffd93d',x:250},
-    {n:3,title:'Absorption',eq:'SO₃ + H₂SO₄ → H₂S₂O₇',temp:'Oleum formed',col:'#00e5ff',x:440},
-    {n:4,title:'Dilution',eq:'H₂S₂O₇ + H₂O → H₂SO₄',temp:'Final product',col:'#7fff6b',x:600},
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Contact Process</b> — makes H₂SO₄ in 4 stages: Burn S → Oxidise SO₂ → Absorb SO₃ → Dilute to H₂SO₄';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300,t=0;
+  var stages=[
+    {name:'Burn Sulfur',eq:'S+O₂→SO₂',temp:'~1000°C',col:'#ff6b35',x:30,molCol:'#ff8844'},
+    {name:'Catalytic Oxidation',eq:'2SO₂+O₂⇌2SO₃',temp:'450°C V₂O₅',col:'#ffd93d',x:200,molCol:'#ffdd44'},
+    {name:'Absorption',eq:'SO₃+H₂SO₄→H₂S₂O₇',temp:'Oleum',col:'#00e5ff',x:400,molCol:'#44aaff'},
+    {name:'Dilution',eq:'H₂S₂O₇+H₂O→H₂SO₄',temp:'Final product',col:'#7fff6b',x:570,molCol:'#44ff88'},
   ];
-  steps.forEach(function(s,i){
-    var bx=s.x,by=60,bw=150,bh=100;
-    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('x',bx);rect.setAttribute('y',by);rect.setAttribute('width',bw);rect.setAttribute('height',bh);
-    rect.setAttribute('rx',8);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',s.col);rect.setAttribute('stroke-width','2');svg.appendChild(rect);
-    // Step number
-    var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',bx+15);circle.setAttribute('cy',by+15);circle.setAttribute('r',12);circle.setAttribute('fill',s.col);svg.appendChild(circle);
-    var cn=document.createElementNS('http://www.w3.org/2000/svg','text');
-    cn.setAttribute('x',bx+15);cn.setAttribute('y',by+19);cn.setAttribute('text-anchor','middle');cn.setAttribute('fill','#000');cn.setAttribute('font-size','11');cn.setAttribute('font-weight','bold');cn.textContent=s.n;svg.appendChild(cn);
-    // Title
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',bx+bw/2);t.setAttribute('y',by+40);t.setAttribute('text-anchor','middle');t.setAttribute('fill',s.col);t.setAttribute('font-size','10');t.setAttribute('font-weight','bold');t.textContent=s.title;svg.appendChild(t);
-    // Equation
-    var eq=document.createElementNS('http://www.w3.org/2000/svg','text');
-    eq.setAttribute('x',bx+bw/2);eq.setAttribute('y',by+62);eq.setAttribute('text-anchor','middle');eq.setAttribute('fill','#e8f4f8');eq.setAttribute('font-size','9');eq.textContent=s.eq;svg.appendChild(eq);
-    // Temp
-    var tp=document.createElementNS('http://www.w3.org/2000/svg','text');
-    tp.setAttribute('x',bx+bw/2);tp.setAttribute('y',by+80);tp.setAttribute('text-anchor','middle');tp.setAttribute('fill','#5a8aa0');tp.setAttribute('font-size','9');tp.textContent=s.temp;svg.appendChild(tp);
-    // Arrow
-    if(i<steps.length-1){
-      var arr=document.createElementNS('http://www.w3.org/2000/svg','text');
-      arr.setAttribute('x',bx+bw+5);arr.setAttribute('y',by+55);arr.setAttribute('fill','#5a8aa0');arr.setAttribute('font-size','20');arr.textContent='→';svg.appendChild(arr);
+  var molecules=[];
+  for(var i=0;i<stages.length;i++){
+    for(var j=0;j<6;j++){
+      molecules.push({stage:i,x:stages[i].x+20+Math.random()*120,y:100+Math.random()*100,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5,r:5});
     }
-  });
-  // Uses of H2SO4
-  var useT=document.createElementNS('http://www.w3.org/2000/svg','text');
-  useT.setAttribute('x',350);useT.setAttribute('y',200);useT.setAttribute('text-anchor','middle');useT.setAttribute('fill','#7fff6b');useT.setAttribute('font-size','13');useT.setAttribute('font-weight','bold');useT.textContent='Uses of H₂SO₄:';svg.appendChild(useT);
-  var uses=['Fertilisers (ammonium sulfate)','Car batteries (lead-acid)','Making detergents','Paint manufacture'];
-  uses.forEach(function(u,i){
-    var ut=document.createElementNS('http://www.w3.org/2000/svg','text');
-    ut.setAttribute('x',350);ut.setAttribute('y',220+i*14);ut.setAttribute('text-anchor','middle');ut.setAttribute('fill','#5a8aa0');ut.setAttribute('font-size','10');ut.textContent='• '+u;svg.appendChild(ut);
-  });
+  }
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    stages.forEach(function(s,i){
+      var x=s.x,y=60,w=155,h=160;
+      // Tank with glow
+      var glow=Math.sin(t*2+i)*0.1+0.15;
+      ctx.fillStyle=s.col+Math.floor(glow*255).toString(16).padStart(2,'0');
+      ctx.fillRect(x,y,w,h);
+      ctx.strokeStyle=s.col;ctx.lineWidth=2;ctx.strokeRect(x,y,w,h);
+      // Heat shimmer
+      for(var sh=0;sh<3;sh++){
+        var shx=x+20+sh*40,shy=y+h-20+Math.sin(t*4+sh+i)*8;
+        ctx.beginPath();ctx.arc(shx,shy,8+Math.sin(t*3+sh)*3,0,Math.PI*2);
+        ctx.fillStyle=s.col+'22';ctx.fill();
+      }
+      // Labels
+      ctx.fillStyle=s.col;ctx.textAlign='center';ctx.font='bold 10px sans-serif';ctx.fillText(s.name,x+w/2,y-8);
+      ctx.fillStyle='#e8f4f8';ctx.font='9px monospace';ctx.fillText(s.eq,x+w/2,y+h+15);
+      ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText(s.temp,x+w/2,y+h+28);
+      // Step number
+      ctx.fillStyle=s.col;ctx.font='bold 20px sans-serif';ctx.fillText(i+1+'.',x+10,y+25);
+      // Arrow
+      if(i<3){
+        ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(x+w+1,y+h/2);ctx.lineTo(x+w+30,y+h/2);ctx.stroke();
+        ctx.fillStyle='#5a8aa0';ctx.beginPath();ctx.moveTo(x+w+28,y+h/2-5);ctx.lineTo(x+w+28,y+h/2+5);ctx.lineTo(x+w+38,y+h/2);ctx.fill();
+      }
+    });
+    // Animate molecules in each stage
+    molecules.forEach(function(m){
+      var s=stages[m.stage];
+      m.x+=m.vx;m.y+=m.vy;
+      if(m.x<s.x+5||m.x>s.x+150)m.vx*=-1;
+      if(m.y<65||m.y>215)m.vy*=-1;
+      ctx.beginPath();ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+      var mg=ctx.createRadialGradient(m.x-1,m.y-1,0,m.x,m.y,m.r);
+      mg.addColorStop(0,s.molCol);mg.addColorStop(1,s.molCol+'44');
+      ctx.fillStyle=mg;ctx.fill();
+    });
+    // H2SO4 bottle at end
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='bold 12px sans-serif';
+    ctx.fillText('H₂SO₄',640,H-20);
+    ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText('Sulfuric Acid',640,H-8);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
 }
 
 // 38. ALLOYS
@@ -2457,82 +2608,182 @@ function renderAlloys(el){
 // 39. CORROSION PREVENTION
 function renderCorrosion(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Rusting</b> needs both oxygen AND water. Prevention methods: painting, galvanising (zinc coating), sacrificial anode, electroplating, alloying.';el.appendChild(info);
-  var svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 700 300');svg.setAttribute('width','100%');svg.setAttribute('height','300');el.appendChild(svg);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Rusting</b> needs BOTH oxygen AND water. Prevention: painting, galvanising, sacrificial anode, electroplating, alloying.';
+  el.appendChild(info);
   var methods=[
-    {name:'Painting',desc:'Physical barrier — keeps O₂ and H₂O away from iron surface',col:'#ff6b35',icon:'🖌️',x:60,y:40},
-    {name:'Galvanising',desc:'Zinc coat — zinc is more reactive, oxidises preferentially (sacrificial)',col:'#7fff6b',icon:'⚡',x:250,y:40},
-    {name:'Electroplating',desc:'Chrome/tin coat via electrolysis — shiny barrier',col:'#00e5ff',icon:'🔋',x:440,y:40},
-    {name:'Sacrificial Anode',desc:'Zinc/magnesium block attached — corrodes instead of iron',col:'#ffd93d',icon:'🔩',x:60,y:170},
-    {name:'Alloying (Stainless)',desc:'Add Cr + Ni — Cr₂O₃ layer forms, self-sealing barrier',col:'#aaa',icon:'⚙️',x:250,y:170},
-    {name:'Oiling/Greasing',desc:'Physical barrier — used on machine parts',col:'#888',icon:'💧',x:440,y:170},
+    {name:'No Protection',protected:false,desc:'Rusts quickly',col:'#ff4444'},
+    {name:'Painted',protected:true,desc:'Physical barrier',col:'#00e5ff'},
+    {name:'Galvanised (Zn)',protected:true,desc:'Sacrificial Zn layer',col:'#7fff6b'},
+    {name:'Electroplated',protected:true,desc:'Chrome/tin barrier',col:'#ffd93d'},
   ];
-  methods.forEach(function(m){
-    var rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('x',m.x);rect.setAttribute('y',m.y);rect.setAttribute('width',180);rect.setAttribute('height',110);
-    rect.setAttribute('rx',8);rect.setAttribute('fill','#0d1a24');rect.setAttribute('stroke',m.col);rect.setAttribute('stroke-width','1.5');svg.appendChild(rect);
-    var icon=document.createElementNS('http://www.w3.org/2000/svg','text');
-    icon.setAttribute('x',m.x+20);icon.setAttribute('y',m.y+28);icon.setAttribute('font-size','18');icon.textContent=m.icon;svg.appendChild(icon);
-    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
-    t.setAttribute('x',m.x+42);t.setAttribute('y',m.y+25);t.setAttribute('fill',m.col);t.setAttribute('font-size','11');t.setAttribute('font-weight','bold');t.textContent=m.name;svg.appendChild(t);
-    // Description - wrap text
-    var words=m.desc.split(' ');var line='',lineY=m.y+45,lineCount=0;
-    words.forEach(function(w){
-      var test=line+w+' ';
-      if(test.length>28&&line!==''){
-        var dt=document.createElementNS('http://www.w3.org/2000/svg','text');
-        dt.setAttribute('x',m.x+10);dt.setAttribute('y',lineY);dt.setAttribute('fill','#5a8aa0');dt.setAttribute('font-size','9');dt.textContent=line;svg.appendChild(dt);
-        line=w+' ';lineY+=13;lineCount++;
-      } else line=test;
-      if(lineCount<4){
-        var dt=document.createElementNS('http://www.w3.org/2000/svg','text');
-        dt.setAttribute('x',m.x+10);dt.setAttribute('y',lineY);dt.setAttribute('fill','#5a8aa0');dt.setAttribute('font-size','9');dt.textContent=line;svg.appendChild(dt);
-      }
-    });
+  var sel=0;
+  var ctrl=document.createElement('div');ctrl.className='controls';
+  methods.forEach(function(m,i){
+    var b=document.createElement('button');b.className='btn'+(i===0?' green':'');b.textContent=m.name;
+    b.onclick=function(){sel=i;rustLevel=0;ctrl.querySelectorAll('button').forEach(function(x){x.className='btn';});b.className='btn green';};
+    ctrl.appendChild(b);
   });
-  // Rust equation at bottom
-  var eq=document.createElementNS('http://www.w3.org/2000/svg','text');
-  eq.setAttribute('x',350);eq.setAttribute('y',290);eq.setAttribute('text-anchor','middle');eq.setAttribute('fill','#ff4444');eq.setAttribute('font-size','11');eq.setAttribute('font-family','monospace');eq.textContent='4Fe + 3O₂ + xH₂O → 2Fe₂O₃·xH₂O (rust)';svg.appendChild(eq);
+  el.appendChild(ctrl);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=300;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=300,t=0,rustLevel=0;
+  var waterDrops=[];
+  for(var i=0;i<20;i++) waterDrops.push({x:Math.random()*400+150,y:-Math.random()*200,vy:1+Math.random()*2,r:3+Math.random()*4});
+  var oxygenParticles=[];
+  for(var i=0;i<15;i++) oxygenParticles.push({x:Math.random()*500+100,y:Math.random()*H,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5});
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    var m=methods[sel];
+    // Sky/environment
+    var skyG=ctx.createLinearGradient(0,0,0,120);
+    skyG.addColorStop(0,'#050a1a');skyG.addColorStop(1,'#0a1a2a');
+    ctx.fillStyle=skyG;ctx.fillRect(0,0,W,120);
+    // Rain drops
+    waterDrops.forEach(function(d){
+      d.y+=d.vy;if(d.y>200)d.y=-20;
+      ctx.strokeStyle='rgba(0,180,255,0.6)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-1,d.y+d.r*2);ctx.stroke();
+    });
+    // O2 particles floating
+    oxygenParticles.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>150)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,150,50,0.5)';ctx.fill();
+      ctx.fillStyle='rgba(255,150,50,0.8)';ctx.font='8px monospace';ctx.textAlign='center';ctx.fillText('O₂',p.x,p.y+3);
+    });
+    // Iron bar
+    var barX=150,barY=160,barW=400,barH=60;
+    // Base iron
+    var ironG=ctx.createLinearGradient(barX,barY,barX,barY+barH);
+    ironG.addColorStop(0,'#888');ironG.addColorStop(0.5,'#aaa');ironG.addColorStop(1,'#666');
+    ctx.fillStyle=ironG;ctx.fillRect(barX,barY,barW,barH);
+    // Protection layer
+    if(m.protected){
+      var layerCol=sel===1?'#4488ff':sel===2?'#88ff88':'#ffcc00';
+      ctx.fillStyle=layerCol+'88';ctx.fillRect(barX,barY-8,barW,8);
+      ctx.fillStyle=layerCol+'44';ctx.fillRect(barX,barY+barH,barW,8);
+      ctx.fillStyle=layerCol+'66';ctx.fillRect(barX-8,barY,8,barH);
+      ctx.fillStyle=layerCol+'66';ctx.fillRect(barX+barW,barY,8,barH);
+      // Shimmer
+      var shimX=(t*50)%barW;
+      ctx.fillStyle=layerCol+'22';ctx.fillRect(barX+shimX-20,barY,40,barH);
+    }
+    // Rust spreading
+    if(!m.protected) rustLevel=Math.min(rustLevel+0.15,100);
+    else rustLevel=Math.max(rustLevel-0.5,0);
+    if(rustLevel>0){
+      var rustPatches=Math.floor(rustLevel/8)+1;
+      for(var r=0;r<rustPatches;r++){
+        var rx=barX+30+r*((barW-60)/rustPatches);
+        var ry=barY+10+Math.sin(r*2.3)*20;
+        var rr=5+r*2+rustLevel/20;
+        ctx.beginPath();ctx.arc(rx,ry,rr,0,Math.PI*2);
+        ctx.fillStyle='rgba(180,80,0,'+(rustLevel/150)+')';ctx.fill();
+        ctx.beginPath();ctx.arc(rx+rr*0.5,ry+rr*0.3,rr*0.6,0,Math.PI*2);
+        ctx.fillStyle='rgba(150,60,0,'+(rustLevel/200)+')';ctx.fill();
+      }
+    }
+    // Label on bar
+    ctx.fillStyle=m.protected?m.col:'#ff4444';ctx.textAlign='center';ctx.font='bold 13px sans-serif';
+    ctx.fillText(m.name,W/2,barY+barH/2+5);
+    // Rust meter
+    ctx.fillStyle='#1d3347';ctx.fillRect(150,240,400,16);
+    ctx.fillStyle=rustLevel>50?'#ff4444':'#7fff6b';
+    ctx.fillRect(150,240,rustLevel*4,16);
+    ctx.fillStyle='#e8f4f8';ctx.font='11px sans-serif';ctx.fillText('Rust level: '+Math.round(rustLevel)+'%',150,272);
+    // Equation
+    ctx.fillStyle='#ff4444';ctx.font='11px monospace';ctx.textAlign='center';
+    ctx.fillText('4Fe + 3O₂ + xH₂O → 2Fe₂O₃·xH₂O',W/2,295);
+    ctx.fillStyle='#5a8aa0';ctx.font='10px sans-serif';ctx.fillText(m.desc,W/2,258);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
 }
 
 // 40. PERCENTAGE YIELD & PURITY
 function renderYieldPurity(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>% Yield</b> = (actual yield ÷ theoretical yield) × 100  |  <b>% Purity</b> = (mass of pure substance ÷ total mass) × 100';el.appendChild(info);
-  var container=document.createElement('div');container.style.padding='1rem';
-  // Interactive calculator
-  var calcs=[
-    {title:'% Yield Calculator',fields:[{l:'Theoretical Yield (g)',id:'ty'},{l:'Actual Yield (g)',id:'ay'}],
-     formula:function(v){return v.ay&&v.ty?(v.ay/v.ty*100).toFixed(1)+'%':'—';},result:'% Yield'},
-    {title:'% Purity Calculator',fields:[{l:'Mass of Sample (g)',id:'ms'},{l:'Mass of Pure Substance (g)',id:'mp'}],
-     formula:function(v){return v.mp&&v.ms?(v.mp/v.ms*100).toFixed(1)+'%':'—';},result:'% Purity'},
-  ];
-  calcs.forEach(function(c){
-    var box=document.createElement('div');box.style.cssText='background:var(--s1);border-radius:12px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);';
-    var title=document.createElement('div');title.style.cssText='font-weight:bold;color:#00e5ff;margin-bottom:.75rem;font-size:1rem;';title.textContent=c.title;box.appendChild(title);
-    var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr auto;gap:.75rem;align-items:end;';
-    var vals={};
-    c.fields.forEach(function(f){
-      var wrap=document.createElement('div');
-      var lbl=document.createElement('label');lbl.style.cssText='font-size:.8rem;color:var(--dim);display:block;margin-bottom:.3rem;';lbl.textContent=f.l;
-      var inp=document.createElement('input');inp.type='number';inp.min=0;inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:8px;font-size:.9rem;';
-      inp.oninput=function(){vals[f.id]=parseFloat(inp.value);res.textContent=c.result+': '+c.formula(vals);};
-      wrap.appendChild(lbl);wrap.appendChild(inp);grid.appendChild(wrap);
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>% Yield</b> = (actual ÷ theoretical) × 100  |  <b>% Purity</b> = (pure mass ÷ total mass) × 100. Yield is never 100% due to side reactions, reversibility, and losses.';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=220;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=220,t=0;
+  var yieldVal=75,purityVal=90;
+  var reactants=[],products=[],impurities=[];
+  for(var i=0;i<30;i++) reactants.push({x:60+Math.random()*80,y:60+Math.random()*120,vx:(Math.random()-0.5)*1.2,vy:(Math.random()-0.5)*1.2,r:4,col:'#ff6b35'});
+  for(var i=0;i<22;i++) products.push({x:540+Math.random()*100,y:60+Math.random()*120,vx:(Math.random()-0.5)*1,vy:(Math.random()-0.5)*1,r:4,col:'#7fff6b'});
+  for(var i=0;i<5;i++) impurities.push({x:540+Math.random()*100,y:60+Math.random()*120,vx:(Math.random()-0.5)*0.8,vy:(Math.random()-0.5)*0.8,r:4,col:'#ff4444'});
+  // Calc panel
+  var calcDiv=document.createElement('div');calcDiv.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem;padding:.75rem;background:var(--s1);border-radius:10px;align-items:end;';
+  function makeInput(label,placeholder){
+    var w=document.createElement('div');
+    var l=document.createElement('label');l.style.cssText='font-size:.72rem;color:var(--dim);display:block;';l.textContent=label;
+    var i=document.createElement('input');i.type='number';i.placeholder=placeholder;i.min=0;
+    i.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.4rem;border-radius:6px;';
+    w.appendChild(l);w.appendChild(i);calcDiv.appendChild(w);return i;
+  }
+  var inpTY=makeInput('Theoretical Yield (g)','e.g. 50');
+  var inpAY=makeInput('Actual Yield (g)','e.g. 37');
+  var inpMS=makeInput('Sample Mass (g)','e.g. 40');
+  var inpMP=makeInput('Pure Mass (g)','e.g. 36');
+  var res=document.createElement('div');res.style.cssText='padding:.5rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:.82rem;line-height:1.6;';res.textContent='Enter values above';
+  var btn=document.createElement('button');btn.className='btn green';btn.style.gridColumn='span 4';btn.textContent='Calculate % Yield & Purity';
+  btn.onclick=function(){
+    var ty=parseFloat(inpTY.value),ay=parseFloat(inpAY.value),ms=parseFloat(inpMS.value),mp=parseFloat(inpMP.value);
+    var out='';
+    if(!isNaN(ty)&&!isNaN(ay)){yieldVal=ay/ty*100;out+='% Yield = '+ay+' / '+ty+' x 100 = '+yieldVal.toFixed(1)+'%';}
+    if(!isNaN(ms)&&!isNaN(mp)){purityVal=mp/ms*100;out+='% Purity = '+mp+' ÷ '+ms+' × 100 = '+purityVal.toFixed(1)+'%';}
+    if(out)res.textContent=out;
+  };
+  calcDiv.appendChild(res);calcDiv.appendChild(btn);el.appendChild(calcDiv);
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    // Reactant flask
+    ctx.strokeStyle='#ff6b35';ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(120,140,70,80,0,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgba(255,107,53,0.08)';ctx.fill();
+    ctx.fillStyle='#ff6b35';ctx.textAlign='center';ctx.font='bold 11px sans-serif';ctx.fillText('Reactants',120,H-10);
+    // Arrow/reaction
+    ctx.strokeStyle='#5a8aa0';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(200,140);ctx.lineTo(460,140);ctx.stroke();
+    ctx.fillStyle='#5a8aa0';ctx.beginPath();ctx.moveTo(458,133);ctx.lineTo(458,147);ctx.lineTo(470,140);ctx.fill();
+    ctx.fillStyle='#ffd93d';ctx.font='10px sans-serif';ctx.fillText('Reaction',330,135);
+    ctx.fillStyle='#5a8aa0';ctx.fillText('(not all reactants → products)',330,150);
+    // Product flask
+    ctx.strokeStyle='#7fff6b';ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(570,140,100,80,0,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgba(127,255,107,0.08)';ctx.fill();
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='bold 11px sans-serif';ctx.fillText('Products + Impurities',570,H-10);
+    // Animate particles
+    reactants.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      var dx=p.x-120,dy=p.y-140;if(Math.sqrt(dx*dx+dy*dy)>65){p.vx*=-1;p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+'cc';ctx.fill();
     });
-    var res=document.createElement('div');res.style.cssText='padding:.6rem 1rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:1rem;white-space:nowrap;';res.textContent=c.result+': —';
-    grid.appendChild(res);box.appendChild(grid);container.appendChild(box);
-  });
-  // Why yield < 100%?
-  var reasons=document.createElement('div');reasons.style.cssText='background:var(--s1);border-radius:12px;padding:1rem;border-left:4px solid #ffd93d;';
-  reasons.innerHTML='<div style="font-weight:bold;color:#ffd93d;margin-bottom:.5rem">Why is % Yield never 100%?</div>'+
-    '<div style="color:var(--dim);font-size:.85rem;line-height:1.6">'+
-    '• Reversible reactions don\'t go to completion<br>'+
-    '• Product lost during separation/filtration<br>'+
-    '• Side reactions produce unwanted products<br>'+
-    '• Reactants may not be pure<br>'+
-    '• Practical difficulties in collection</div>';
-  container.appendChild(reasons);
-  el.appendChild(container);
+    products.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      var dx=p.x-570,dy=p.y-140;if(Math.sqrt(dx*dx+dy*dy)>95){p.vx*=-1;p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+'cc';ctx.fill();
+    });
+    impurities.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;
+      var dx=p.x-570,dy=p.y-140;if(Math.sqrt(dx*dx+dy*dy)>95){p.vx*=-1;p.vy*=-1;}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.col+'cc';ctx.fill();
+    });
+    // Yield meter (animated)
+    var meterY=Math.min(yieldVal/100*120,120)+Math.sin(t*2)*2;
+    ctx.fillStyle='#1d3347';ctx.fillRect(220,30,20,130);
+    ctx.fillStyle='#7fff6b';ctx.fillRect(220,30+(130-meterY),20,meterY);
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='bold 11px sans-serif';ctx.fillText(yieldVal.toFixed(0)+'%',230,175);
+    ctx.fillStyle='#5a8aa0';ctx.font='9px sans-serif';ctx.fillText('Yield',230,185);
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
 }
 
 // 41. ACID RAIN
@@ -2664,53 +2915,93 @@ function renderGiantCovalent(el){
 // 43. EMPIRICAL FORMULA
 function renderEmpirical(el){
   el.innerHTML='';
-  var info=document.createElement('div');info.className='obs';info.innerHTML='<b>Empirical Formula</b> = simplest whole number ratio of atoms. <b>Molecular Formula</b> = actual number of atoms. Find from % composition using: moles = mass ÷ Ar, then divide by smallest.';el.appendChild(info);
-  var container=document.createElement('div');container.style.padding='1rem';
-  // Step calculator
-  var elements=[{symbol:'',ar:0,percent:0},{symbol:'',ar:0,percent:0},{symbol:'',ar:0,percent:0}];
-  var grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem;';
+  var info=document.createElement('div');info.className='obs';
+  info.innerHTML='<b>Empirical Formula</b> — simplest whole number ratio of atoms. Steps: % → ÷ Ar → ÷ smallest → round to ratio.';
+  el.appendChild(info);
+  var cv=document.createElement('canvas');cv.width=700;cv.height=160;el.appendChild(cv);
+  var ctx=cv.getContext('2d'),W=700,H=160,t=0;
+  var step=0;
+  var example={elements:[{sym:'C',pct:40,ar:12},{sym:'H',pct:6.67,ar:1},{sym:'O',pct:53.33,ar:16}]};
+  function calcSteps(els){
+    var moles=els.map(function(e){return{sym:e.sym,mol:e.pct/e.ar};});
+    var minMol=Math.min.apply(null,moles.map(function(m){return m.mol;}));
+    var ratios=moles.map(function(m){return{sym:m.sym,mol:m.mol,ratio:Math.round(m.mol/minMol*10)/10};});
+    return{moles:moles,ratios:ratios,min:minMol};
+  }
+  function loop(){
+    ctx.fillStyle='#050a0f';ctx.fillRect(0,0,W,H);
+    t+=0.02;
+    var steps2=calcSteps(example.elements);
+    var stepLabels=['% Composition','÷ Molar Mass','÷ Smallest','Ratio = Formula'];
+    var stepColors=['#ff6b35','#ffd93d','#00e5ff','#7fff6b'];
+    // Step headers
+    stepLabels.forEach(function(l,i){
+      var x=30+i*165;
+      var active=Math.floor(t/2)%4===i;
+      var glow=active?1+Math.sin(t*5)*0.1:0.6;
+      ctx.fillStyle=stepColors[i]+(active?'ff':'88');
+      ctx.textAlign='center';ctx.font=(active?'bold ':'')+'10px sans-serif';
+      ctx.fillText('Step '+(i+1)+': '+l,x+65,25);
+      // Step values
+      example.elements.forEach(function(e,ei){
+        var y=50+ei*32;
+        var val='';
+        if(i===0)val=e.pct+'%';
+        else if(i===1)val=(e.pct/e.ar).toFixed(3);
+        else if(i===2)val=(e.pct/e.ar/steps2.min).toFixed(2);
+        else val=e.sym+':'+steps2.ratios[ei].ratio;
+        ctx.fillStyle=active?stepColors[i]:'#5a8aa0';
+        ctx.font=active?'bold 12px monospace':'11px monospace';
+        ctx.textAlign='center';ctx.fillText(val,x+65,y);
+      });
+      // Arrow
+      if(i<3){ctx.fillStyle='#5a8aa0';ctx.font='16px sans-serif';ctx.fillText('→',x+140,68);}
+    });
+    // Element symbols on left
+    example.elements.forEach(function(e,i){
+      ctx.fillStyle=['#ff6b35','#00aaff','#ff4444'][i];
+      ctx.textAlign='center';ctx.font='bold 13px monospace';ctx.fillText(e.sym,15,50+i*32);
+    });
+    // Result
+    ctx.fillStyle='#7fff6b';ctx.textAlign='center';ctx.font='bold 14px sans-serif';
+    var pulse=1+Math.sin(t*3)*0.04;ctx.save();ctx.translate(W/2,H-15);ctx.scale(pulse,pulse);
+    ctx.fillText('Empirical Formula: CH₂O  (glucose repeating unit)',0,0);ctx.restore();
+    ctx.textAlign='left';
+    _raf=requestAnimationFrame(loop);
+  }
+  loop();
+  // Interactive calculator below
+  var calcDiv=document.createElement('div');calcDiv.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;padding:1rem;background:var(--s1);border-radius:12px;margin-top:.5rem;';
   var inputs=[];
-  elements.forEach(function(e,i){
-    var col=document.createElement('div');col.style.cssText='background:var(--s1);border-radius:10px;padding:.75rem;border:1px solid var(--border);';
-    col.innerHTML='<div style="color:#00e5ff;font-weight:bold;margin-bottom:.5rem">Element '+(i+1)+'</div>';
-    var fields=[{l:'Symbol',p:'e.g. C',t:'text',k:'sym'},{l:'Ar (atomic mass)',p:'e.g. 12',t:'number',k:'ar'},{l:'% or mass',p:'e.g. 40',t:'number',k:'pct'}];
+  ['Element 1','Element 2','Element 3'].forEach(function(label,i){
+    var col=document.createElement('div');col.style.cssText='background:var(--s2);border-radius:8px;padding:.75rem;';
+    col.innerHTML='<div style="color:#00e5ff;font-weight:bold;font-size:.8rem;margin-bottom:.5rem">'+label+'</div>';
     var inps={};
-    fields.forEach(function(f){
-      var lbl=document.createElement('label');lbl.style.cssText='font-size:.75rem;color:var(--dim);display:block;';lbl.textContent=f.l;
+    [{l:'Symbol',p:'e.g. C',t:'text',k:'sym'},{l:'Ar',p:'e.g. 12',t:'number',k:'ar'},{l:'% or mass',p:'e.g. 40',t:'number',k:'pct'}].forEach(function(f){
+      var lbl=document.createElement('label');lbl.style.cssText='font-size:.72rem;color:var(--dim);display:block;';lbl.textContent=f.l;
       var inp=document.createElement('input');inp.type=f.t;inp.placeholder=f.p;
-      inp.style.cssText='width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:.4rem;border-radius:6px;font-size:.85rem;margin-bottom:.4rem;';
+      inp.style.cssText='width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.3rem;border-radius:6px;font-size:.82rem;margin-bottom:.3rem;';
       inps[f.k]=inp;col.appendChild(lbl);col.appendChild(inp);
     });
-    inputs.push(inps);grid.appendChild(col);
+    inputs.push(inps);calcDiv.appendChild(col);
   });
-  container.appendChild(grid);
-  var calcBtn=document.createElement('button');calcBtn.className='btn green';calcBtn.textContent='Calculate Empirical Formula';
-  var result=document.createElement('div');result.style.cssText='margin-top:1rem;background:var(--s1);border-radius:10px;padding:1rem;border-left:4px solid #7fff6b;min-height:3rem;font-family:monospace;';
-  calcBtn.onclick=function(){
+  var resultDiv=document.createElement('div');resultDiv.style.cssText='padding:.75rem;background:var(--s2);border-radius:8px;color:#7fff6b;font-family:monospace;font-size:.85rem;line-height:1.7;min-height:3rem;grid-column:span 3;';
+  resultDiv.textContent='Fill in elements above and click Calculate';
+  var btn=document.createElement('button');btn.className='btn green';btn.style.gridColumn='span 3';btn.textContent='Calculate Empirical Formula';
+  btn.onclick=function(){
     var data=inputs.map(function(inp){return{sym:inp.sym.value.trim(),ar:parseFloat(inp.ar.value),pct:parseFloat(inp.pct.value)};}).filter(function(d){return d.sym&&!isNaN(d.ar)&&!isNaN(d.pct);});
-    if(data.length<2){result.innerHTML='<span style="color:#ff4444">Enter at least 2 elements</span>';return;}
+    if(data.length<2){resultDiv.textContent='Enter at least 2 elements';return;}
     var moles=data.map(function(d){return{sym:d.sym,mol:d.pct/d.ar};});
     var minMol=Math.min.apply(null,moles.map(function(m){return m.mol;}));
     var ratios=moles.map(function(m){return{sym:m.sym,ratio:Math.round(m.mol/minMol*10)/10};});
-    var html='<div style="color:#7fff6b;font-weight:bold;margin-bottom:.5rem">Steps:</div>';
-    html+='<div style="color:#5a8aa0;font-size:.85rem;">';
-    html+='Step 1 — Moles = mass ÷ Ar:<br>';
-    moles.forEach(function(m){html+='&nbsp;&nbsp;'+m.sym+': '+m.mol.toFixed(4)+' mol<br>';});
-    html+='Step 2 — Divide by smallest ('+minMol.toFixed(4)+'):<br>';
-    ratios.forEach(function(r){html+='&nbsp;&nbsp;'+r.sym+': '+r.ratio+'<br>';});
-    html+='</div>';
-    html+='<div style="color:#7fff6b;font-size:1.1rem;margin-top:.5rem">Empirical Formula: ';
-    ratios.forEach(function(r){html+=r.sym+(r.ratio!==1?'<sub>'+r.ratio+'</sub>':'');});
-    html+='</div>';
-    result.innerHTML=html;
+    var html2='Steps:\n';
+    moles.forEach(function(m){html2+=m.sym+': '+m.mol.toFixed(3)+' mol\n';});
+    html2+='\u00f7 smallest ('+minMol.toFixed(3)+'):\n';
+    ratios.forEach(function(r){html2+=r.sym+' = '+r.ratio+'\n';});
+    html2+='Empirical Formula: '+ratios.map(function(r){return r.sym+(r.ratio!==1?r.ratio:'');}).join('');
+    resultDiv.textContent=html2;
   };
-  container.appendChild(calcBtn);container.appendChild(result);
-  // Example
-  var eg=document.createElement('div');eg.style.cssText='margin-top:1rem;background:var(--s1);border-radius:10px;padding:.75rem;border-left:4px solid #ffd93d;';
-  eg.innerHTML='<div style="color:#ffd93d;font-weight:bold;margin-bottom:.3rem">Example: Compound is 40% C, 6.7% H, 53.3% O</div>'+
-    '<div style="color:#5a8aa0;font-size:.85rem;">C: 40/12=3.33 | H: 6.7/1=6.7 | O: 53.3/16=3.33<br>Divide by 3.33: C=1, H=2, O=1 → <strong style="color:#ffd93d">CH₂O</strong> (glucose empirical formula)</div>';
-  container.appendChild(eg);
-  el.appendChild(container);
+  calcDiv.appendChild(resultDiv);calcDiv.appendChild(btn);el.appendChild(calcDiv);
 }
 
 // ════════════ SEARCH ════════════
@@ -3489,7 +3780,7 @@ function renderEquil(c){
     const mx=Math.max(A,B,C,10);
     [[A,'A','rgba(255,136,68,.8)'],[B,'B','rgba(68,200,255,.8)'],[C,'C','rgba(100,255,150,.8)']].forEach(([val,lbl,col],pi)=>{
       const n=Math.min(20,Math.round(val/mx*20));const cx=120+pi*170;
-      ctx.fillStyle='rgba(255,255,255,.35)';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText(`${lbl}(${Math.round(val)})`,cx,35);
+      ctx.fillStyle='rgba(255,255,255,.35)';ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText(lbl+'('+Math.round(val)+')',cx,35);
       for(let i=0;i<n;i++){const t2=Date.now()/1000;ctx.beginPath();ctx.arc(cx-30+Math.sin(t2+i*1.1)*25+i%5*12,65+Math.floor(i/5)*25+Math.cos(t2*.8+i)*8,6,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();}
     });
     // Arrow
