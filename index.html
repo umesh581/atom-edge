@@ -471,13 +471,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
 #cb-toolbar::-webkit-scrollbar{display:none}
 </style>
 
-  <!-- Disable login until Firebase ready -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var b = document.getElementById('auth-submit-btn');
-      if (b) b.disabled = true;
-    });
-  </script>
   <!-- Firebase -->
   <script type="module">
     import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -505,9 +498,6 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
                   collection, getDocs, deleteDoc, serverTimestamp,
                   createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
     window._fbReady = true;
-    // Re-enable login button now that Firebase is ready
-    var submitBtn = document.getElementById('auth-submit-btn');
-    if (submitBtn) submitBtn.disabled = false;
     var fbSt = document.getElementById('fb-status');
     if (fbSt) fbSt.textContent = '✓ Connected — ready to sign in';
 
@@ -994,15 +984,7 @@ function authSubmit() {
   var errEl   = document.getElementById('auth-err');
   if (!email || !pass) { showAuthErr('Please enter email and password.'); return; }
   if (!window.FB) {
-    var btn3 = document.getElementById('auth-submit-btn');
-    if (btn3) btn3.disabled = true;
-    showAuthErr('Connecting… retrying in a moment.');
-    setTimeout(function() {
-      if (btn3) btn3.disabled = false;
-      var e3 = document.getElementById('auth-err');
-      if (e3) e3.style.display = 'none';
-      authSubmit();
-    }, 1200);
+    showAuthErr('Firebase still connecting — please wait a moment and try again.');
     return;
   }
   if (_authMode === 'signup') {
