@@ -5110,10 +5110,11 @@ function finishGameLevel(){
 var _cbRoomId = null;
 
 function cbNewSession(){
-  _cbRoomId = Math.random().toString(36).substring(2,10);
+  _cbRoomId = Math.random().toString(36).substring(2,12) + Math.random().toString(36).substring(2,12);
+  var encKey = (_cbRoomId + Math.random().toString(36).substring(2,12)).substring(0,22);
   var iframe = document.getElementById('cb-iframe');
   if(iframe){
-    iframe.src = 'https://excalidraw.com/#room=' + _cbRoomId + ',' + Math.random().toString(36).substring(2,18);
+    iframe.src = 'https://excalidraw.com/#room=' + _cbRoomId.substring(0,20) + ',' + encKey;
     var status = document.getElementById('cb-status');
     if(status) status.textContent = '✓ New session started. Use Share Link to invite students.';
   }
