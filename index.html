@@ -852,7 +852,7 @@ select{background:var(--s2);color:var(--text);border:1px solid var(--border);bor
       <button class="btn" onclick="cbFullscreen()">⛶ Fullscreen</button>
     </div>
     <div id="cb-status" style="font-size:.78rem;color:var(--dim);margin-bottom:.75rem"></div>
-    <div style="border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#000">
+    <div id="cb-wrapper" style="border-radius:12px;overflow:hidden;border:1px solid var(--border);background:#000">
       <iframe
         id="cb-iframe"
         src="https://excalidraw.com"
@@ -5110,14 +5110,22 @@ function finishGameLevel(){
 var _cbRoomId = null;
 
 function cbNewSession(){
-  _cbRoomId = Math.random().toString(36).substring(2,12) + Math.random().toString(36).substring(2,12);
-  var encKey = (_cbRoomId + Math.random().toString(36).substring(2,12)).substring(0,22);
-  var iframe = document.getElementById('cb-iframe');
-  if(iframe){
-    iframe.src = 'https://excalidraw.com/#room=' + _cbRoomId.substring(0,20) + ',' + encKey;
-    var status = document.getElementById('cb-status');
-    if(status) status.textContent = '✓ New session started. Use Share Link to invite students.';
+  _cbRoomId = (Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)).substring(0,20);
+  var encKey = (Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)).substring(0,22);
+  var wrapper = document.getElementById('cb-wrapper');
+  var status = document.getElementById('cb-status');
+  // Remove and recreate iframe — only way to guarantee a truly blank board
+  if(wrapper){
+    wrapper.innerHTML = '';
+    var fresh = document.createElement('iframe');
+    fresh.id = 'cb-iframe';
+    fresh.style.cssText = 'width:100%;height:600px;border:none;display:block';
+    fresh.allow = 'clipboard-read; clipboard-write';
+    fresh.title = 'Classboard whiteboard';
+    fresh.src = 'https://excalidraw.com/#room=' + _cbRoomId + ',' + encKey;
+    wrapper.appendChild(fresh);
   }
+  if(status){ status.style.color='var(--green)'; status.textContent = '✓ Fresh whiteboard ready. Click Share Link to invite students.'; }
 }
 
 function cbShareLink(){
