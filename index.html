@@ -5112,6 +5112,12 @@ var _cbRoomId = null;
 function cbNewSession(){
   var wrapper = document.getElementById('cb-wrapper');
   var status = document.getElementById('cb-status');
+  // Clear ALL Excalidraw localStorage keys — this is the root cause of old drawings persisting
+  Object.keys(localStorage).forEach(function(key){
+    if(key.startsWith('excalidraw') || key.startsWith('EXCALIDRAW')){
+      localStorage.removeItem(key);
+    }
+  });
   if(wrapper){
     wrapper.innerHTML = '';
     var fresh = document.createElement('iframe');
@@ -5121,9 +5127,8 @@ function cbNewSession(){
     fresh.title = 'Classboard';
     fresh.src = 'https://excalidraw.com';
     wrapper.appendChild(fresh);
-    _cbRoomId = null;
   }
-  if(status){ status.style.color='var(--green)'; status.textContent = '✓ Fresh whiteboard loaded. To share: click the collaboration icon (👥) inside the whiteboard, then share that link with students.'; }
+  if(status){ status.style.color='var(--green)'; status.textContent = '✓ Fresh blank whiteboard — previous session cleared.'; }
 }
 
 function cbShareLink(){
