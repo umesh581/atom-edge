@@ -5110,40 +5110,28 @@ function finishGameLevel(){
 var _cbRoomId = null;
 
 function cbNewSession(){
-  _cbRoomId = (Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)).substring(0,20);
-  var encKey = (Math.random().toString(36).substring(2)+Math.random().toString(36).substring(2)).substring(0,22);
   var wrapper = document.getElementById('cb-wrapper');
   var status = document.getElementById('cb-status');
-  // Remove and recreate iframe — only way to guarantee a truly blank board
   if(wrapper){
     wrapper.innerHTML = '';
     var fresh = document.createElement('iframe');
     fresh.id = 'cb-iframe';
     fresh.style.cssText = 'width:100%;height:600px;border:none;display:block';
     fresh.allow = 'clipboard-read; clipboard-write';
-    fresh.title = 'Classboard whiteboard';
-    fresh.src = 'https://excalidraw.com/#room=' + _cbRoomId + ',' + encKey;
+    fresh.title = 'Classboard';
+    fresh.src = 'https://excalidraw.com';
     wrapper.appendChild(fresh);
+    _cbRoomId = null;
   }
-  if(status){ status.style.color='var(--green)'; status.textContent = '✓ Fresh whiteboard ready. Click Share Link to invite students.'; }
+  if(status){ status.style.color='var(--green)'; status.textContent = '✓ Fresh whiteboard loaded. To share: click the collaboration icon (👥) inside the whiteboard, then share that link with students.'; }
 }
 
 function cbShareLink(){
-  var iframe = document.getElementById('cb-iframe');
-  if(!iframe) return;
-  var url = iframe.src;
-  if(url === 'https://excalidraw.com' || url === ''){
-    var status = document.getElementById('cb-status');
-    if(status){ status.style.color='var(--orange)'; status.textContent = 'Start a New Session first, then share the link.'; }
-    return;
+  var status = document.getElementById('cb-status');
+  if(status){ 
+    status.style.color='#ffd93d'; 
+    status.textContent = 'To share: click the 👥 collaboration icon inside the whiteboard toolbar → copy the link → send to students.'; 
   }
-  navigator.clipboard.writeText(url).then(function(){
-    var status = document.getElementById('cb-status');
-    if(status){ status.style.color='var(--green)'; status.textContent = '✓ Link copied! Share it with your students.'; }
-  }).catch(function(){
-    var status = document.getElementById('cb-status');
-    if(status){ status.style.color='var(--dim)'; status.textContent = 'Link: ' + url; }
-  });
 }
 
 function cbFullscreen(){
